@@ -5,7 +5,7 @@ export const Layout = ({ children }: { children?: ReactNode }) => {
   return (
     <div>
       <Header />
-      <div>{children}</div>
+      <div style={{ margin: "75px" }}>{children}</div>
     </div>
   );
 };

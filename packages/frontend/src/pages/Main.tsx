@@ -6,17 +6,22 @@ const ContentColumns = styled.div`
   display: flex;
   flex-direction: row;
 
+  max-width: 1272px;
+  margin: 0 auto;
+
   .left-section {
-    width: 60%;
+    flex-grow: 1;
+    padding-right: 50px;
   }
   .right-section {
-    width: 40%;
+    min-width: 400px;
   }
 `;
 
 const Header = styled.header`
   font-family: "Clash Display";
   font-size: 48px;
+  margin-bottom: 37px;
 `;
 
 export const Main = () => {

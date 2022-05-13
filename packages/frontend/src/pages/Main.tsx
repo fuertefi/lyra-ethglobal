@@ -1,5 +1,6 @@
 import ManageLiquidity from "../components/ManageLiquidity";
 import styled from "styled-components";
+import VaultDescription from "../components/Strategy/VaultDescription";
 
 const ContentColumns = styled.div`
   display: flex;
@@ -25,6 +26,12 @@ export const Main = () => {
         <Header>
           Strategy<strong>Name</strong>
         </Header>
+        <VaultDescription>
+          Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
+          sint. Velit officia consequat duis enim velit mollit. Exercitation
+          veniam consequat sunt nostrud amet. Velit officia consequat duis enim
+          velit mollit. met minim mollit non deserunt ullamco est sit aliqua.
+        </VaultDescription>
       </div>
       <div className="right-section">
         <ManageLiquidity />

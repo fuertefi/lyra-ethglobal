@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@rainbow-me/rainbowkit": "^0.1.0",
+    "@craco/craco": "7.0.0-alpha.3",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.1.1",
     "@testing-library/user-event": "^13.5.0",
@@ -24,10 +25,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "craco eject"
   },
   "eslintConfig": {
     "extends": [
@@ -48,6 +49,10 @@
     ]
   },
   "devDependencies": {
-    "prettier": "^2.6.2"
+    "buffer": "^6.0.3",
+    "prettier": "^2.6.2",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "url": "^0.11.0"
   }
 }

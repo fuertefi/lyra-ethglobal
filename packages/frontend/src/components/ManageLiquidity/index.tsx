@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { FlexColumn } from "../styles";
 import Button from "../Button";
 import YourPosition from "./YourPosition";
+import CurrencyInput from "./CurrencyInput";
 
 const { TabPane } = Tabs;
 
@@ -61,13 +62,13 @@ const ManageLiquidity: FC = (props: any) => {
       <Tabs centered defaultActiveKey="1" renderTabBar={renderTabBar}>
         <TabPane tab="DEPOSIT" key="1">
           <TabContent>
-            <input placeholder={"Enter amount"} />
+            <CurrencyInput currency="USDC" />
             <ActionButton>Deposit</ActionButton>
           </TabContent>
         </TabPane>
         <TabPane tab="WITHDRAW" key="2">
           <TabContent>
-            <input placeholder={"Enter amount"} />
+            <CurrencyInput />
             <ActionButton>Withdraw</ActionButton>
           </TabContent>
         </TabPane>

@@ -21,7 +21,7 @@ contract StrategyBase is VaultAdapter {
   using SignedDecimalMath for int;
 
   LyraVault public immutable vault;
-  //OptionType public immutable optionType;
+  OptionType public immutable optionType;
   GWAVOracle public immutable gwavOracle;
 
   /// @dev asset used as collateral in AMM to sell. Should be the same as vault asset
@@ -43,11 +43,11 @@ contract StrategyBase is VaultAdapter {
 
   constructor(
     LyraVault _vault,
-    // OptionType _optionType,
+    OptionType _optionType,
     GWAVOracle _gwavOracle
   ) VaultAdapter() {
     vault = _vault;
-    // optionType = _optionType;
+    optionType = _optionType;
     gwavOracle = _gwavOracle;
   }
 
@@ -81,7 +81,7 @@ contract StrategyBase is VaultAdapter {
 
     quoteAsset.approve(address(vault), type(uint).max);
     baseAsset.approve(address(vault), type(uint).max);
-    collateralAsset = baseAsset; // _isBaseCollat() ? baseAsset : quoteAsset;
+    collateralAsset = _isBaseCollat() ? baseAsset : quoteAsset;
   }
 
   ///////////////////
@@ -93,11 +93,21 @@ contract StrategyBase is VaultAdapter {
    * @dev override this function if you want to customize asset management flow
    */
   function _returnFundsToVaut() internal virtual {
-    //ExchangeRateParams memory exchangeParams = getExchangeParams();
+    ExchangeRateParams memory exchangeParams = getExchangeParams();
     uint quoteBal = quoteAsset.balanceOf(address(this));
-    uint baseBal = baseAsset.balanceOf(address(this));
-    require(baseAsset.transfer(address(vault), baseBal), "failed to return funds from strategy");
-    require(quoteAsset.transfer(address(vault), quoteBal), "failed to return funds from strategy");
+
+    if (_isBaseCollat()) {
+      // exchange quote asset to base asset, and send base asset back to vault
+      uint baseBal = baseAsset.balanceOf(address(this));
+      uint minQuoteExpected = quoteBal.divideDecimal(exchangeParams.spotPrice).multiplyDecimal(
+        DecimalMath.UNIT - exchangeParams.baseQuoteFeeRate
+      );
+      uint baseReceived = exchangeFromExactQuote(quoteBal, minQuoteExpected);
+      require(baseAsset.transfer(address(vault), baseBal + baseReceived), "failed to return funds from strategy");
+    } else {
+      // send quote balance directly
+      require(quoteAsset.transfer(address(vault), quoteBal), "failed to return funds from strategy");
+    }
   }
 
   /////////////////////////////
@@ -111,7 +121,6 @@ contract StrategyBase is VaultAdapter {
    */
   function _getPremiumLimit(
     Strike memory strike,
-    OptionType optionType,
     uint vol,
     uint size
   ) internal view returns (uint limitPremium) {
@@ -123,7 +132,7 @@ contract StrategyBase is VaultAdapter {
       strike.strikePrice
     );
 
-    limitPremium = _isCall(optionType) ? callPremium.multiplyDecimal(size) : putPremium.multiplyDecimal(size);
+    limitPremium = _isCall() ? callPremium.multiplyDecimal(size) : putPremium.multiplyDecimal(size);
   }
 
   /**
@@ -182,11 +191,11 @@ contract StrategyBase is VaultAdapter {
   // Misc //
   //////////
 
-  function _isBaseCollat(OptionType optionType) internal pure returns (bool isBase) {
+  function _isBaseCollat() internal view returns (bool isBase) {
     isBase = (optionType == OptionType.SHORT_CALL_BASE) ? true : false;
   }
 
-  function _isCall(OptionType optionType) internal pure returns (bool isCall) {
+  function _isCall() internal view returns (bool isCall) {
     isCall = (optionType == OptionType.SHORT_PUT_QUOTE || optionType == OptionType.LONG_PUT) ? false : true;
   }
 

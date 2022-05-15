@@ -9,6 +9,7 @@ import { chain, createClient, WagmiProvider } from "wagmi";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Layout } from "./components/Layout";
 import { Main } from "./pages/Main";
+import "antd/dist/antd.css";
 
 const lightGray = "#99A0AB";
 const red = "#DC583B";

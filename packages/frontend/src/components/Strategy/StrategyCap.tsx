@@ -61,13 +61,13 @@ const StrategyCap = ({ currentBalance, cap, currency }: StrategyCapProps) => (
       <div>
         Strategy deposit
         <Amount>
-          {currentBalance} {currency}
+          {currentBalance.toLocaleString()} {currency}
         </Amount>
       </div>
       <div>
         Strategy capacity
         <Amount>
-          {cap} {currency}
+          {cap.toLocaleString()} {currency}
         </Amount>
       </div>
     </Details>

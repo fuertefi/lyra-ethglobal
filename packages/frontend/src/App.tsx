@@ -1,65 +1,17 @@
 import "@rainbow-me/rainbowkit/styles.css";
-import { apiProvider, configureChains, darkTheme, getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import {
+  apiProvider,
+  configureChains,
+  darkTheme,
+  getDefaultWallets,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
 import { chain, createClient, WagmiProvider } from "wagmi";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Layout } from "./components/Layout";
 import { Main } from "./pages/Main";
 import "./antd.css";
-
-const lightGray = "#99A0AB";
-const red = "#DC583B";
-const white = "#FFFFFF";
-const black = "#131517";
-const darkGray = "#1F2124";
-
-const theme = {
-    position: {
-        bg: "#2C2E32",
-        inactiveTabBg: darkGray,
-        tabs: {
-            inactive: {
-                bg: darkGray,
-                color: "#42454A",
-            },
-        },
-        input: {
-            placeholder: {
-                color: lightGray,
-            },
-            border: {
-                normal: lightGray,
-                error: red,
-            },
-            error: red,
-            color: white,
-        },
-    },
-    button: {
-        bg: "#06C799",
-        color: black,
-    },
-    icons: {
-        error: "#DC583B",
-    },
-    metrics: {
-        background: "transparent",
-        border: "1px solid #414447",
-        // borderColor: "#414447",
-        progress: {
-            background: {
-                color: darkGray,
-                border: "#2C2E30",
-            },
-            inner: {
-                color: black,
-                border: "#2C2E30",
-            },
-        },
-        accent: {
-            color: "#CED4DC",
-        },
-    },
-};
+import { theme } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -73,45 +25,63 @@ const GlobalStyle = createGlobalStyle`
     color: white;
   }
   
+
+  @keyframes buttonHoverIn {
+    0% {
+      background-position: 0;
+    }
+    100% {
+      background-position: 0 -50px;
+    }
+  }
+
+  @keyframes buttonHoverOut {
+    0% {
+      background-position: 0 -50px;
+    }
+    100% {
+      background-position: 0;
+    }
+  }
 `;
 
 const { chains, provider } = configureChains(
-    [chain.optimism],
-    [apiProvider.alchemy(process.env.ALCHEMY_ID), apiProvider.fallback()]
+  [chain.optimism],
+  [apiProvider.alchemy(process.env.ALCHEMY_ID), apiProvider.fallback()]
 );
 
 const { connectors } = getDefaultWallets({
-    appName: "lyra-ethglobal",
-    chains,
+  appName: "lyra-ethglobal",
+  chains,
 });
 
 const wagmiClient = createClient({
-    autoConnect: true,
-    connectors,
-    provider,
+  autoConnect: true,
+  connectors,
+  provider,
 });
 
 function App() {
-    return (
-        <WagmiProvider client={wagmiClient}>
-            <RainbowKitProvider
-                chains={chains}
-                theme={darkTheme({
-                    accentColor: "#06C799",
-                    accentColorForeground: "black",
-                    borderRadius: "large",
-                    fontStack: "system",
-                })}
-            >
-                <ThemeProvider theme={theme}>
-                    <GlobalStyle />
-                    <Layout>
-                        <Main />
-                    </Layout>
-                </ThemeProvider>
-            </RainbowKitProvider>
-        </WagmiProvider>
-    );
+  return (
+    <WagmiProvider client={wagmiClient}>
+      <RainbowKitProvider
+        chains={chains}
+        theme={darkTheme({
+          accentColor: "#06C799",
+          accentColorForeground: "black",
+          borderRadius: "large",
+          fontStack: "system",
+        })}
+      >
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <Layout>
+            <Main />
+          </Layout>
+        </ThemeProvider>
+      </RainbowKitProvider>
+    </WagmiProvider>
+  );
 }
 
 export default App;

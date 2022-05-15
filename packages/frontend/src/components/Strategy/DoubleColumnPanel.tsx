@@ -38,38 +38,30 @@ const TooltipContainer = styled.div`
 `;
 
 type Props = {
-    cycleNumber: number;
-    startTime: Date;
-    endTime: Date;
-    collateral: string;
+    headline1: string;
+    text1: string;
+    tooltip1: string;
+    headline2: string;
+    text2: string;
+    tooltip2: string;
 };
 
-const StrategyPeriodAndCollateral = ({ cycleNumber, startTime, endTime, collateral }: Props) => (
+const DoubleColumnPanel = ({ headline1, text1, tooltip1, headline2, text2, tooltip2 }: Props) => (
     <div style={{ display: "flex", marginTop: "20px" }}>
         <Container style={{ marginRight: "10px" }}>
-            <Headline>Current Period: {cycleNumber}</Headline>
-            <Text>
-                {format(startTime, "MMM dd")} - {format(endTime, "MMM dd")}
-            </Text>
+            <Headline>{headline1}</Headline>
+            <Text>{text1}</Text>
             <TooltipContainer>
-                <Tooltip
-                    placement="right"
-                    title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                    color="#404349"
-                >
+                <Tooltip placement="right" title={tooltip1} color="#404349">
                     <img src="/info_icon.svg" width="30" alt="" />
                 </Tooltip>
             </TooltipContainer>
         </Container>
         <Container style={{ marginLeft: "10px" }}>
-            <Headline>Strategy Collateral</Headline>
-            <Text>{collateral}</Text>
+            <Headline>{headline2}</Headline>
+            <Text>{text2}</Text>
             <TooltipContainer>
-                <Tooltip
-                    placement="right"
-                    title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                    color="#404349"
-                >
+                <Tooltip placement="right" title={tooltip2} color="#404349">
                     <img src="/info_icon.svg" width="30" alt="" />
                 </Tooltip>
             </TooltipContainer>
@@ -77,4 +69,4 @@ const StrategyPeriodAndCollateral = ({ cycleNumber, startTime, endTime, collater
     </div>
 );
 
-export default StrategyPeriodAndCollateral;
+export default DoubleColumnPanel;

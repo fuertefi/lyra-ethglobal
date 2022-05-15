@@ -6,6 +6,7 @@ import { FlexColumn } from "../styles";
 import Button from "../Button";
 import YourPosition from "./YourPosition";
 import CurrencyInput from "./CurrencyInput";
+import { lightGray } from "../../theme";
 
 const { TabPane } = Tabs;
 
@@ -23,7 +24,6 @@ const TabsWrapper = styled.div`
   .ant-tabs-nav-list {
     width: 100%;
     display: flex;
-    cursor: pointer;
   }
 
   .ant-tabs-tab {
@@ -33,13 +33,17 @@ const TabsWrapper = styled.div`
     justify-content: center;
     letter-spacing: 0.12em;
     font-weight: 500;
-
     &:not(.ant-tabs-tab-active) {
+      cursor: pointer;
       background-color: ${(props) => props.theme.position.tabs.inactive.bg};
       color: ${(props) => props.theme.position.tabs.inactive.color};
+      :hover {
+        color: ${lightGray};
+      }
     }
   }
 `;
+
 const renderTabBar = (props: any, DefaultTabBar: any): ReactElement => (
   <TabsWrapper>
     <DefaultTabBar {...props} />
@@ -49,8 +53,19 @@ const renderTabBar = (props: any, DefaultTabBar: any): ReactElement => (
 const ActionButton = styled(Button)`
   font-size: 18px;
   font-weight: bold;
+  background: radial-gradient(
+    93.99% 86.5% at 51.43% 106.5%,
+    #0699c7 0%,
+    #06c799 49.41%,
+    #06c799 100%
+  );
+  background-size: 100% 100px;
+  background-position: 0;
+  animation-duration: 0.3s;
+  animation-name: buttonHoverOut;
   :hover {
-    background-color: #1f967a;
+    animation-name: buttonHoverIn;
+    background-position: 0 -50px;
   }
 `;
 

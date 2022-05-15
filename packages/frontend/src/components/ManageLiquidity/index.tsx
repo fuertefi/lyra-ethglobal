@@ -23,7 +23,6 @@ const TabsWrapper = styled.div`
     .ant-tabs-nav-list {
         width: 100%;
         display: flex;
-        cursor: pointer;
     }
 
     .ant-tabs-tab {
@@ -33,13 +32,17 @@ const TabsWrapper = styled.div`
         justify-content: center;
         letter-spacing: 0.12em;
         font-weight: 500;
-
         &:not(.ant-tabs-tab-active) {
+            cursor: pointer;
             background-color: ${(props) => props.theme.position.tabs.inactive.bg};
             color: ${(props) => props.theme.position.tabs.inactive.color};
+            :hover {
+                color: #1f967a;
+            }
         }
     }
 `;
+
 const renderTabBar = (props: any, DefaultTabBar: any): ReactElement => (
     <TabsWrapper>
         <DefaultTabBar {...props} />
@@ -50,7 +53,7 @@ const ActionButton = styled(Button)`
     font-size: 18px;
     font-weight: bold;
     :hover {
-      background-color: #1F967A;
+        background-color: #1f967a;
     }
 `;
 
@@ -71,7 +74,7 @@ const ManageLiquidity: FC = (props: any) => {
         <LiquidityWidget>
             <YourPosition position={ethers.utils.parseUnits("1", 6)} />
             <Tabs centered defaultActiveKey="1" renderTabBar={renderTabBar}>
-                <TabPane tab="DEPOSIT" key="1">
+                <TabPane tab="DEPOSIT" key="1" className="tab">
                     <TabContent>
                         <CurrencyInput currency="USDC" />
                         <ActionButton>Deposit</ActionButton>

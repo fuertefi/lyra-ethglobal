@@ -13,14 +13,16 @@ import { Main } from "./pages/Main";
 const lightGray = "#99A0AB";
 const red = "#DC583B";
 const white = "#FFFFFF";
+const black = "#131517";
+const darkGray = "#1F2124";
 
 const theme = {
   position: {
     bg: "#2C2E32",
-    inactiveTabBg: "#1F2124",
+    inactiveTabBg: darkGray,
     tabs: {
       inactive: {
-        bg: "#1F2124",
+        bg: darkGray,
         color: "#42454A",
       },
     },
@@ -38,10 +40,28 @@ const theme = {
   },
   button: {
     bg: "#06C799",
-    color: "#000",
+    color: black,
   },
   icons: {
     error: "#DC583B",
+  },
+  metrics: {
+    background: "transparent",
+    border: "1px solid #414447",
+    // borderColor: "#414447",
+    progress: {
+      background: {
+        color: darkGray,
+        border: "#2C2E30",
+      },
+      inner: {
+        color: black,
+        border: "#2C2E30",
+      },
+    },
+    accent: {
+      color: "#CED4DC",
+    },
   },
 };
 

@@ -1,6 +1,7 @@
 import ManageLiquidity from "../components/ManageLiquidity";
 import styled from "styled-components";
 import VaultDescription from "../components/Strategy/VaultDescription";
+import StrategyCap from "../components/Strategy/StrategyCap";
 
 const ContentColumns = styled.div`
   display: flex;
@@ -24,6 +25,10 @@ const Header = styled.header`
   margin-bottom: 37px;
 `;
 
+const StyledVaultDescription = styled(VaultDescription)`
+  margin-bottom: 50px;
+`;
+
 export const Main = () => {
   return (
     <ContentColumns>
@@ -31,12 +36,14 @@ export const Main = () => {
         <Header>
           Strategy<strong>Name</strong>
         </Header>
-        <VaultDescription>
-          Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-          sint. Velit officia consequat duis enim velit mollit. Exercitation
-          veniam consequat sunt nostrud amet. Velit officia consequat duis enim
-          velit mollit. met minim mollit non deserunt ullamco est sit aliqua.
-        </VaultDescription>
+        <StyledVaultDescription link="https://github.com/fuertefi/core/pull/8">
+          T-YVUSDC-P-ETH earns yield on its USDC deposits by running a weekly
+          automated ETH put-selling strategy, where the put options are
+          collateralized by yvUSDC. The vault reinvests the yield it earns back
+          into the strategy, effectively compounding the yields for depositors
+          over time.
+        </StyledVaultDescription>
+        <StrategyCap currentBalance={10005.87} cap={1000000} currency="USDC" />
       </div>
       <div className="right-section">
         <ManageLiquidity />

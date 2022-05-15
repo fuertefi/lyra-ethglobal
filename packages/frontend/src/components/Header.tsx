@@ -9,6 +9,10 @@ const Container = styled.div`
 export const Header = () => (
   <Container style={{ margin: "30px" }}>
     <img src="/logo.svg" alt="0" width="200" />
-    <ConnectButton />
+    <ConnectButton
+      chainStatus="name"
+      accountStatus="address"
+      showBalance={false}
+    />
   </Container>
 );

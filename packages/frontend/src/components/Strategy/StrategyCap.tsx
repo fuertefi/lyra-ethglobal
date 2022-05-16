@@ -5,6 +5,7 @@ type StrategyCapProps = {
   currentBalance: number;
   currency: string;
   cap: number;
+  className?: string;
 };
 
 const StyledProgress = styled(Progress)`
@@ -55,8 +56,13 @@ const Amount = styled.div`
   color: ${({ theme }) => theme.metrics.accent.color};
 `;
 
-const StrategyCap = ({ currentBalance, cap, currency }: StrategyCapProps) => (
-  <Container>
+const StrategyCap = ({
+  currentBalance,
+  cap,
+  currency,
+  className,
+}: StrategyCapProps) => (
+  <Container className={className}>
     <Details>
       <div>
         Strategy deposit

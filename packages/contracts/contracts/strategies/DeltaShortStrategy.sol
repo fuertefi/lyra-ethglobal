@@ -30,12 +30,12 @@ contract DeltaShortStrategy is StrategyBase, IStrategy {
   struct DeltaShortStrategyDetail {
     uint minTimeToExpiry;
     uint maxTimeToExpiry;
-    int targetDelta;
-    uint maxDeltaGap;
-    uint minVol;
-    uint maxVol;
+    int targetDelta; // -20%
+    uint maxDeltaGap; // 5%
+    uint minVol; // 80%
+    uint maxVol; // 130%
     uint size;
-    uint maxVolVariance;
+    uint maxVolVariance; // 10%
     uint gwavPeriod;
     uint collatBuffer; // multiple of vaultAdapter.minCollateral(): 1.1 -> 110% * minCollat
     uint collatPercent; // partial collateral: 0.9 -> 90% * fullCollat
@@ -309,7 +309,7 @@ contract DeltaShortStrategy is StrategyBase, IStrategy {
 
   /**
    * @dev verify if the strike is valid for the strategy
-   * @return isValid true if vol is withint [minVol, maxVol] and delta is within targetDelta +- maxDeltaGap
+   * @return isValid true if vol is within [minVol, maxVol] and delta is within targetDelta +- maxDeltaGap
    */
   function isValidStrike(Strike memory strike) public view returns (bool isValid) {
     if (activeExpiry != strike.expiry) {

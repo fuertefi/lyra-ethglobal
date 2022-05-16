@@ -2,9 +2,7 @@ import ManageLiquidity from "../components/ManageLiquidity";
 import styled from "styled-components";
 import VaultDescription from "../components/Strategy/VaultDescription";
 import StrategyDetailsPanel from "../components/Strategy/StrategyDetailsPanel";
-import { useEffect, useState } from "react";
-import { getCurrentStrategy, StrategyDetails } from "./api/strategyServices";
-import { LoadingOutlined } from "@ant-design/icons";
+import { VaultActivityContainer } from "../components/VaultActivity/VaultActivityContainer";
 
 const ContentColumns = styled.div`
   display: flex;
@@ -33,18 +31,7 @@ const StyledVaultDescription = styled(VaultDescription)`
 `;
 
 export const Main = () => {
-  const [strategyDetails, setStrategyDetails] = useState<StrategyDetails>();
-  useEffect(() => {
-    // simulate an API request for fetching current vault status
-    const delayMilliseconds = 1000;
-    let timer = setTimeout(
-      () => setStrategyDetails(getCurrentStrategy()),
-      delayMilliseconds
-    );
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+
   return (
     <ContentColumns>
       <div className="left-section">
@@ -58,10 +45,8 @@ export const Main = () => {
           into the strategy, effectively compounding the yields for depositors
           over time.
         </StyledVaultDescription>
-        {!strategyDetails && <LoadingOutlined />}
-        {strategyDetails && (
-          <StrategyDetailsPanel strategyDetails={strategyDetails} />
-        )}
+        <StrategyDetailsPanel />
+        <VaultActivityContainer />
       </div>
       <div className="right-section">
         <ManageLiquidity />

@@ -10,7 +10,7 @@ export interface StrategyDetails {
 }
 
 export const getCurrentStrategy = (): StrategyDetails => {
-  return <StrategyDetails>{
+  return {
     deposit: 400000,
     capacity: 9000000,
     currency: "USDC",
@@ -20,7 +20,7 @@ export const getCurrentStrategy = (): StrategyDetails => {
     collateralDescription: "1 ETH + 2500 USDC",
     optionsPositions:
       "Call (50 contracts) - 3000 USDS strike. Put (50 contracts) - 2000 USDS strike",
-  };
+  } as StrategyDetails;
 };
 
 export const getLastFriday = (): Date => {

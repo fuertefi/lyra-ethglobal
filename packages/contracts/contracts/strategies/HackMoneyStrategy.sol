@@ -6,7 +6,7 @@ pragma experimental ABIEncoderV2;
 import "hardhat/console.sol";
 
 // standard strategy interface
-import "../interfaces/IStrategy.sol";
+import "../interfaces/IHackMoneyStrategy.sol";
 
 // Lyra
 import {VaultAdapter} from "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol";
@@ -22,7 +22,7 @@ import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/Signe
 // StrategyBase to inherit
 import {HackMoneyStrategyBase} from "./HackMoneyStrategyBase.sol";
 
-contract HackMoneyStrategy is HackMoneyStrategyBase, IStrategy {
+contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
   using DecimalMath for uint;
   using SignedDecimalMath for int;
 
@@ -30,17 +30,19 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IStrategy {
   struct HackMoneyStrategyDetail {
     uint minTimeToExpiry;
     uint maxTimeToExpiry;
-    int targetDelta;
-    uint maxDeltaGap;
-    uint minVol;
-    uint maxVol;
-    uint size;
-    uint maxVolVariance;
+    int mintargetDelta; // 15%
+    int maxtargetDelta; // 85%
+    uint maxDeltaGap; // 5% ?
+    uint minVol; // 80%
+    uint maxVol; // 130%
+    uint size; // 15
+    uint maxVolVariance; // 10%
     uint gwavPeriod;
   }
 
   HackMoneyStrategyDetail public strategyDetail;
   uint public activeExpiry;
+  uint public currentBoardId;
 
   ///////////
   // ADMIN //
@@ -73,6 +75,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IStrategy {
     Board memory board = getBoard(boardId);
     require(_isValidExpiry(board.expiry), "invalid board");
     activeExpiry = board.expiry;
+    currentBoardId = boardId;
   }
 
   /**
@@ -89,35 +92,118 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IStrategy {
   /**
    * @notice sell a fix aomunt of options and collect premium
    * @dev the vault should pass in a strike id, and the strategy would verify if the strike is valid on-chain.
-   * @param strikeId lyra strikeId to trade
    * @param lyraRewardRecipient address to receive trading reward. This need to be whitelisted
-   * @return positionId
+   * @return positionId1
+   * @return positionId2
    * @return premiumReceived
+   * @return collateralToAdd
    */
-  function doTrade(uint strikeId, address lyraRewardRecipient)
+  function doTrade(
+    uint,
+    uint,
+    address lyraRewardRecipient
+  )
     external
     onlyVault
     returns (
-      uint positionId,
+      uint positionId1,
+      uint positionId2,
       uint premiumReceived,
       uint collateralToAdd
     )
   {
-    //require(_isValidVolVariance(strikeId), "vol variance exceeded");
+    (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
 
-    Strike memory strike = getStrikes(_toDynamic(strikeId))[0];
-    //require(isValidStrike(strike), "invalid strike");
+    //uint setCollateralTo1;
+    uint collateralToAdd1;
+    (collateralToAdd1, ) = getRequiredCollateral(strike1);
 
-    uint setCollateralTo;
-    (collateralToAdd, setCollateralTo) = getRequiredCollateral(strike);
+    //uint setCollateralTo2;
+    uint collateralToAdd2;
+    (collateralToAdd2, ) = getRequiredCollateral(strike2);
+
+    collateralToAdd = collateralToAdd1 + collateralToAdd2;
 
     require(
       collateralAsset.transferFrom(address(vault), address(this), collateralToAdd),
       "collateral transfer from vault failed"
     );
 
-    (positionId, premiumReceived) = _sellStrike(strike, setCollateralTo, lyraRewardRecipient);
+    uint premiumReceived1;
+    (positionId1, premiumReceived1) = _sellStrike(strike1, collateralToAdd1, lyraRewardRecipient);
+    uint premiumReceived2;
+    (positionId2, premiumReceived2) = _sellStrike(strike2, collateralToAdd2, lyraRewardRecipient);
+
+    premiumReceived = premiumReceived1 + premiumReceived2;
   }
+
+  /**
+   * @notice sell a fix aomunt of options and collect premium
+   * @dev the vault should pass in a strike id, and the strategy would verify if the strike is valid on-chain.
+   * @param strikeId1 lyra strikeId to trade
+   * @param strikeId2 lyra strikeId to trade
+   * @param lyraRewardRecipient address to receive trading reward. This need to be whitelisted
+   * @return positionId1
+   * @return positionId2
+   * @return premiumReceived
+   */
+  // function doTrade(
+  //   uint strikeId1,
+  //   uint strikeId2,
+  //   address lyraRewardRecipient
+  // )
+  //   external
+  //   onlyVault
+  //   returns (
+  //     uint positionId1,
+  //     uint positionId2,
+  //     uint premiumReceived,
+  //     uint collateralToAdd
+  //   )
+  // {
+  //   Strike memory k1 = getStrikes(_toDynamic(strikeId1))[0];
+  //   Strike memory k2 = getStrikes(_toDynamic(strikeId2))[0];
+
+  //   Strike memory strike1;
+  //   Strike memory strike2;
+
+  //   if (k1.strikePrice < k2.strikePrice) {
+  //     strike1 = k1;
+  //     strike2 = k2;
+  //   } else {
+  //     strike1 = k2;
+  //     strike2 = k1;
+  //   }
+
+  //   require(isValidStrike(strike1, true), "invalid strike");
+  //   require(isValidStrike(strike2, false), "invalid strike");
+
+  //   //uint setCollateralTo1;
+  //   uint collateralToAdd1;
+  //   (collateralToAdd1, ) = getRequiredCollateral(strike1);
+
+  //   //uint setCollateralTo2;
+  //   uint collateralToAdd2;
+  //   (collateralToAdd2, ) = getRequiredCollateral(strike2);
+
+  //   collateralToAdd = collateralToAdd1 + collateralToAdd2;
+
+  //   require(
+  //     collateralAsset.transferFrom(address(vault), address(this), collateralToAdd),
+  //     "collateral transfer from vault failed"
+  //   );
+
+  //   uint premiumReceived1;
+  //   (positionId1, premiumReceived1) = _sellStrike(strike1, collateralToAdd1, lyraRewardRecipient);
+  //   uint premiumReceived2;
+  //   (positionId2, premiumReceived2) = _sellStrike(strike2, collateralToAdd2, lyraRewardRecipient);
+
+  //   premiumReceived = premiumReceived1 + premiumReceived2;
+  // }
+
+  /////////////////////////////
+  // Trade Parameter Helpers //
+  /////////////////////////////
 
   /**
    * @dev calculate required collateral to add in the next trade.
@@ -185,6 +271,26 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IStrategy {
     revert("not supported");
   }
 
+  function _getTradeStrikes() internal view returns (Strike memory smallStrike, Strike memory bigStrike) {
+    // get all strike Ids for current board
+    uint[] memory strikeIds = optionMarket.getBoardStrikes(currentBoardId);
+
+    // get small and big strike Ids
+    uint smallStrikeId = strikeIds[0];
+    uint bigStrikeId = strikeIds[strikeIds.length - 1];
+
+    // init strikes
+    smallStrike = getStrikes(_toDynamic(smallStrikeId))[0];
+    bigStrike = getStrikes(_toDynamic(bigStrikeId))[0];
+
+    for (uint i = 1; i < strikeIds.length - 1; i++) {
+      uint currentStrikeId = strikeIds[i];
+      Strike memory currentStrike = getStrikes(_toDynamic(currentStrikeId))[0];
+      if (isValidStrike(currentStrike, true)) smallStrike = currentStrike;
+      if (isValidStrike(currentStrike, false)) bigStrike = currentStrike;
+    }
+  }
+
   /////////////////////////////
   // Trade Parameter Helpers //
   /////////////////////////////
@@ -202,17 +308,17 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IStrategy {
    * @dev verify if the strike is valid for the strategy
    * @return isValid true if vol is withint [minVol, maxVol] and delta is within targetDelta +- maxDeltaGap
    */
-  function isValidStrike(Strike memory strike) public view returns (bool isValid) {
+  function isValidStrike(Strike memory strike, bool isSmallStrike) public view returns (bool isValid) {
     if (activeExpiry != strike.expiry) {
       return false;
     }
 
+    int targetDelta = isSmallStrike ? strategyDetail.maxtargetDelta : strategyDetail.mintargetDelta;
     uint[] memory strikeId = _toDynamic(strike.id);
-    uint vol = getVols(strikeId)[0];
     int callDelta = getDeltas(strikeId)[0];
     int delta = _isCall() ? callDelta : callDelta - SignedDecimalMath.UNIT;
-    uint deltaGap = _abs(strategyDetail.targetDelta - delta);
-    return vol >= strategyDetail.minVol && vol <= strategyDetail.maxVol && deltaGap < strategyDetail.maxDeltaGap;
+    uint deltaGap = _abs(targetDelta - delta);
+    return deltaGap < strategyDetail.maxDeltaGap;
   }
 
   /**

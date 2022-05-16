@@ -7,14 +7,14 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {BaseVault} from "./BaseVault.sol";
 import {Vault} from "../libraries/Vault.sol";
 
-import {IStrategy} from "../interfaces/IStrategy.sol";
+import {IHackMoneyStrategy} from "../interfaces/IHackMoneyStrategy.sol";
 
 /// @notice LyraVault help users run option-selling strategies on Lyra AMM.
 contract HackMoneyVault is Ownable, BaseVault {
   IERC20 public immutable premiumAsset;
   IERC20 public immutable collateralAsset;
 
-  IStrategy public strategy;
+  IHackMoneyStrategy public strategy;
   bool public canTrade;
   address public lyraRewardRecipient;
 
@@ -50,7 +50,7 @@ contract HackMoneyVault is Ownable, BaseVault {
       collateralAsset.approve(address(strategy), 0);
     }
 
-    strategy = IStrategy(_strategy);
+    strategy = IHackMoneyStrategy(_strategy);
     collateralAsset.approve(_strategy, type(uint).max);
     emit StrategyUpdated(_strategy);
   }
@@ -64,11 +64,11 @@ contract HackMoneyVault is Ownable, BaseVault {
     require(strikeId_1 != strikeId_2, "!strikes");
 
     // perform trades through strategy
-    (uint positionId_1, uint premiumReceived_1, uint capitalUsed_1) = strategy.doTrade(strikeId_1, lyraRewardRecipient);
-    (uint positionId_2, uint premiumReceived_2, uint capitalUsed_2) = strategy.doTrade(strikeId_2, lyraRewardRecipient);
-
-    uint premiumReceived = premiumReceived_1 + premiumReceived_2;
-    uint capitalUsed = capitalUsed_1 + capitalUsed_2;
+    (uint positionId_1, uint positionId_2, uint premiumReceived, uint capitalUsed) = strategy.doTrade(
+      strikeId_1,
+      strikeId_2,
+      lyraRewardRecipient
+    );
 
     // update the remaining locked amount
     vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;

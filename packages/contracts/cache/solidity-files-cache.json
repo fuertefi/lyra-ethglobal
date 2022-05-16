@@ -4463,53 +4463,6 @@
         "HackMoneyStrategyBase"
       ]
     },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/core/BaseVault.sol": {
-      "lastModificationDate": 1652715349884,
-      "contentHash": "72b311cf100900a83531735bfa27135e",
-      "sourceName": "contracts/core/BaseVault.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/proxy/utils/Initializable.sol",
-        "../libraries/Vault.sol",
-        "../libraries/VaultLifecycle.sol",
-        "../libraries/ShareMath.sol",
-        "hardhat/console.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "BaseVault"
-      ]
-    },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol": {
       "lastModificationDate": 1652601850263,
       "contentHash": "2337f0279507b5edf14a07067adf0d05",
@@ -4766,122 +4719,6 @@
         "Initializable"
       ]
     },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/libraries/Vault.sol": {
-      "lastModificationDate": 1652715349898,
-      "contentHash": "2231676b38398ce7d7786c3897a23a5f",
-      "sourceName": "contracts/libraries/Vault.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "Vault"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/libraries/VaultLifecycle.sol": {
-      "lastModificationDate": 1652715349899,
-      "contentHash": "59961907ed813cd795f937b5227eb9b7",
-      "sourceName": "contracts/libraries/VaultLifecycle.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "./Vault.sol",
-        "./ShareMath.sol",
-        "../interfaces/IERC20Detailed.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "hardhat/console.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "VaultLifecycle"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/libraries/ShareMath.sol": {
-      "lastModificationDate": 1652715349898,
-      "contentHash": "95271aa855a2a95fbf3fa154bf113784",
-      "sourceName": "contracts/libraries/ShareMath.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "./Vault.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "ShareMath"
-      ]
-    },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/node_modules/hardhat/console.sol": {
       "lastModificationDate": 1652601841626,
       "contentHash": "cc4777addd464ea56fa35b1c45df0591",
@@ -5022,163 +4859,6 @@
       ],
       "artifacts": [
         "IERC20Metadata"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IERC20Detailed.sol": {
-      "lastModificationDate": 1652715349902,
-      "contentHash": "b7270faee7d2387ea0706c0ea749d836",
-      "sourceName": "contracts/interfaces/IERC20Detailed.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "IERC20Detailed"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/core/LyraVault.sol": {
-      "lastModificationDate": 1652715349883,
-      "contentHash": "57cdbd02743d7382af0cc30d1a6e66b7",
-      "sourceName": "contracts/core/LyraVault.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "./BaseVault.sol",
-        "../libraries/Vault.sol",
-        "../interfaces/IStrategy.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "LyraVault"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IStrategy.sol": {
-      "lastModificationDate": 1652715349902,
-      "contentHash": "31287b1661be554b82b6a9187ea16f4c",
-      "sourceName": "contracts/interfaces/IStrategy.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "IStrategy"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/StrategyBaseFuerte.sol": {
-      "lastModificationDate": 1652715349885,
-      "contentHash": "005b130ac65c9a4a75779db6b928453e",
-      "sourceName": "contracts/strategies/StrategyBaseFuerte.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "hardhat/console.sol",
-        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
-        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
-        "../libraries/Vault.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../core/LyraVault.sol",
-        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
-        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "StrategyBaseFuerte"
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/node_modules/@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol": {
@@ -6769,429 +6449,6 @@
         "ILiquidityTracker"
       ]
     },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/HackMoneyStrategyBase.sol": {
-      "lastModificationDate": 1652715349898,
-      "contentHash": "0412e05268171dd2795fa57be6e1ace7",
-      "sourceName": "contracts/strategies/HackMoneyStrategyBase.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "hardhat/console.sol",
-        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
-        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
-        "../libraries/Vault.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../core/HackMoneyVault.sol",
-        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
-        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "HackMoneyStrategyBase"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/core/HackMoneyVault.sol": {
-      "lastModificationDate": 1652715349884,
-      "contentHash": "a0ae1d4796832b2328b8f60247872378",
-      "sourceName": "contracts/core/HackMoneyVault.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "./BaseVault.sol",
-        "../libraries/Vault.sol",
-        "../interfaces/IStrategy.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "HackMoneyVault"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/HackMoneyStrategy.sol": {
-      "lastModificationDate": 1652715349886,
-      "contentHash": "62ccbf7059b9aad9aa6ba132b64e9894",
-      "sourceName": "contracts/strategies/HackMoneyStrategy.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "hardhat/console.sol",
-        "../interfaces/IStrategy.sol",
-        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
-        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
-        "../libraries/Vault.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../core/HackMoneyVault.sol",
-        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
-        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
-        "./HackMoneyStrategyBase.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "HackMoneyStrategy"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/DeltaShortStrategy.sol": {
-      "lastModificationDate": 1652715349898,
-      "contentHash": "b53ae580f38903f3e4e59062185edf98",
-      "sourceName": "contracts/strategies/DeltaShortStrategy.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "hardhat/console.sol",
-        "../interfaces/IStrategy.sol",
-        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
-        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
-        "../libraries/Vault.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../core/LyraVault.sol",
-        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
-        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
-        "./StrategyBase.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "DeltaShortStrategy"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/StrategyBase.sol": {
-      "lastModificationDate": 1652715349897,
-      "contentHash": "3a23400b4b02a5094802fca65dceae25",
-      "sourceName": "contracts/strategies/StrategyBase.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "hardhat/console.sol",
-        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
-        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
-        "../libraries/Vault.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../core/LyraVault.sol",
-        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
-        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "StrategyBase"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/FuerteStrategy.sol": {
-      "lastModificationDate": 1652715349896,
-      "contentHash": "cd9f95e0fd205a5317269301b73bb63d",
-      "sourceName": "contracts/strategies/FuerteStrategy.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "hardhat/console.sol",
-        "../interfaces/IStrategyFuerte.sol",
-        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
-        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
-        "../libraries/Vault.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../core/LyraVault.sol",
-        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
-        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
-        "./StrategyBaseFuerte.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "FuerteStrategy"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IStrategyFuerte.sol": {
-      "lastModificationDate": 1652715349900,
-      "contentHash": "3528090ddd7d67b809f51e87d8c240bd",
-      "sourceName": "contracts/interfaces/IStrategyFuerte.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "IStrategyFuerte"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/test/ShareMathTest.sol": {
-      "lastModificationDate": 1652715349885,
-      "contentHash": "41ee8ead6bd218b512c2b313526203cf",
-      "sourceName": "contracts/test/ShareMathTest.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../libraries/ShareMath.sol",
-        "../libraries/Vault.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "ShareMathTest"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/synthetix/SafeDecimalMath.sol": {
-      "lastModificationDate": 1652715349899,
-      "contentHash": "48ab5b2a25c2c946caac1ddbc16984fb",
-      "sourceName": "contracts/synthetix/SafeDecimalMath.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/math/SafeMath.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "SafeDecimalMath"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/DeltaLongStrategy.sol": {
-      "lastModificationDate": 1652715349897,
-      "contentHash": "324b4afae08c4fe21005a3a670075a18",
-      "sourceName": "contracts/strategies/DeltaLongStrategy.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "hardhat/console.sol",
-        "../interfaces/IStrategy.sol",
-        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
-        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
-        "../libraries/Vault.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../core/LyraVault.sol",
-        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
-        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
-        "./StrategyBase.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "DeltaLongStrategy"
-      ]
-    },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/node_modules/@lyrafinance/protocol/contracts/test-helpers/TestSynthetix.sol": {
       "lastModificationDate": 1652601850240,
       "contentHash": "2fed45cc3e60b765475fccabc02b14d9",
@@ -7307,7 +6564,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestSynthetixReturnZero.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353629,
       "contentHash": "ea0dc8234145c4ec6ab94053d8af7f8f",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestSynthetixReturnZero.sol",
       "solcConfig": {
@@ -7380,45 +6637,8 @@
         "TestERC20SetDecimals"
       ]
     },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/mocks/MockERC20.sol": {
-      "lastModificationDate": 1652715349881,
-      "contentHash": "9d67b925bcec6004283c27b2415879f8",
-      "sourceName": "contracts/mocks/MockERC20.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "MockERC20"
-      ]
-    },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353629,
       "contentHash": "158395e965eff955edb20c36c387e185",
       "sourceName": "contracts/hardhat-dependency-compiler/@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -7641,7 +6861,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1652715640039,
+      "lastModificationDate": 1652734353629,
       "contentHash": "027b263a52e4b61d54fbd577d17201ef",
       "sourceName": "contracts/hardhat-dependency-compiler/@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -7714,7 +6934,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestFaucet.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353628,
       "contentHash": "1c161575eeb3caf22d142ce412d7160f",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestFaucet.sol",
       "solcConfig": {
@@ -7829,7 +7049,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/PoolHedger.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "9a429de3317421785a0700e2b4fd3fe8",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/PoolHedger.sol",
       "solcConfig": {
@@ -7864,7 +7084,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/BasicFeeCounter.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "c83ec684566eed37cb560b83335665b7",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/BasicFeeCounter.sol",
       "solcConfig": {
@@ -7938,7 +7158,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestCurve.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353628,
       "contentHash": "892eb93c60e10c15175257407fcfe58d",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestCurve.sol",
       "solcConfig": {
@@ -8051,7 +7271,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/Wrapper/OptionMarketWrapperWithSwaps.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "e0494973eeb90edc58166ac86dd511a5",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/Wrapper/OptionMarketWrapperWithSwaps.sol",
       "solcConfig": {
@@ -8131,7 +7351,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/OptionMarketViewer.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "46b19ce3e33b99bfba1ff2f09ccbe3f7",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/OptionMarketViewer.sol",
       "solcConfig": {
@@ -8250,7 +7470,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/Wrapper/OptionMarketWrapper.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "eb0e82ac9eed690081cbd71b029d07f6",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/Wrapper/OptionMarketWrapper.sol",
       "solcConfig": {
@@ -8285,7 +7505,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/Owned.sol": {
-      "lastModificationDate": 1652715640036,
+      "lastModificationDate": 1652734353626,
       "contentHash": "3209418015667a90c4ffefffe1745b21",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/Owned.sol",
       "solcConfig": {
@@ -8320,7 +7540,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/ShortCollateral.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "e9c9d68d16971f76e0244a0334889ca6",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/ShortCollateral.sol",
       "solcConfig": {
@@ -8353,44 +7573,6 @@
         ">0.0.0"
       ],
       "artifacts": []
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/mocks/MockOptionMarket.sol": {
-      "lastModificationDate": 1652715349882,
-      "contentHash": "d27f073e0593b6ec50070e5a8eb19c4b",
-      "sourceName": "contracts/mocks/MockOptionMarket.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@lyrafinance/protocol/contracts/OptionMarket.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "MockOptionMarket"
-      ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/node_modules/@lyrafinance/protocol/contracts/periphery/Wrapper/BasicOptionMarketWrapper.sol": {
       "lastModificationDate": 1652601853365,
@@ -8431,7 +7613,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/Wrapper/BasicOptionMarketWrapper.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "9713df7efe0e8f8d951f5171796dd766",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/Wrapper/BasicOptionMarketWrapper.sol",
       "solcConfig": {
@@ -8503,7 +7685,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/KeeperHelper.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "605054a121d2edcae340dbe64afa0259",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/KeeperHelper.sol",
       "solcConfig": {
@@ -8538,7 +7720,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/OptionMarket.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "f5bc32cc135c56106ced4054b37f9b09",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/OptionMarket.sol",
       "solcConfig": {
@@ -8613,7 +7795,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/MultistepSwapper.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "c58b1945c9647b530599d4f3e4e5206a",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/MultistepSwapper.sol",
       "solcConfig": {
@@ -8648,7 +7830,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/LiquidityTokens.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "b4307fce2c56e2aadcfbd34bf7bfafbc",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/LiquidityTokens.sol",
       "solcConfig": {
@@ -8683,7 +7865,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/lib/SimpleInitializeable.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "3a3e98c773c8b770f4a688bfc7b12e43",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/lib/SimpleInitializeable.sol",
       "solcConfig": {
@@ -8718,7 +7900,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/LiquidityPool.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "b53178d11db7ce2af8ed6a9b29b6603e",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/LiquidityPool.sol",
       "solcConfig": {
@@ -8753,7 +7935,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/AbstractOwned.sol": {
-      "lastModificationDate": 1652715640032,
+      "lastModificationDate": 1652734353626,
       "contentHash": "a7f6a10b5848ac82d39900e1ea4577f8",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/AbstractOwned.sol",
       "solcConfig": {
@@ -8788,7 +7970,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/OwnedUpgradeable.sol": {
-      "lastModificationDate": 1652715640036,
+      "lastModificationDate": 1652734353626,
       "contentHash": "ed6181c17fb0e46f5f713f27aa0b739b",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/OwnedUpgradeable.sol",
       "solcConfig": {
@@ -8898,7 +8080,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353629,
       "contentHash": "d81b82d0288fb7d03d3170cddb3a8eb1",
       "sourceName": "contracts/hardhat-dependency-compiler/@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
       "solcConfig": {
@@ -9009,7 +8191,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/MathTest.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353626,
       "contentHash": "eb1f3f3b83de68fd0cc1d1e08b28a48b",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/MathTest.sol",
       "solcConfig": {
@@ -9044,7 +8226,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/lib/GWAV.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "30b32887d9ab5ca0bc91898017c8e7c2",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/lib/GWAV.sol",
       "solcConfig": {
@@ -9079,7 +8261,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/lib/FixedPointMathLib.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "1da4b0dc6aeb11c5de4d5be3afd8c354",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/lib/FixedPointMathLib.sol",
       "solcConfig": {
@@ -9114,7 +8296,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/lib/BlackScholes.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "c19a6427864a54f34d20e96d1416d34d",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/lib/BlackScholes.sol",
       "solcConfig": {
@@ -9149,7 +8331,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/LyraRegistry.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "301556f4336523487d4df7d4a44a0471",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/LyraRegistry.sol",
       "solcConfig": {
@@ -9184,7 +8366,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/OptionToken.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "cecbd7bfebdeb140553d4bd720792dd5",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/OptionToken.sol",
       "solcConfig": {
@@ -9219,7 +8401,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol": {
-      "lastModificationDate": 1652715640039,
+      "lastModificationDate": 1652734353629,
       "contentHash": "4d7cef05cc4ffae2591d88a0dcb81e9f",
       "sourceName": "contracts/hardhat-dependency-compiler/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
       "solcConfig": {
@@ -9254,7 +8436,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353625,
       "contentHash": "60bf6ad63ecd9e33990cce98ad0b3f5f",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
       "solcConfig": {
@@ -9289,7 +8471,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/OptionGreekCache.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "2e9c806e58ce93f077b32b330ef55cea",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/OptionGreekCache.sol",
       "solcConfig": {
@@ -9324,7 +8506,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestCollateralShort.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353628,
       "contentHash": "7d1f8f62d4c69fa68c88ad65c5849293",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestCollateralShort.sol",
       "solcConfig": {
@@ -9359,7 +8541,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestExchangeRates.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353628,
       "contentHash": "eac76c7e0ad3ea61158d6d1003f8b948",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestExchangeRates.sol",
       "solcConfig": {
@@ -9432,7 +8614,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestExchanger.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353628,
       "contentHash": "7057f11c61037523e46e82fba23de673",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestExchanger.sol",
       "solcConfig": {
@@ -9505,7 +8687,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestAddressResolver.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353627,
       "contentHash": "108f25cb056a29fdba14272e18b57057",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestAddressResolver.sol",
       "solcConfig": {
@@ -9577,7 +8759,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/BasicLiquidityCounter.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "cc6c8d3926167794aa228d67f3406cbc",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/BasicLiquidityCounter.sol",
       "solcConfig": {
@@ -9612,7 +8794,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/BytesLib.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353626,
       "contentHash": "ac7383542cfac2745b1bd16f912c9bb7",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/BytesLib.sol",
       "solcConfig": {
@@ -9647,7 +8829,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/Path.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353626,
       "contentHash": "730f7456191672c3e3b735c7bd5c18db",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/Path.sol",
       "solcConfig": {
@@ -9682,7 +8864,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestSwapRouter.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353628,
       "contentHash": "840a86180f20e90b72b51a52de52f98c",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestSwapRouter.sol",
       "solcConfig": {
@@ -9754,7 +8936,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestERC20Fail.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353628,
       "contentHash": "414774d2f7899f88559c490a7f6f41f2",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestERC20Fail.sol",
       "solcConfig": {
@@ -9789,7 +8971,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestERC20.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353628,
       "contentHash": "0c92bb2d61ae42c40c9b50ce3bd9b174",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestERC20.sol",
       "solcConfig": {
@@ -9823,46 +9005,8 @@
       ],
       "artifacts": []
     },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IERC4626.sol": {
-      "lastModificationDate": 1652715349905,
-      "contentHash": "6f31d9f63ad6ce5c4641da2eb0f9e9c6",
-      "sourceName": "contracts/interfaces/IERC4626.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC4626"
-      ]
-    },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestERC20SetDecimals.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353628,
       "contentHash": "64d64270e1f7ac24a3d7a5908bccbfd3",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestERC20SetDecimals.sol",
       "solcConfig": {
@@ -9897,7 +9041,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestSynthetix.sol": {
-      "lastModificationDate": 1652715640038,
+      "lastModificationDate": 1652734353628,
       "contentHash": "604f72a6af35edd14ceb5bf8b06b26d3",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestSynthetix.sol",
       "solcConfig": {
@@ -9932,7 +9076,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/SynthetixAdapter.sol": {
-      "lastModificationDate": 1652715640030,
+      "lastModificationDate": 1652734353624,
       "contentHash": "894024bf8b76df596a65c343701b4d58",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/SynthetixAdapter.sol",
       "solcConfig": {
@@ -10004,7 +9148,7 @@
       ]
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestDelegateApprovals.sol": {
-      "lastModificationDate": 1652715640037,
+      "lastModificationDate": 1652734353628,
       "contentHash": "df67edc954911a912aaa0509fd1dfbb9",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/test-helpers/TestDelegateApprovals.sol",
       "solcConfig": {
@@ -10039,7 +9183,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol": {
-      "lastModificationDate": 1652715640031,
+      "lastModificationDate": 1652734353625,
       "contentHash": "bb289509865ea9d21df225a9926014f4",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
       "solcConfig": {
@@ -10073,119 +9217,8 @@
       ],
       "artifacts": []
     },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/mocks/MockStrategy.sol": {
-      "lastModificationDate": 1652715349882,
-      "contentHash": "784a221d72e005f8a3df9e471c93591c",
-      "sourceName": "contracts/mocks/MockStrategy.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../interfaces/IStrategy.sol",
-        "../interfaces/IERC20Detailed.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "MockStrategy"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/mocks/MockSynthetix.sol": {
-      "lastModificationDate": 1652715349881,
-      "contentHash": "9630e57dfa06b45f1addf8b12969f3bb",
-      "sourceName": "contracts/mocks/MockSynthetix.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../interfaces/ISynthetix.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "MockSynthetix"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/ISynthetix.sol": {
-      "lastModificationDate": 1652715349904,
-      "contentHash": "70bcead0c2bf23f4f85e72e3459c6d18",
-      "sourceName": "contracts/interfaces/ISynthetix.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "ISynthetix"
-      ]
-    },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol": {
-      "lastModificationDate": 1652715640032,
+      "lastModificationDate": 1652734353626,
       "contentHash": "0cc290a75b24e982ca6a12a4d8e503a8",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
       "solcConfig": {
@@ -10220,7 +9253,7 @@
       "artifacts": []
     },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol": {
-      "lastModificationDate": 1652715640036,
+      "lastModificationDate": 1652734353626,
       "contentHash": "9d065bddddb64b201615ce3c01f36b6e",
       "sourceName": "contracts/hardhat-dependency-compiler/@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
       "solcConfig": {
@@ -10358,218 +9391,6 @@
         "MockAggregatorV2V3"
       ]
     },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IBlackScholes.sol": {
-      "lastModificationDate": 1652715349900,
-      "contentHash": "88bf1d230b0eaf66c0b2172ab7b67116",
-      "sourceName": "contracts/interfaces/IBlackScholes.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "IBlackScholes"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/ICollateralShort.sol": {
-      "lastModificationDate": 1652715349904,
-      "contentHash": "7eb8aeb34e0d8a94f5831c82da1f9fd3",
-      "sourceName": "contracts/interfaces/ICollateralShort.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "ICollateralShort"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IExchanger.sol": {
-      "lastModificationDate": 1652715349900,
-      "contentHash": "cea4b1e552863c7ed6136a153e31bb96",
-      "sourceName": "contracts/interfaces/IExchanger.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "IExchanger"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IExchangeRates.sol": {
-      "lastModificationDate": 1652715349901,
-      "contentHash": "9aa28b5d60b14beb60e13b3858886629",
-      "sourceName": "contracts/interfaces/IExchangeRates.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "IExchangeRates"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IWETH.sol": {
-      "lastModificationDate": 1652715349901,
-      "contentHash": "9ddb548d441fdff2d2d1501ede943c63",
-      "sourceName": "contracts/interfaces/IWETH.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "IWETH"
-      ]
-    },
-    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/synthetix/SignedSafeDecimalMath.sol": {
-      "lastModificationDate": 1652715349899,
-      "contentHash": "8fd3e0da28e1870fa8da7c1917978911",
-      "sourceName": "contracts/synthetix/SignedSafeDecimalMath.sol",
-      "solcConfig": {
-        "version": "0.8.9",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/math/SignedSafeMath.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "SignedSafeDecimalMath"
-      ]
-    },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/node_modules/@openzeppelin/contracts/utils/math/SignedSafeMath.sol": {
       "lastModificationDate": 1652601850266,
       "contentHash": "f7b3809e202b5547e9ddd97aaeb1d907",
@@ -10605,8 +9426,1222 @@
         "SignedSafeMath"
       ]
     },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/core/BaseVault.sol": {
+      "lastModificationDate": 1652734305350,
+      "contentHash": "72b311cf100900a83531735bfa27135e",
+      "sourceName": "contracts/core/BaseVault.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/math/SafeMath.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/proxy/utils/Initializable.sol",
+        "../libraries/Vault.sol",
+        "../libraries/VaultLifecycle.sol",
+        "../libraries/ShareMath.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "BaseVault"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/libraries/Vault.sol": {
+      "lastModificationDate": 1652734305353,
+      "contentHash": "2231676b38398ce7d7786c3897a23a5f",
+      "sourceName": "contracts/libraries/Vault.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "Vault"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/libraries/VaultLifecycle.sol": {
+      "lastModificationDate": 1652734305354,
+      "contentHash": "59961907ed813cd795f937b5227eb9b7",
+      "sourceName": "contracts/libraries/VaultLifecycle.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/math/SafeMath.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "./Vault.sol",
+        "./ShareMath.sol",
+        "../interfaces/IERC20Detailed.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "VaultLifecycle"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/libraries/ShareMath.sol": {
+      "lastModificationDate": 1652734305353,
+      "contentHash": "95271aa855a2a95fbf3fa154bf113784",
+      "sourceName": "contracts/libraries/ShareMath.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/math/SafeMath.sol",
+        "./Vault.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "ShareMath"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IERC20Detailed.sol": {
+      "lastModificationDate": 1652734305356,
+      "contentHash": "b7270faee7d2387ea0706c0ea749d836",
+      "sourceName": "contracts/interfaces/IERC20Detailed.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "IERC20Detailed"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/core/LyraVault.sol": {
+      "lastModificationDate": 1652734305349,
+      "contentHash": "57cdbd02743d7382af0cc30d1a6e66b7",
+      "sourceName": "contracts/core/LyraVault.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "./BaseVault.sol",
+        "../libraries/Vault.sol",
+        "../interfaces/IStrategy.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "LyraVault"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IStrategy.sol": {
+      "lastModificationDate": 1652734305357,
+      "contentHash": "31287b1661be554b82b6a9187ea16f4c",
+      "sourceName": "contracts/interfaces/IStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "IStrategy"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/StrategyBaseFuerte.sol": {
+      "lastModificationDate": 1652734305351,
+      "contentHash": "005b130ac65c9a4a75779db6b928453e",
+      "sourceName": "contracts/strategies/StrategyBaseFuerte.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
+        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
+        "../libraries/Vault.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../core/LyraVault.sol",
+        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
+        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "StrategyBaseFuerte"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/HackMoneyStrategyBase.sol": {
+      "lastModificationDate": 1652734305352,
+      "contentHash": "0412e05268171dd2795fa57be6e1ace7",
+      "sourceName": "contracts/strategies/HackMoneyStrategyBase.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
+        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
+        "../libraries/Vault.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../core/HackMoneyVault.sol",
+        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
+        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "HackMoneyStrategyBase"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/core/HackMoneyVault.sol": {
+      "lastModificationDate": 1652734305350,
+      "contentHash": "eabac7df1e5b3d06149808dd88839e3f",
+      "sourceName": "contracts/core/HackMoneyVault.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "./BaseVault.sol",
+        "../libraries/Vault.sol",
+        "../interfaces/IHackMoneyStrategy.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "HackMoneyVault"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IHackMoneyStrategy.sol": {
+      "lastModificationDate": 1652734305358,
+      "contentHash": "031c4cd20325e855369799cac5854f15",
+      "sourceName": "contracts/interfaces/IHackMoneyStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "IHackMoneyStrategy"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/HackMoneyStrategy.sol": {
+      "lastModificationDate": 1652734305352,
+      "contentHash": "d61a3cf73bf55c259f5aa7c01f62891e",
+      "sourceName": "contracts/strategies/HackMoneyStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "../interfaces/IHackMoneyStrategy.sol",
+        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
+        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
+        "../libraries/Vault.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../core/HackMoneyVault.sol",
+        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
+        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
+        "./HackMoneyStrategyBase.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "HackMoneyStrategy"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/test/ShareMathTest.sol": {
+      "lastModificationDate": 1652734305351,
+      "contentHash": "41ee8ead6bd218b512c2b313526203cf",
+      "sourceName": "contracts/test/ShareMathTest.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../libraries/ShareMath.sol",
+        "../libraries/Vault.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "ShareMathTest"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/synthetix/SafeDecimalMath.sol": {
+      "lastModificationDate": 1652734305354,
+      "contentHash": "48ab5b2a25c2c946caac1ddbc16984fb",
+      "sourceName": "contracts/synthetix/SafeDecimalMath.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "SafeDecimalMath"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/FuerteStrategy.sol": {
+      "lastModificationDate": 1652734305352,
+      "contentHash": "cd9f95e0fd205a5317269301b73bb63d",
+      "sourceName": "contracts/strategies/FuerteStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "../interfaces/IStrategyFuerte.sol",
+        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
+        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
+        "../libraries/Vault.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../core/LyraVault.sol",
+        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
+        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
+        "./StrategyBaseFuerte.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "FuerteStrategy"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IStrategyFuerte.sol": {
+      "lastModificationDate": 1652734305355,
+      "contentHash": "3528090ddd7d67b809f51e87d8c240bd",
+      "sourceName": "contracts/interfaces/IStrategyFuerte.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "IStrategyFuerte"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/DeltaShortStrategy.sol": {
+      "lastModificationDate": 1652734305353,
+      "contentHash": "f11880cb85f0b19fdf51fdcc1231bbff",
+      "sourceName": "contracts/strategies/DeltaShortStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "../interfaces/IStrategy.sol",
+        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
+        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
+        "../libraries/Vault.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../core/LyraVault.sol",
+        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
+        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
+        "./StrategyBase.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "DeltaShortStrategy"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/StrategyBase.sol": {
+      "lastModificationDate": 1652734305352,
+      "contentHash": "3a23400b4b02a5094802fca65dceae25",
+      "sourceName": "contracts/strategies/StrategyBase.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
+        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
+        "../libraries/Vault.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../core/LyraVault.sol",
+        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
+        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "StrategyBase"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/strategies/DeltaLongStrategy.sol": {
+      "lastModificationDate": 1652734305352,
+      "contentHash": "324b4afae08c4fe21005a3a670075a18",
+      "sourceName": "contracts/strategies/DeltaLongStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "../interfaces/IStrategy.sol",
+        "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol",
+        "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol",
+        "../libraries/Vault.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../core/LyraVault.sol",
+        "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol",
+        "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol",
+        "./StrategyBase.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "DeltaLongStrategy"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/mocks/MockOptionMarket.sol": {
+      "lastModificationDate": 1652734305348,
+      "contentHash": "d27f073e0593b6ec50070e5a8eb19c4b",
+      "sourceName": "contracts/mocks/MockOptionMarket.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@lyrafinance/protocol/contracts/OptionMarket.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "MockOptionMarket"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/mocks/MockERC20.sol": {
+      "lastModificationDate": 1652734305348,
+      "contentHash": "9d67b925bcec6004283c27b2415879f8",
+      "sourceName": "contracts/mocks/MockERC20.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "MockERC20"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IERC4626.sol": {
+      "lastModificationDate": 1652734305358,
+      "contentHash": "6f31d9f63ad6ce5c4641da2eb0f9e9c6",
+      "sourceName": "contracts/interfaces/IERC4626.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC4626"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/mocks/MockStrategy.sol": {
+      "lastModificationDate": 1652734305349,
+      "contentHash": "784a221d72e005f8a3df9e471c93591c",
+      "sourceName": "contracts/mocks/MockStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IStrategy.sol",
+        "../interfaces/IERC20Detailed.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "MockStrategy"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/mocks/MockSynthetix.sol": {
+      "lastModificationDate": 1652734305348,
+      "contentHash": "9630e57dfa06b45f1addf8b12969f3bb",
+      "sourceName": "contracts/mocks/MockSynthetix.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/ISynthetix.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "MockSynthetix"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/ISynthetix.sol": {
+      "lastModificationDate": 1652734305357,
+      "contentHash": "70bcead0c2bf23f4f85e72e3459c6d18",
+      "sourceName": "contracts/interfaces/ISynthetix.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "ISynthetix"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IBlackScholes.sol": {
+      "lastModificationDate": 1652734305355,
+      "contentHash": "88bf1d230b0eaf66c0b2172ab7b67116",
+      "sourceName": "contracts/interfaces/IBlackScholes.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "IBlackScholes"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/ICollateralShort.sol": {
+      "lastModificationDate": 1652734305357,
+      "contentHash": "7eb8aeb34e0d8a94f5831c82da1f9fd3",
+      "sourceName": "contracts/interfaces/ICollateralShort.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "ICollateralShort"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IExchanger.sol": {
+      "lastModificationDate": 1652734305355,
+      "contentHash": "cea4b1e552863c7ed6136a153e31bb96",
+      "sourceName": "contracts/interfaces/IExchanger.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "IExchanger"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IExchangeRates.sol": {
+      "lastModificationDate": 1652734305356,
+      "contentHash": "9aa28b5d60b14beb60e13b3858886629",
+      "sourceName": "contracts/interfaces/IExchangeRates.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "IExchangeRates"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/interfaces/IWETH.sol": {
+      "lastModificationDate": 1652734305356,
+      "contentHash": "9ddb548d441fdff2d2d1501ede943c63",
+      "sourceName": "contracts/interfaces/IWETH.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "IWETH"
+      ]
+    },
+    "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/synthetix/SignedSafeDecimalMath.sol": {
+      "lastModificationDate": 1652734305354,
+      "contentHash": "8fd3e0da28e1870fa8da7c1917978911",
+      "sourceName": "contracts/synthetix/SignedSafeDecimalMath.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/math/SignedSafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.9"
+      ],
+      "artifacts": [
+        "SignedSafeDecimalMath"
+      ]
+    },
     "/Users/web3/Hackathons/EthGlobal/lyra-ethglobal/packages/contracts/contracts/test/WETH9.sol": {
-      "lastModificationDate": 1652715349885,
+      "lastModificationDate": 1652734305351,
       "contentHash": "97a9d405e6303fbb6d1ff86648c30e9a",
       "sourceName": "contracts/test/WETH9.sol",
       "solcConfig": {

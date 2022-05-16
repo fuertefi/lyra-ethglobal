@@ -18,11 +18,11 @@ const strategyDetail: DeltaShortStrategyDetailStruct = {
   collatBuffer: toBN('1.5'), // multiplier of minimum required collateral
   collatPercent: toBN('0.35'), // percentage of full collateral
   minTradeInterval: 600,
-  maxVolVariance: toBN('0.1'),
+  maxVolVariance: toBN('0.1'), // 10%
   gwavPeriod: 600,
   minTimeToExpiry: lyraConstants.DAY_SEC,
   maxTimeToExpiry: lyraConstants.WEEK_SEC * 2,
-  targetDelta: toBN('0.2').mul(-1),
+  targetDelta: toBN('0.2').mul(-1), // -20%
   maxDeltaGap: toBN('0.05'), // accept delta from 0.15~0.25
   minVol: toBN('0.8'), // min vol to sell. (also used to calculate min premium for call selling vault)
   maxVol: toBN('1.3'), // max vol to sell.

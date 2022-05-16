@@ -1,4 +1,4 @@
-import { Tabs } from "antd";
+import { message, Tabs } from "antd";
 import { FC, ReactElement } from "react";
 import { ethers } from "ethers";
 import styled from "styled-components";
@@ -81,6 +81,22 @@ const DepositDisclaimer = styled.div`
 
 const ManageLiquidity: FC = (props: any) => {
   // TODO: add contract query on position
+
+  const handleDepositClick = () => {
+    const key = "updatable";
+    message.loading({
+      content: "Request submitted to the blockchain, waiting...",
+      key,
+    });
+    setTimeout(() => {
+      message.success({
+        content: "Deposit Success! 5 ETH deposited into strategy vault.",
+        key,
+        duration: 5,
+      });
+    }, 2500);
+  };
+
   console.log(props.theme);
   return (
     <LiquidityWidget>
@@ -89,7 +105,7 @@ const ManageLiquidity: FC = (props: any) => {
         <TabPane tab="DEPOSIT" key="1">
           <TabContent>
             <CurrencyInput currency="USDC" />
-            <ActionButton>Deposit</ActionButton>
+            <ActionButton onClick={handleDepositClick}>Deposit</ActionButton>
             <DepositDisclaimer>
               Your deposit will be deployed in the vault's weekly strategy on
               Friday at 11am UTC

@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for strategies/DeltaLongStrategy.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">strategies/</a> DeltaLongStrategy.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>36/36</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">81.25% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>13/16</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>10/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>36/36</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+pragma experimental ABIEncoderV2;
+&nbsp;
+// Hardhat
+import "hardhat/console.sol";
+&nbsp;
+// standard strategy interface
+import "../interfaces/IStrategy.sol";
+&nbsp;
+// Lyra
+import {VaultAdapter} from "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol";
+import {GWAVOracle} from "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol";
+&nbsp;
+// Libraries
+import {Vault} from "../libraries/Vault.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {LyraVault} from "../core/LyraVault.sol";
+import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol";
+import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol";
+&nbsp;
+// StrategyBase to inherit
+import {StrategyBase} from "./StrategyBase.sol";
+&nbsp;
+contract DeltaLongStrategy is StrategyBase, IStrategy {
+  using DecimalMath for uint;
+  using SignedDecimalMath for int;
+&nbsp;
+  // example strategy detail
+  struct DeltaLongStrategyDetail {
+    uint minTimeToExpiry;
+    uint maxTimeToExpiry;
+    int targetDelta;
+    uint maxDeltaGap;
+    uint minVol;
+    uint maxVol;
+    uint size;
+    uint maxVolVariance;
+    uint gwavPeriod;
+    uint minTradeInterval;
+  }
+&nbsp;
+  DeltaLongStrategyDetail public strategyDetail;
+  uint public activeExpiry;
+&nbsp;
+  ///////////
+  // ADMIN //
+  ///////////
+&nbsp;
+  constructor(
+    LyraVault _vault,
+    OptionType _optionType,
+    GWAVOracle _gwavOracle
+  ) StrategyBase(_vault, _optionType, _gwavOracle) {}
+&nbsp;
+  /**
+   * @dev update the strategy detail for the new round.
+   */
+  function setStrategyDetail(DeltaLongStrategyDetail memory _deltaStrategy) external onlyOwner {
+    (, , , , , , , bool roundInProgress) = vault.vaultState();
+    require(!roundInProgress, "cannot change strategy if round is active");
+    strategyDetail = _deltaStrategy;
+  }
+&nbsp;
+  /**
+   * @dev set the board id that will be traded for the next round
+   * @param boardId lyra board Id.
+   */
+  function setBoard(uint boardId) external onlyVault {
+    Board memory board = getBoard(boardId);
+    require(_isValidExpiry(board.expiry), "invalid board");
+    activeExpiry = board.expiry;
+  }
+&nbsp;
+  /**
+   * @dev convert premium in quote asset into collateral asset and send it back to the vault.
+   */
+  function returnFundsAndClearStrikes() external onlyVault {
+    // exchange asset back to collateral asset and send it back to the vault
+    _returnFundsToVaut();
+&nbsp;
+    // keep internal storage data on old strikes and positions ids
+    _clearAllActiveStrikes();
+  }
+&nbsp;
+  /**
+   * @notice sell a fix aomunt of options and collect premium
+   * @dev the vault should pass in a strike id, and the strategy would verify if the strike is valid on-chain.
+   * @param strikeId lyra strikeId to trade
+   * @param lyraRewardRecipient address to receive trading reward. This need to be whitelisted
+   * @return positionId
+   * @return premiumPayed
+   * @return capitalUsed this value will always be 0 for long strategy
+   */
+  function doTrade(uint strikeId, address lyraRewardRecipient)
+    external
+    onlyVault
+    returns (
+      uint positionId,
+      uint premiumPayed,
+      uint capitalUsed
+    )
+  {
+    // validate trade
+    require(
+      lastTradeTimestamp[strikeId] + strategyDetail.minTradeInterval &lt;= block.timestamp,
+      "min time interval not passed"
+    );
+    <span class="missing-if-branch" title="else path not taken" >E</span>require(_isValidVolVariance(strikeId), "vol variance exceeded");
+&nbsp;
+    Strike memory strike = getStrikes(_toDynamic(strikeId))[0];
+    require(isValidStrike(strike), "invalid strike");
+&nbsp;
+    // max premium willing to pay
+    uint maxPremium = _getPremiumLimit(strike, strategyDetail.maxVol, strategyDetail.size);
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>require(
+      collateralAsset.transferFrom(address(vault), address(this), maxPremium),
+      "collateral transfer from vault failed"
+    );
+&nbsp;
+    (positionId, premiumPayed) = _buyStrike(strike, maxPremium, lyraRewardRecipient);
+    capitalUsed = premiumPayed;
+  }
+&nbsp;
+  /**
+   * @dev this function will not be used for long strategy
+   */
+  function reducePosition(
+    uint,
+    uint,
+    address
+  ) external pure {
+    revert("not supported");
+  }
+&nbsp;
+  /**
+   * @dev perform the trade
+   * @param strike strike detail
+   * @param maxPremium max premium willing to spend for this trade
+   * @param lyraRewardRecipient address to receive lyra trading reward
+   * @return positionId
+   * @return premiumReceived
+   */
+  function _buyStrike(
+    Strike memory strike,
+    uint maxPremium,
+    address lyraRewardRecipient
+  ) internal returns (uint, uint) {
+    // perform trade to long
+    TradeResult memory result = openPosition(
+      TradeInputParameters({
+        strikeId: strike.id,
+        positionId: strikeToPositionId[strike.id],
+        iterations: 1,
+        optionType: optionType,
+        amount: strategyDetail.size,
+        setCollateralTo: 0,
+        minTotalCost: 0,
+        maxTotalCost: maxPremium,
+        rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
+      })
+    );
+    _setLastTradedAt(strike.id, block.timestamp);
+&nbsp;
+    // update active strikes
+    _addActiveStrike(strike.id, result.positionId);
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>require(result.totalCost &lt;= maxPremium, "premium too high");
+&nbsp;
+    return (result.positionId, result.totalCost);
+  }
+&nbsp;
+  /**
+   * @dev verify if the strike is valid for the strategy
+   * @return isValid true if vol is withint [minVol, maxVol] and delta is within targetDelta +- maxDeltaGap
+   */
+  function isValidStrike(Strike memory strike) public view returns (bool isValid) {
+    if (activeExpiry != strike.expiry) {
+      return false;
+    }
+&nbsp;
+    uint[] memory strikeId = _toDynamic(strike.id);
+    uint vol = getVols(strikeId)[0];
+    int callDelta = getDeltas(strikeId)[0];
+    int delta = _isCall() ? callDelta : callDelta - SignedDecimalMath.UNIT;
+    uint deltaGap = _abs(strategyDetail.targetDelta - delta);
+    return vol &gt;= strategyDetail.minVol &amp;&amp; vol &lt;= strategyDetail.maxVol &amp;&amp; deltaGap &lt; strategyDetail.maxDeltaGap;
+  }
+&nbsp;
+  /**
+   * @dev check if the vol variance for the given strike is within certain range
+   */
+  function _isValidVolVariance(uint strikeId) internal view returns (bool isValid) {
+    uint volGWAV = gwavOracle.volGWAV(strikeId, strategyDetail.gwavPeriod);
+    uint volSpot = getVols(_toDynamic(strikeId))[0];
+&nbsp;
+    uint volDiff = (volGWAV &gt;= volSpot) ? volGWAV - volSpot : volSpot - volGWAV;
+&nbsp;
+    return isValid = volDiff &lt; strategyDetail.maxVolVariance;
+  }
+&nbsp;
+  /**
+   * @dev check if the expiry of the board is valid according to the strategy
+   */
+  function _isValidExpiry(uint expiry) public view returns (bool isValid) {
+    uint secondsToExpiry = _getSecondsToExpiry(expiry);
+    isValid = (secondsToExpiry &gt;= strategyDetail.minTimeToExpiry &amp;&amp; secondsToExpiry &lt;= strategyDetail.maxTimeToExpiry);
+  }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri May 13 2022 15:29:08 GMT+0100 (British Summer Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

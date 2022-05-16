@@ -407,7 +407,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     return (lockedBalance, queuedWithdrawAmount);
   }
 
-  /*
+  /**
    * @notice Helper function that transfers management fees and performance fees from previous round.
    * @param pastWeekBalance is the balance we are about to lock for next round
    * @return vaultFee is the fee deducted

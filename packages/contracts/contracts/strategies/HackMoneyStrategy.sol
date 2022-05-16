@@ -103,10 +103,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IStrategy {
       uint collateralToAdd
     )
   {
-    require(_isValidVolVariance(strikeId), "vol variance exceeded");
+    //require(_isValidVolVariance(strikeId), "vol variance exceeded");
 
     Strike memory strike = getStrikes(_toDynamic(strikeId))[0];
-    require(isValidStrike(strike), "invalid strike");
+    //require(isValidStrike(strike), "invalid strike");
 
     uint setCollateralTo;
     (collateralToAdd, setCollateralTo) = getRequiredCollateral(strike);

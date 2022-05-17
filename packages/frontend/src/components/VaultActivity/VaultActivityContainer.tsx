@@ -4,20 +4,23 @@ import { LoadingOutlined } from "@ant-design/icons";
 import {
   getVaultActivityData,
   VaultActivityData,
+  VaultActivitySorting,
 } from "../../pages/api/vaultActivityServices";
 import { VaultActivityEntry } from "./VaultActivityEntry";
 
 const SectionHeader = styled.header`
   font-weight: 700;
   font-family: "Satoshi";
-  margin-bottom: 50px;
-  margin-top: 50px;
+  margin-top: 40px;
+  margin-bottom: 20px;
 `;
 
 const ContainerHeader = styled.div`
   display: inline-grid;
   width: 100%;
-  grid-template-columns: 50px 1fr 1fr 1fr 1fr;
+  box-sizing: border-box;
+  grid-template-columns: 25px 1fr 1fr 1fr 1fr 25px;
+  grid-gap: 14px;
   padding: 20px 24px;
 `;
 
@@ -46,12 +49,15 @@ export const VaultActivityContainer = () => {
             <div></div>
             <div>Action</div>
             <div>Contract</div>
-            <div>Quantity</div>
-            <div>Yield</div>
+            <div style={{ textAlign: "center" }}>Quantity</div>
+            <div style={{ textAlign: "right" }}>Yield</div>
+            <div></div>
           </ContainerHeader>
-          {activityData.getEntries().map((entry, i) => (
-            <VaultActivityEntry key={i} data={entry} />
-          ))}
+          {activityData
+            .getEntries(VaultActivitySorting.SORT_BY_LATEST)
+            .map((entry, i) => (
+              <VaultActivityEntry key={i} data={entry} />
+            ))}
         </>
       )}
     </>

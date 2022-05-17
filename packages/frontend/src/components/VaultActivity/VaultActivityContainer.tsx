@@ -7,11 +7,18 @@ import {
 } from "../../pages/api/vaultActivityServices";
 import { VaultActivityEntry } from "./VaultActivityEntry";
 
-const Header = styled.header`
+const SectionHeader = styled.header`
   font-weight: 700;
   font-family: "Satoshi";
-  margin-bottom: 8px;
+  margin-bottom: 50px;
   margin-top: 50px;
+`;
+
+const ContainerHeader = styled.div`
+  display: inline-grid;
+  width: 100%;
+  grid-template-columns: 50px 1fr 1fr 1fr 1fr;
+  padding: 20px 24px;
 `;
 
 export const VaultActivityContainer = () => {
@@ -30,13 +37,23 @@ export const VaultActivityContainer = () => {
   }, []);
 
   return (
-    <div>
-      <Header>Vault Activity</Header>
+    <>
+      <SectionHeader>Vault Activity</SectionHeader>
       {!activityData && <LoadingOutlined />}
-      {activityData &&
-        activityData
-          .getEntries()
-          .map((entry, i) => <VaultActivityEntry key={i} data={entry} />)}
-    </div>
+      {activityData && (
+        <>
+          <ContainerHeader>
+            <div></div>
+            <div>Action</div>
+            <div>Contract</div>
+            <div>Quantity</div>
+            <div>Yield</div>
+          </ContainerHeader>
+          {activityData.getEntries().map((entry, i) => (
+            <VaultActivityEntry key={i} data={entry} />
+          ))}
+        </>
+      )}
+    </>
   );
 };

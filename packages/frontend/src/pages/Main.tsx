@@ -3,6 +3,8 @@ import styled from "styled-components";
 import VaultDescription from "../components/Strategy/VaultDescription";
 import StrategyDetailsPanel from "../components/Strategy/StrategyDetailsPanel";
 import { VaultActivityContainer } from "../components/VaultActivity/VaultActivityContainer";
+import { useAccount } from "wagmi";
+import { ConnectWalletPanel } from "../components/ManageLiquidity/ConnectWalletPanel";
 
 const ContentColumns = styled.div`
   display: flex;
@@ -31,7 +33,7 @@ const StyledVaultDescription = styled(VaultDescription)`
 `;
 
 export const Main = () => {
-
+  const { data: walletData } = useAccount();
   return (
     <ContentColumns>
       <div className="left-section">
@@ -49,7 +51,7 @@ export const Main = () => {
         <VaultActivityContainer />
       </div>
       <div className="right-section">
-        <ManageLiquidity />
+        {walletData ? <ManageLiquidity /> : <ConnectWalletPanel />}
       </div>
     </ContentColumns>
   );

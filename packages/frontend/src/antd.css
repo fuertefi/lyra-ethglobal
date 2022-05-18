@@ -396,14 +396,16 @@
   pointer-events: none;
 }
 .ant-message-notice {
-  padding: 8px;
+  padding: 15px;
   text-align: center;
 }
 .ant-message-notice-content {
   display: inline-block;
-  padding: 10px 16px;
-  background: #fff;
-  border-radius: 2px;
+  padding: 15px 16px;
+  background: #1F2124;
+  color: #99A0AB;
+  border-radius: 10px;
+  border: "1px solid #414447";
   box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
   pointer-events: all;
 }

@@ -79,6 +79,8 @@ const DepositDisclaimer = styled.div`
   letter-spacing: 0.05em;
 `;
 
+const DepositSuccessMessage = styled.span``;
+
 const ManageLiquidity: FC = (props: any) => {
   // TODO: add contract query on position
 
@@ -90,11 +92,20 @@ const ManageLiquidity: FC = (props: any) => {
     });
     setTimeout(() => {
       message.success({
-        content: "Deposit Success! 5 ETH deposited into strategy vault.",
+        icon: <></>,
+        content: (
+          <div style={{ display: "grid", gridTemplateColumns: "40px auto" }}>
+            <div style={{ alignContent: "middle" }}><img src="/check_icon.svg" width="40" /></div>
+            <div style={{ marginLeft: "15px", textAlign: "left" }}>
+              <span style={{ color: "#06C799" }}>DEPOSIT SUCCESS!</span><br />
+              5 ETH deposited into STRATEGY_NAME
+            </div>
+          </div>
+        ),
         key,
         duration: 5,
       });
-    }, 2500);
+    }, 2000);
   };
 
   console.log(props.theme);

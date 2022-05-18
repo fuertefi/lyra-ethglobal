@@ -3,5 +3,14 @@ node_modules
 .env
 package-lock.json
 .DS_Store
-typechain-types
+
+#Hardhat config
+cache
 artifacts
+typechain-types
+dist/
+.vscode/
+
+# hardhat coverage
+coverage
+coverage.json

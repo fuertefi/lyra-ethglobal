@@ -79,8 +79,6 @@ const DepositDisclaimer = styled.div`
   letter-spacing: 0.05em;
 `;
 
-const DepositSuccessMessage = styled.span``;
-
 const ManageLiquidity: FC = (props: any) => {
   // TODO: add contract query on position
 

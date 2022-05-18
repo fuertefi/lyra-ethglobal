@@ -2,3 +2,15 @@ node_modules
 # Keep environment variables out of version control
 .env
 package-lock.json
+.DS_Store
+
+#Hardhat config
+cache
+artifacts
+typechain-types
+dist/
+.vscode/
+
+# hardhat coverage
+coverage
+coverage.json

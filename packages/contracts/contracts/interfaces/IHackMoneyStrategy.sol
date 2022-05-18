@@ -4,11 +4,7 @@ pragma solidity ^0.8.9;
 interface IHackMoneyStrategy {
   function setBoard(uint boardId) external;
 
-  function doTrade(
-    uint strikeId1,
-    uint strikeId2,
-    address rewardRecipient
-  )
+  function doTrade(address rewardRecipient)
     external
     returns (
       uint positionId1,

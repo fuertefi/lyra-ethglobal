@@ -56,17 +56,12 @@ contract HackMoneyVault is Ownable, BaseVault {
   }
 
   /// @dev anyone can trigger a trade
-  /// @param strikeId_1 the strike id to sell
-  /// @param strikeId_2 the strike id to sell
-  function trade(uint strikeId_1, uint strikeId_2) external {
+  function trade() external {
     require(vaultState.roundInProgress, "round closed");
     require(canTrade, "Wait for options to settle");
-    require(strikeId_1 != strikeId_2, "!strikes");
 
     // perform trades through strategy
     (uint positionId_1, uint positionId_2, uint premiumReceived, uint capitalUsed) = strategy.doTrade(
-      strikeId_1,
-      strikeId_2,
       lyraRewardRecipient
     );
 

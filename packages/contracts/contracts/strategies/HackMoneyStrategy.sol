@@ -98,11 +98,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
    * @return premiumReceived
    * @return collateralToAdd
    */
-  function doTrade(
-    uint,
-    uint,
-    address lyraRewardRecipient
-  )
+  function doTrade(address lyraRewardRecipient)
     external
     onlyVault
     returns (
@@ -136,70 +132,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
 
     premiumReceived = premiumReceived1 + premiumReceived2;
   }
-
-  /**
-   * @notice sell a fix aomunt of options and collect premium
-   * @dev the vault should pass in a strike id, and the strategy would verify if the strike is valid on-chain.
-   * @param strikeId1 lyra strikeId to trade
-   * @param strikeId2 lyra strikeId to trade
-   * @param lyraRewardRecipient address to receive trading reward. This need to be whitelisted
-   * @return positionId1
-   * @return positionId2
-   * @return premiumReceived
-   */
-  // function doTrade(
-  //   uint strikeId1,
-  //   uint strikeId2,
-  //   address lyraRewardRecipient
-  // )
-  //   external
-  //   onlyVault
-  //   returns (
-  //     uint positionId1,
-  //     uint positionId2,
-  //     uint premiumReceived,
-  //     uint collateralToAdd
-  //   )
-  // {
-  //   Strike memory k1 = getStrikes(_toDynamic(strikeId1))[0];
-  //   Strike memory k2 = getStrikes(_toDynamic(strikeId2))[0];
-
-  //   Strike memory strike1;
-  //   Strike memory strike2;
-
-  //   if (k1.strikePrice < k2.strikePrice) {
-  //     strike1 = k1;
-  //     strike2 = k2;
-  //   } else {
-  //     strike1 = k2;
-  //     strike2 = k1;
-  //   }
-
-  //   require(isValidStrike(strike1, true), "invalid strike");
-  //   require(isValidStrike(strike2, false), "invalid strike");
-
-  //   //uint setCollateralTo1;
-  //   uint collateralToAdd1;
-  //   (collateralToAdd1, ) = getRequiredCollateral(strike1);
-
-  //   //uint setCollateralTo2;
-  //   uint collateralToAdd2;
-  //   (collateralToAdd2, ) = getRequiredCollateral(strike2);
-
-  //   collateralToAdd = collateralToAdd1 + collateralToAdd2;
-
-  //   require(
-  //     collateralAsset.transferFrom(address(vault), address(this), collateralToAdd),
-  //     "collateral transfer from vault failed"
-  //   );
-
-  //   uint premiumReceived1;
-  //   (positionId1, premiumReceived1) = _sellStrike(strike1, collateralToAdd1, lyraRewardRecipient);
-  //   uint premiumReceived2;
-  //   (positionId2, premiumReceived2) = _sellStrike(strike2, collateralToAdd2, lyraRewardRecipient);
-
-  //   premiumReceived = premiumReceived1 + premiumReceived2;
-  // }
 
   /////////////////////////////
   // Trade Parameter Helpers //
@@ -283,11 +215,31 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     smallStrike = getStrikes(_toDynamic(smallStrikeId))[0];
     bigStrike = getStrikes(_toDynamic(bigStrikeId))[0];
 
+    uint smallDeltaGap = _getDeltaGap(smallStrike, true);
+    uint bigDeltaGap = _getDeltaGap(bigStrike, false);
+
     for (uint i = 1; i < strikeIds.length - 1; i++) {
       uint currentStrikeId = strikeIds[i];
       Strike memory currentStrike = getStrikes(_toDynamic(currentStrikeId))[0];
-      if (isValidStrike(currentStrike, true)) smallStrike = currentStrike;
-      if (isValidStrike(currentStrike, false)) bigStrike = currentStrike;
+      uint currentDeltaGap = _getDeltaGap(currentStrike, true);
+      if (currentDeltaGap < smallDeltaGap) {
+        smallStrike = currentStrike;
+        smallDeltaGap = currentDeltaGap;
+      } else {
+        break;
+      }
+    }
+
+    for (uint i = strikeIds.length - 1; i > 1; i--) {
+      uint currentStrikeId = strikeIds[i];
+      Strike memory currentStrike = getStrikes(_toDynamic(currentStrikeId))[0];
+      uint currentDeltaGap = _getDeltaGap(currentStrike, false);
+      if (currentDeltaGap < bigDeltaGap) {
+        bigStrike = currentStrike;
+        bigDeltaGap = currentDeltaGap;
+      } else {
+        break;
+      }
     }
   }
 
@@ -298,6 +250,18 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
   function _getFullCollateral(uint strikePrice, uint amount) internal view returns (uint fullCollat) {
     // calculate required collat based on collatBuffer and collatPercent
     fullCollat = _isBaseCollat() ? amount : amount.multiplyDecimal(strikePrice);
+  }
+
+  /**
+   * @dev return delta gap
+   * @return deltaGap delta gap in abs value
+   */
+  function _getDeltaGap(Strike memory strike, bool isSmallStrike) public view returns (uint deltaGap) {
+    int targetDelta = isSmallStrike ? strategyDetail.maxtargetDelta : strategyDetail.mintargetDelta;
+    uint[] memory strikeId = _toDynamic(strike.id);
+    int callDelta = getDeltas(strikeId)[0];
+    int delta = _isCall() ? callDelta : callDelta - SignedDecimalMath.UNIT;
+    deltaGap = _abs(targetDelta - delta);
   }
 
   /////////////////

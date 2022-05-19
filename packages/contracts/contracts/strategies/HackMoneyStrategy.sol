@@ -43,6 +43,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     HackMoneyStrategyDetail public strategyDetail;
     uint public activeExpiry;
     uint public currentBoardId;
+    uint public ivLimit = 2 * 1e18;
 
     //uint public optionSize;
 
@@ -66,6 +67,13 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         (, , , , , , , bool roundInProgress) = vault.vaultState();
         require(!roundInProgress, "cannot change strategy if round is active");
         strategyDetail = _deltaStrategy;
+    }
+
+    /**
+     * @dev update the iv limit
+     */
+    function setIvLimit(uint _ivLimit) external onlyOwner {
+        ivLimit = _ivLimit;
     }
 
     ///////////////////
@@ -125,18 +133,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         (collateralToAdd2, ) = getRequiredCollateral(strike2);
 
         collateralToAdd = collateralToAdd1 + collateralToAdd2;
-
-        //uint lockeAmountLeft = vault.getLockedAmountLeft();
-        // require(
-        //   collateralAsset.transferFrom(address(vault), address(this), lockeAmountLeft),
-        //   "collateral transfer from vault failed"
-        // );
-
-        // uint optionCollateral = lockeAmountLeft / 2;
-        // uint premiumReceived1;
-        // (positionId1, premiumReceived1) = _sellStrike2(strike1, optionCollateral, lyraRewardRecipient);
-        // uint premiumReceived2;
-        // (positionId2, premiumReceived2) = _sellStrike2(strike2, optionCollateral, lyraRewardRecipient);
 
         require(
             collateralAsset.transferFrom(
@@ -201,6 +197,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             strategyDetail.minVol,
             strategyDetail.size
         );
+
+        uint strikeId = strike.id;
+        uint initIv = strike.boardIv.multiplyDecimal(strike.skew);
+
         // perform trade
         TradeResult memory result = openPosition(
             TradeInputParameters({
@@ -215,6 +215,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
                 rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
             })
         );
+        Strike memory finalStrike = getStrikes(_toDynamic(strikeId))[0];
+        uint finalIv = finalStrike.boardIv.multiplyDecimal(finalStrike.skew);
+        require(initIv - finalIv < ivLimit, "IV_LIMIT_HIT");
+
         lastTradeTimestamp[strike.id] = block.timestamp;
 
         // update active strikes

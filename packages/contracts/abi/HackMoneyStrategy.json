@@ -1,0 +1,614 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "contract HackMoneyVault",
+          "name": "_vault",
+          "type": "address"
+        },
+        {
+          "internalType": "enum VaultAdapter.OptionType",
+          "name": "_optionType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "contract GWAVOracle",
+          "name": "_gwavOracle",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "expiry",
+          "type": "uint256"
+        }
+      ],
+      "name": "_isValidExpiry",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "isValid",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "activeExpiry",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "activeStrikeIds",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "collateralAsset",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "currentBoardId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "lyraRewardRecipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minsETHfromPremium",
+          "type": "uint256"
+        }
+      ],
+      "name": "doTrade",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "positionId1",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "positionId2",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "premiumReceived",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "collateralToAdd",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "size",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expiry",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "strikePrice",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "skew",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "boardIv",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct VaultAdapter.Strike",
+          "name": "strike",
+          "type": "tuple"
+        }
+      ],
+      "name": "getRequiredCollateral",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "collateralToAdd",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "setCollateralTo",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "gwavOracle",
+      "outputs": [
+        {
+          "internalType": "contract GWAVOracle",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_curveSwap",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_optionToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_optionMarket",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_liquidityPool",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_shortCollateral",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_synthetixAdapter",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_optionPricer",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_greekCache",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_quoteAsset",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_baseAsset",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_feeCounter",
+          "type": "address"
+        }
+      ],
+      "name": "initAdapter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expiry",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "strikePrice",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "skew",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "boardIv",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct VaultAdapter.Strike",
+          "name": "strike",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bool",
+          "name": "isSmallStrike",
+          "type": "bool"
+        }
+      ],
+      "name": "isValidStrike",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "isValid",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "lastTradeTimestamp",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "optionType",
+      "outputs": [
+        {
+          "internalType": "enum VaultAdapter.OptionType",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "reducePosition",
+      "outputs": [],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "returnFundsAndClearStrikes",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "boardId",
+          "type": "uint256"
+        }
+      ],
+      "name": "setBoard",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "minTimeToExpiry",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxTimeToExpiry",
+              "type": "uint256"
+            },
+            {
+              "internalType": "int256",
+              "name": "mintargetDelta",
+              "type": "int256"
+            },
+            {
+              "internalType": "int256",
+              "name": "maxtargetDelta",
+              "type": "int256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxDeltaGap",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minVol",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxVol",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "size",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxVolVariance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "gwavPeriod",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct HackMoneyStrategy.HackMoneyStrategyDetail",
+          "name": "_deltaStrategy",
+          "type": "tuple"
+        }
+      ],
+      "name": "setStrategyDetail",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "strategyDetail",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "minTimeToExpiry",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxTimeToExpiry",
+          "type": "uint256"
+        },
+        {
+          "internalType": "int256",
+          "name": "mintargetDelta",
+          "type": "int256"
+        },
+        {
+          "internalType": "int256",
+          "name": "maxtargetDelta",
+          "type": "int256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxDeltaGap",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minVol",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxVol",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "size",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxVolVariance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gwavPeriod",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "strikeToPositionId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "vault",
+      "outputs": [
+        {
+          "internalType": "contract HackMoneyVault",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]

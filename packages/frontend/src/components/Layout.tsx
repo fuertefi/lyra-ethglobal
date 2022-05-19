@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Footer } from "./Footer";
 import { Header } from "./Header";
 
 export const Layout = ({ children }: { children?: ReactNode }) => {
@@ -6,6 +7,7 @@ export const Layout = ({ children }: { children?: ReactNode }) => {
     <div>
       <Header />
       <div style={{ margin: "75px" }}>{children}</div>
+      <Footer />
     </div>
   );
 };

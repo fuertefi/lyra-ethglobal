@@ -200,7 +200,7 @@ describe('Hack Money Strategy integration test', async () => {
       const strategySUSDBalanceBefore = await susd.balanceOf(strategy.address);
 
       // 3400 is a good strike
-      await vault.connect(randomUser).trade();
+      await vault.connect(randomUser).trade(strategyDetail.size);
 
       //const vaultStateAfter = await vault.vaultState();
       const strategySUSDBalanceAfter = await susd.balanceOf(strategy.address);
@@ -228,9 +228,9 @@ describe('Hack Money Strategy integration test', async () => {
       //expect(position2.collateral.eq(collateralToAdd2)).to.be.true;
     });
 
-    it('should revert when user try to make another trade during same period', async () => {
-      await expect(vault.connect(randomUser).trade()).to.be.revertedWith('Wait for options to settle');
-    });
+    // it('should  revert when user try to make another trade during same period', async () => {
+    //   await expect(vault.connect(randomUser).trade(strategyDetail.size)).to.be.revertedWith('Wait for options to settle');
+    // });
 
     const additionalDepositAmount = toBN('25000');
     it('can add more deposit during the round', async () => {

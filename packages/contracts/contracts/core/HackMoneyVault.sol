@@ -11,113 +11,139 @@ import {IHackMoneyStrategy} from "../interfaces/IHackMoneyStrategy.sol";
 
 /// @notice LyraVault help users run option-selling strategies on Lyra AMM.
 contract HackMoneyVault is Ownable, BaseVault {
-  IERC20 public immutable premiumAsset;
-  IERC20 public immutable collateralAsset;
+    IERC20 public immutable premiumAsset;
+    IERC20 public immutable collateralAsset;
 
-  IHackMoneyStrategy public strategy;
-  bool public canTrade;
-  address public lyraRewardRecipient;
+    IHackMoneyStrategy public strategy;
+    address public lyraRewardRecipient;
 
-  // Amount locked for scheduled withdrawals last week;
-  uint128 public lastQueuedWithdrawAmount;
-  // % of funds to be used for weekly option purchase
-  uint public optionAllocation;
+    // Amount locked for scheduled withdrawals last week;
+    uint128 public lastQueuedWithdrawAmount;
+    // % of funds to be used for weekly option purchase
+    uint public optionAllocation;
 
-  event StrategyUpdated(address strategy);
+    event StrategyUpdated(address strategy);
 
-  event Trade(address user, uint positionId_1, uint positionId_2, uint premium, uint capitalUsed);
-
-  event RoundStarted(uint16 roundId, uint104 lockAmount);
-
-  event RoundClosed(uint16 roundId, uint104 lockAmount);
-
-  constructor(
-    address _susd,
-    address _feeRecipient,
-    uint _roundDuration,
-    string memory _tokenName,
-    string memory _tokenSymbol,
-    Vault.VaultParams memory _vaultParams
-  ) BaseVault(_feeRecipient, _roundDuration, _tokenName, _tokenSymbol, _vaultParams) {
-    premiumAsset = IERC20(_susd);
-    collateralAsset = IERC20(_vaultParams.asset);
-  }
-
-  /// @dev set strategy contract. This function can only be called by owner.
-  /// @param _strategy new strategy contract address
-  function setStrategy(address _strategy) external onlyOwner {
-    if (address(strategy) != address(0)) {
-      collateralAsset.approve(address(strategy), 0);
-    }
-
-    strategy = IHackMoneyStrategy(_strategy);
-    collateralAsset.approve(_strategy, type(uint).max);
-    emit StrategyUpdated(_strategy);
-  }
-
-  /// @dev anyone can trigger a trade
-  function trade() external {
-    require(vaultState.roundInProgress, "round closed");
-    require(canTrade, "Wait for options to settle");
-
-    // perform trades through strategy
-    (uint positionId_1, uint positionId_2, uint premiumReceived, uint capitalUsed) = strategy.doTrade(
-      lyraRewardRecipient
+    event Trade(
+        address user,
+        uint positionId_1,
+        uint positionId_2,
+        uint premium,
+        uint capitalUsed
     );
 
-    // update the remaining locked amount
-    vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
+    event RoundStarted(uint16 roundId, uint104 lockAmount);
 
-    // todo: udpate events
-    emit Trade(msg.sender, positionId_1, positionId_2, premiumReceived, capitalUsed);
+    event RoundClosed(uint16 roundId, uint104 lockAmount);
 
-    canTrade = false;
-  }
+    constructor(
+        address _susd,
+        address _feeRecipient,
+        uint _roundDuration,
+        string memory _tokenName,
+        string memory _tokenSymbol,
+        Vault.VaultParams memory _vaultParams
+    )
+        BaseVault(
+            _feeRecipient,
+            _roundDuration,
+            _tokenName,
+            _tokenSymbol,
+            _vaultParams
+        )
+    {
+        premiumAsset = IERC20(_susd);
+        collateralAsset = IERC20(_vaultParams.asset);
+    }
 
-  /// @dev anyone close part of the position with premium made by the strategy if a position is dangerous
-  /// @param positionId the positiion to close
-  function reducePosition(uint positionId, uint closeAmount) external {
-    strategy.reducePosition(positionId, closeAmount, lyraRewardRecipient);
-  }
+    /// @dev set strategy contract. This function can only be called by owner.
+    /// @param _strategy new strategy contract address
+    function setStrategy(address _strategy) external onlyOwner {
+        if (address(strategy) != address(0)) {
+            collateralAsset.approve(address(strategy), 0);
+        }
 
-  /// @dev close the current round, enable user to deposit for the next round
-  function closeRound() external {
-    uint104 lockAmount = vaultState.lockedAmount;
-    vaultState.lastLockedAmount = lockAmount;
-    vaultState.lockedAmountLeft = 0;
-    vaultState.lockedAmount = 0;
-    vaultState.nextRoundReadyTimestamp = block.timestamp + Vault.ROUND_DELAY;
-    vaultState.roundInProgress = false;
+        strategy = IHackMoneyStrategy(_strategy);
+        collateralAsset.approve(_strategy, type(uint).max);
+        emit StrategyUpdated(_strategy);
+    }
 
-    // won't be able to close if positions are not settled
-    strategy.returnFundsAndClearStrikes();
+    /// @dev anyone can trigger a trade
+    function trade(uint size) external {
+        require(vaultState.roundInProgress, "round closed");
 
-    emit RoundClosed(vaultState.round, lockAmount);
-  }
+        // perform trades through strategy
+        (
+            uint positionId_1,
+            uint positionId_2,
+            uint premiumReceived,
+            uint capitalUsed
+        ) = strategy.doTrade(size, lyraRewardRecipient);
 
-  /// @notice start the next round
-  /// @param boardId board id (asset + expiry) for next round.
-  function startNextRound(uint boardId) external onlyOwner {
-    require(!vaultState.roundInProgress, "round opened");
-    require(block.timestamp > vaultState.nextRoundReadyTimestamp, "CD");
+        // update the remaining locked amount
+        vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
 
-    strategy.setBoard(boardId);
+        // todo: udpate events
+        emit Trade(
+            msg.sender,
+            positionId_1,
+            positionId_2,
+            premiumReceived,
+            capitalUsed
+        );
+    }
 
-    (uint lockedBalance, uint queuedWithdrawAmount) = _rollToNextRound(uint(lastQueuedWithdrawAmount));
+    /// @dev anyone close part of the position with premium made by the strategy if a position is dangerous
+    /// @param positionId the positiion to close
+    function reducePosition(uint positionId, uint closeAmount) external {
+        strategy.reducePosition(positionId, closeAmount, lyraRewardRecipient);
+    }
 
-    vaultState.lockedAmount = uint104(lockedBalance);
-    vaultState.lockedAmountLeft = lockedBalance;
-    vaultState.roundInProgress = true;
-    lastQueuedWithdrawAmount = uint128(queuedWithdrawAmount);
+    /// @dev close the current round, enable user to deposit for the next round
+    function closeRound() external {
+        uint104 lockAmount = vaultState.lockedAmount;
+        vaultState.lastLockedAmount = lockAmount;
+        vaultState.lockedAmountLeft = 0;
+        vaultState.lockedAmount = 0;
+        vaultState.nextRoundReadyTimestamp =
+            block.timestamp +
+            Vault.ROUND_DELAY;
+        vaultState.roundInProgress = false;
 
-    emit RoundStarted(vaultState.round, uint104(lockedBalance));
+        // won't be able to close if positions are not settled
+        strategy.returnFundsAndClearStrikes();
 
-    canTrade = true;
-  }
+        emit RoundClosed(vaultState.round, lockAmount);
+    }
 
-  /// @notice set set new address to receive Lyra trading reward on behalf of the vault
-  /// @param recipient recipient address
-  function setLyraRewardRecipient(address recipient) external onlyOwner {
-    lyraRewardRecipient = recipient;
-  }
+    /// @notice start the next round
+    /// @param boardId board id (asset + expiry) for next round.
+    function startNextRound(uint boardId) external onlyOwner {
+        require(!vaultState.roundInProgress, "round opened");
+        require(block.timestamp > vaultState.nextRoundReadyTimestamp, "CD");
+
+        strategy.setBoard(boardId);
+
+        (uint lockedBalance, uint queuedWithdrawAmount) = _rollToNextRound(
+            uint(lastQueuedWithdrawAmount)
+        );
+
+        vaultState.lockedAmount = uint104(lockedBalance);
+        vaultState.lockedAmountLeft = lockedBalance;
+        vaultState.roundInProgress = true;
+        lastQueuedWithdrawAmount = uint128(queuedWithdrawAmount);
+
+        emit RoundStarted(vaultState.round, uint104(lockedBalance));
+    }
+
+    /// @notice set set new address to receive Lyra trading reward on behalf of the vault
+    /// @param recipient recipient address
+    function setLyraRewardRecipient(address recipient) external onlyOwner {
+        lyraRewardRecipient = recipient;
+    }
+
+    // helper to set strategy size
+    function getLockedAmountLeft() public view returns (uint lockedAmountLeft) {
+        lockedAmountLeft = uint(vaultState.lockedAmountLeft);
+    }
 }

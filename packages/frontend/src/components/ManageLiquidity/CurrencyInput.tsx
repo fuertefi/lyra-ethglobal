@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import { useAccount, useBalance } from "wagmi";
+import { useAtom } from "jotai";
 import { useState } from "react";
+import styled from "styled-components";
+import { depositAtom } from "../../state/position/atoms";
 import { ErrorIcon as ErrorIconSvg } from "../Icons";
-import { USDC_ADDRESS } from "../../constants";
 
 interface InputProps extends React.ComponentPropsWithoutRef<"div"> {
   error: boolean;
@@ -82,23 +82,20 @@ const ErrorIcon = styled.span`
 
 type CurrencyInputProps = {
   currency?: string;
+  maxAmount?: string | undefined;
 };
 
-export const CurrencyInput = ({ currency = "ETH" }: CurrencyInputProps) => {
-  const [value, setValue] = useState("");
+export const CurrencyInput = ({
+  currency = "ETH",
+  maxAmount = "0",
+}: CurrencyInputProps) => {
   const [error, setError] = useState<string>();
-  const account = useAccount();
-  const { data: balanceData } = useBalance({
-    addressOrName: account.data?.address,
-    token: USDC_ADDRESS,
-    formatUnits: 6,
-  });
 
-  const balanceAmount = parseFloat(balanceData?.formatted ?? "0");
+  const [value, setValue] = useAtom(depositAtom);
 
   const validateAmount = (amount: string) => {
-    console.log(parseFloat(amount) > balanceAmount);
-    if (parseFloat(amount) > balanceAmount) {
+    console.log(parseFloat(amount) > parseFloat(maxAmount));
+    if (parseFloat(amount) > parseFloat(maxAmount)) {
       setError("Amount exceeds balance");
     } else {
       setError(undefined);
@@ -110,11 +107,8 @@ export const CurrencyInput = ({ currency = "ETH" }: CurrencyInputProps) => {
   return (
     <div>
       <SupContainer>
-        <Sup
-          className={"max"}
-          onClick={() => setValue(balanceData?.formatted ?? "0")}
-        >
-          Use max: {balanceAmount} {currency}
+        <Sup className={"max"} onClick={() => setValue(maxAmount.toString())}>
+          Use max: {maxAmount} {currency}
         </Sup>
       </SupContainer>
       <InputContainer error={!!error} filled={!!value}>

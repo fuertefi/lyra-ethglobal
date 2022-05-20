@@ -1,8 +1,10 @@
-import ManageLiquidity from "../components/ManageLiquidity";
+import { useEffect } from "react";
 import styled from "styled-components";
-import VaultDescription from "../components/Strategy/VaultDescription";
+import ManageLiquidity from "../components/ManageLiquidity";
 import StrategyDetailsPanel from "../components/Strategy/StrategyDetailsPanel";
+import VaultDescription from "../components/Strategy/VaultDescription";
 import { VaultActivityContainer } from "../components/VaultActivity/VaultActivityContainer";
+import { useGetLyraMarket, useLyraMarket } from "../state/lyra/hooks/getMarket";
 
 const ContentColumns = styled.div`
   display: flex;
@@ -31,6 +33,12 @@ const StyledVaultDescription = styled(VaultDescription)`
 `;
 
 export const Main = () => {
+  const getLyraMarket = useGetLyraMarket();
+  useEffect(() => {
+    getLyraMarket();
+  }, []);
+
+  const market = useLyraMarket();
 
   return (
     <ContentColumns>
@@ -48,9 +56,7 @@ export const Main = () => {
         <StrategyDetailsPanel />
         <VaultActivityContainer />
       </div>
-      <div className="right-section">
-        <ManageLiquidity />
-      </div>
+      <div className="right-section">{market && <ManageLiquidity />}</div>
     </ContentColumns>
   );
 };

@@ -46,7 +46,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const { chains, provider } = configureChains(
-  [chain.optimism],
+  [chain.optimismKovan],
   [apiProvider.alchemy(process.env.ALCHEMY_ID), apiProvider.fallback()]
 );
 

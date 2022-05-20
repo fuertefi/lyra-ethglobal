@@ -14,7 +14,6 @@ import {
   useNetwork,
   useWaitForTransaction,
 } from "wagmi";
-import { VAULT_ADDRESS } from "../../constants";
 import { useLyraMarket } from "../../state/lyra/hooks/getMarket";
 import { depositAtom } from "../../state/position/atoms";
 import { useVault } from "../../state/vault/hooks";
@@ -265,10 +264,10 @@ const ManageLiquidity: FC = (props: any) => {
         </Tabs>
       </LiquidityWidget>
       <SmartContractLink>
-        contract: {shortenAddress(VAULT_ADDRESS)}
+        contract: {shortenAddress(lyraVaultAddress)}
         &nbsp;
         <a
-          href={`https://optimistic.etherscan.io/token/${VAULT_ADDRESS}`}
+          href={`${network?.activeChain?.blockExplorers?.etherscan.url}/address/${lyraVaultAddress}`}
           target="_blank"
         >
           <img src="external_link_icon.svg" />
@@ -279,7 +278,7 @@ const ManageLiquidity: FC = (props: any) => {
 };
 
 function shortenAddress(address: string) {
-  return address?.slice(0, 4) + "..." + address?.slice(-4);
+  return address?.slice(0, 6) + "..." + address?.slice(-4);
 }
 
 export default ManageLiquidity;

@@ -1,9 +1,8 @@
-import { Tabs } from "antd";
+import { message, Tabs } from "antd";
 import HackMoneyVaultABI from "contracts/abi/HackMoneyVault.json";
 import { DEPLOYED_CONTRACTS } from "contracts/constants";
 import { BigNumber, utils } from "ethers";
 import { useAtomValue } from "jotai";
-import { message, Tabs } from "antd";
 import { FC, ReactElement } from "react";
 import styled from "styled-components";
 import {
@@ -60,6 +59,17 @@ const TabsWrapper = styled.div`
   }
 `;
 
+const SmartContractLink = styled.div`
+  text-align: center;
+  margin-top: 9px;
+  font-family: "Satoshi";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+`;
+
 const renderTabBar = (props: any, DefaultTabBar: any): ReactElement => (
   <TabsWrapper>
     <DefaultTabBar {...props} />
@@ -102,7 +112,6 @@ const DepositDisclaimer = styled.div`
 `;
 
 const ManageLiquidity: FC = (props: any) => {
-
   const market = useLyraMarket();
 
   const account = useAccount();
@@ -120,7 +129,8 @@ const ManageLiquidity: FC = (props: any) => {
   const accountVaultBalance = depositReceipt && depositReceipt[1];
 
   const network = useNetwork();
-  const lyraVaultAddress = DEPLOYED_CONTRACTS.LyraVault[network.activeChain?.id || 69];
+  const lyraVaultAddress =
+    DEPLOYED_CONTRACTS.LyraVault[network.activeChain?.id || 69];
   const { data: allowance } = useContractRead(
     {
       addressOrName: market?.baseToken.address || "",
@@ -128,10 +138,7 @@ const ManageLiquidity: FC = (props: any) => {
     },
     "allowance",
     {
-      args: [
-        account?.data?.address,
-        lyraVaultAddress
-      ],
+      args: [account?.data?.address, lyraVaultAddress],
       watch: true,
     }
   );
@@ -179,7 +186,6 @@ const ManageLiquidity: FC = (props: any) => {
     confirmations: 2,
   });
 
-
   // TODO: add contract query on position
 
   const handleDepositClick = () => {
@@ -193,10 +199,12 @@ const ManageLiquidity: FC = (props: any) => {
         icon: <></>,
         content: (
           <div style={{ display: "grid", gridTemplateColumns: "40px auto" }}>
-            <div style={{ alignContent: "middle" }}><img src="/check_icon.svg" width="40" /></div>
+            <div style={{ alignContent: "middle" }}>
+              <img src="/check_icon.svg" width="40" />
+            </div>
             <div style={{ marginLeft: "15px", textAlign: "left" }}>
-              <span style={{ color: "#06C799" }}>DEPOSIT SUCCESS!</span><br />
-              5 ETH deposited into STRATEGY_NAME
+              <span style={{ color: "#06C799" }}>DEPOSIT SUCCESS!</span>
+              <br />5 ETH deposited into STRATEGY_NAME
             </div>
           </div>
         ),
@@ -209,54 +217,68 @@ const ManageLiquidity: FC = (props: any) => {
   console.log(props.theme);
 
   return (
-    <LiquidityWidget>
-      <YourPosition
-        position={(accountVaultBalance as unknown as BigNumber) || 0}
-        token={market?.baseToken}
-      />
-      <Tabs centered defaultActiveKey="1" renderTabBar={renderTabBar}>
-        <TabPane tab="DEPOSIT" key="1">
-          <TabContent>
-
-            <CurrencyInput
-              currency={market?.baseToken.symbol}
-              maxAmount={balanceData?.formatted}
-            />
-            {enoughAllowance ? (
-              <ActionButton
-                disabled={depositIsPending}
-                onClick={() => {
-                  deposit();
-                }}
-              >
-                {depositIsPending ? "Depositing..." : "Deposit"}
-              </ActionButton>
-            ) : (
-              <ActionButton
-                disabled={approvalIsPending}
-                onClick={() => {
-                  approve();
-                }}
-              >
-                {approvalIsPending ? "Approving..." : "Approve"}
-              </ActionButton>
-            )}
-
-            <DepositDisclaimer>
-              Your deposit will be deployed in the vault's weekly strategy on
-              Friday at 11am UTC
-            </DepositDisclaimer>
-          </TabContent>
-        </TabPane>
-        <TabPane tab="WITHDRAW" key="2">
-          <TabContent>
-            <CurrencyInput />
-            <ActionButton>Withdraw</ActionButton>
-          </TabContent>
-        </TabPane>
-      </Tabs>
-    </LiquidityWidget>
+    <>
+      <LiquidityWidget>
+        <YourPosition
+          position={(accountVaultBalance as unknown as BigNumber) || 0}
+          token={market?.baseToken}
+        />
+        <Tabs centered defaultActiveKey="1" renderTabBar={renderTabBar}>
+          <TabPane tab="DEPOSIT" key="1">
+            <TabContent>
+              <CurrencyInput
+                currency={market?.baseToken.symbol}
+                maxAmount={balanceData?.formatted}
+              />
+              {enoughAllowance ? (
+                <ActionButton
+                  disabled={depositIsPending}
+                  onClick={() => {
+                    deposit();
+                  }}
+                >
+                  {depositIsPending ? "Depositing..." : "Deposit"}
+                </ActionButton>
+              ) : (
+                <ActionButton
+                  disabled={approvalIsPending}
+                  onClick={() => {
+                    approve();
+                  }}
+                >
+                  {approvalIsPending ? "Approving..." : "Approve"}
+                </ActionButton>
+              )}
+              <DepositDisclaimer>
+                Your deposit will be deployed in the vault's weekly strategy on
+                Friday at 11am UTC
+              </DepositDisclaimer>
+            </TabContent>
+          </TabPane>
+          <TabPane tab="WITHDRAW" key="2">
+            <TabContent>
+              <CurrencyInput />
+              <ActionButton>Withdraw</ActionButton>
+            </TabContent>
+          </TabPane>
+        </Tabs>
+      </LiquidityWidget>
+      <SmartContractLink>
+        contract: {shortenAddress(lyraVaultAddress)}
+        &nbsp;
+        <a
+          href={`${network?.activeChain?.blockExplorers?.etherscan.url}/address/${lyraVaultAddress}`}
+          target="_blank"
+        >
+          <img src="external_link_icon.svg" />
+        </a>
+      </SmartContractLink>
+    </>
   );
 };
+
+function shortenAddress(address: string) {
+  return address?.slice(0, 6) + "..." + address?.slice(-4);
+}
 
 export default ManageLiquidity;

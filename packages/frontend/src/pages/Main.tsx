@@ -5,6 +5,9 @@ import StrategyDetailsPanel from "../components/Strategy/StrategyDetailsPanel";
 import VaultDescription from "../components/Strategy/VaultDescription";
 import { VaultActivityContainer } from "../components/VaultActivity/VaultActivityContainer";
 import { useGetLyraMarket, useLyraMarket } from "../state/lyra/hooks/getMarket";
+import { useAccount } from "wagmi";
+import { ConnectWalletPanel } from "../components/ManageLiquidity/ConnectWalletPanel";
+
 
 const ContentColumns = styled.div`
   display: flex;
@@ -39,6 +42,7 @@ export const Main = () => {
   }, []);
 
   const market = useLyraMarket();
+  const { data: walletData } = useAccount();
 
   return (
     <ContentColumns>
@@ -56,7 +60,9 @@ export const Main = () => {
         <StrategyDetailsPanel />
         <VaultActivityContainer />
       </div>
-      <div className="right-section">{market && <ManageLiquidity />}</div>
+      <div className="right-section">
+        {walletData && market ? <ManageLiquidity /> : <ConnectWalletPanel />}
+      </div>
     </ContentColumns>
   );
 };

@@ -3,6 +3,7 @@ import HackMoneyVaultABI from "contracts/abi/HackMoneyVault.json";
 import { DEPLOYED_CONTRACTS } from "contracts/constants";
 import { BigNumber, utils } from "ethers";
 import { useAtomValue } from "jotai";
+import { message, Tabs } from "antd";
 import { FC, ReactElement } from "react";
 import styled from "styled-components";
 import {
@@ -101,6 +102,7 @@ const DepositDisclaimer = styled.div`
 `;
 
 const ManageLiquidity: FC = (props: any) => {
+
   const market = useLyraMarket();
 
   const account = useAccount();
@@ -177,6 +179,35 @@ const ManageLiquidity: FC = (props: any) => {
     confirmations: 2,
   });
 
+
+  // TODO: add contract query on position
+
+  const handleDepositClick = () => {
+    const key = "updatable";
+    message.loading({
+      content: "Request submitted to the blockchain, waiting...",
+      key,
+    });
+    setTimeout(() => {
+      message.success({
+        icon: <></>,
+        content: (
+          <div style={{ display: "grid", gridTemplateColumns: "40px auto" }}>
+            <div style={{ alignContent: "middle" }}><img src="/check_icon.svg" width="40" /></div>
+            <div style={{ marginLeft: "15px", textAlign: "left" }}>
+              <span style={{ color: "#06C799" }}>DEPOSIT SUCCESS!</span><br />
+              5 ETH deposited into STRATEGY_NAME
+            </div>
+          </div>
+        ),
+        key,
+        duration: 5,
+      });
+    }, 2000);
+  };
+
+  console.log(props.theme);
+
   return (
     <LiquidityWidget>
       <YourPosition
@@ -186,6 +217,7 @@ const ManageLiquidity: FC = (props: any) => {
       <Tabs centered defaultActiveKey="1" renderTabBar={renderTabBar}>
         <TabPane tab="DEPOSIT" key="1">
           <TabContent>
+
             <CurrencyInput
               currency={market?.baseToken.symbol}
               maxAmount={balanceData?.formatted}
@@ -209,6 +241,7 @@ const ManageLiquidity: FC = (props: any) => {
                 {approvalIsPending ? "Approving..." : "Approve"}
               </ActionButton>
             )}
+
             <DepositDisclaimer>
               Your deposit will be deployed in the vault's weekly strategy on
               Friday at 11am UTC

@@ -51,11 +51,7 @@ export const Main = () => {
           Strategy<strong>Name</strong>
         </Header>
         <StyledVaultDescription>
-          T-YVUSDC-P-ETH earns yield on its USDC deposits by running a weekly
-          automated ETH put-selling strategy, where the put options are
-          collateralized by yvUSDC. The vault reinvests the yield it earns back
-          into the strategy, effectively compounding the yields for depositors
-          over time.
+          Vaults imitate the payoff of selling out-of-the-money covered calls, and one out-of-the-money cash secured puts in equal parts on a weekly basis. Covered strangle is a classic short volatility strategy – it will perform best in USD terms if the price of underlying goes up and lose money if the price of the underlying declines. Compared to a covered call, it has a more protected downside for the cost of a more limited upside.
         </StyledVaultDescription>
         <StrategyDetailsPanel />
         <VaultActivityContainer />

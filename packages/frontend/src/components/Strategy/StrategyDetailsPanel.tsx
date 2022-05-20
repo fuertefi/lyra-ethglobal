@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { formatUnits } from "ethers/lib/utils";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import useChainlinkETHPrice from "../../hooks/useChainlinkETHPrice";
 import {
   getCurrentStrategy,
   StrategyDetails,
@@ -42,6 +43,7 @@ const StrategyDetailsPanel = () => {
   const { data: vaultParams } = useVault("vaultParams", []);
   const { data: vaultBalance } = useVault("totalBalance", []);
   const lyraMarket = useLyraMarket();
+  const ethPrice = useChainlinkETHPrice() || 0;
 
   if (!vaultParams || !vaultBalance || !lyraMarket?.baseToken.symbol) return null;
   const [decimals, cap] = vaultParams as unknown as VaultParamsStructOutput;
@@ -68,28 +70,28 @@ const StrategyDetailsPanel = () => {
           />
           <SingleColumnPanel
             headline="Strategy Collateral"
-            text={strategyDetails.collateralDescription}
+            text={`${parseFloat(formatUnits(vaultBalance, decimals))} ${lyraMarket?.baseToken.symbol}`}
             tooltip={
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }
           />
           <SingleColumnPanel
             headline="Current ETH Price"
-            text="2500 USD"
+            text={ethPrice?.toFixed(2).toString()}
             tooltip={
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }
           />
           <SingleColumnPanel
-            headline="Another Parameter"
-            text="Some value"
+            headline="Vault performance since start"
+            text="0%"
             tooltip={
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }
           />
           <DoubleColumnPanel
             headline={"Options Positions"}
-            text={strategyDetails.optionsPositions}
+            text={""}
             tooltip={
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }

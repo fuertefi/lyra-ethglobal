@@ -1,13 +1,17 @@
+import { LoadingOutlined } from "@ant-design/icons";
+import { VaultParamsStructOutput } from "contracts/typechain-types/BaseVault";
 import { format } from "date-fns";
+import { formatUnits } from "ethers/lib/utils";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   getCurrentStrategy,
   StrategyDetails,
 } from "../../pages/api/strategyServices";
-import SingleColumnPanel, { DoubleColumnPanel } from "./StrategyMetrics";
+import {useLyraMarket} from "../../state/lyra/hooks/getMarket";
+import { useVault } from "../../state/vault/hooks";
 import StrategyCap from "./StrategyCap";
-import { useEffect, useState } from "react";
-import { LoadingOutlined } from "@ant-design/icons";
+import SingleColumnPanel, { DoubleColumnPanel } from "./StrategyMetrics";
 
 const StrategyDetailsContainer = styled.div`
   width: 100%;
@@ -35,15 +39,22 @@ const StrategyDetailsPanel = () => {
     };
   }, []);
 
+  const { data: vaultParams } = useVault("vaultParams", []);
+  const { data: vaultBalance } = useVault("totalBalance", []);
+  const lyraMarket = useLyraMarket();
+
+  if (!vaultParams || !vaultBalance || !lyraMarket?.baseToken.symbol) return null;
+  const [decimals, cap] = vaultParams as unknown as VaultParamsStructOutput;
+
   return (
     <>
       {!strategyDetails && <LoadingOutlined />}
       {strategyDetails && (
         <StrategyDetailsContainer>
           <StyledStrategyCap
-            currentBalance={strategyDetails.deposit}
-            cap={strategyDetails.capacity}
-            currency={strategyDetails.currency}
+            currentBalance={parseFloat(formatUnits(vaultBalance, decimals))}
+            cap={parseFloat(formatUnits(cap, decimals))}
+            currency={lyraMarket?.baseToken.symbol}
           />
           <SingleColumnPanel
             headline={`Current Period: ${strategyDetails.cycleNumber}`}

@@ -1,8 +1,14 @@
 import { ethers } from "ethers";
 import styled from "styled-components";
 
+type Token = {
+  decimals: number;
+  symbol: string;
+}
+
 export type PositionProps = {
-  position: ethers.BigNumber;
+  position: ethers.BigNumber | undefined;
+  token: Token | undefined;
 };
 
 const Container = styled.div`
@@ -28,12 +34,12 @@ const PositionValue = styled.span`
   text-transform: uppercase;
 `;
 
-const Position = ({ position }: PositionProps) => {
+const Position = ({ position, token }: PositionProps) => {
   return (
     <Container>
       <Label>Your position</Label>
       <PositionValue>
-        {ethers.utils.formatUnits(position, 6)} USDC
+        {ethers.utils.formatUnits(position || 0, token?.decimals)} {token?.symbol}
       </PositionValue>
     </Container>
   );

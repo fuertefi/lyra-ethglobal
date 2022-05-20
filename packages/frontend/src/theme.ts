@@ -3,6 +3,7 @@ export const red = "#DC583B";
 export const white = "#FFFFFF";
 export const black = "#131517";
 export const darkGray = "#1F2124";
+export const disabledGray = "#696D74";
 
 export const theme = {
   position: {

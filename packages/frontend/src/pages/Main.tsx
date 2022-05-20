@@ -1,10 +1,13 @@
-import ManageLiquidity from "../components/ManageLiquidity";
+import { useEffect } from "react";
 import styled from "styled-components";
-import VaultDescription from "../components/Strategy/VaultDescription";
+import ManageLiquidity from "../components/ManageLiquidity";
 import StrategyDetailsPanel from "../components/Strategy/StrategyDetailsPanel";
+import VaultDescription from "../components/Strategy/VaultDescription";
 import { VaultActivityContainer } from "../components/VaultActivity/VaultActivityContainer";
+import { useGetLyraMarket, useLyraMarket } from "../state/lyra/hooks/getMarket";
 import { useAccount } from "wagmi";
 import { ConnectWalletPanel } from "../components/ManageLiquidity/ConnectWalletPanel";
+
 
 const ContentColumns = styled.div`
   display: flex;
@@ -33,7 +36,14 @@ const StyledVaultDescription = styled(VaultDescription)`
 `;
 
 export const Main = () => {
+  const getLyraMarket = useGetLyraMarket();
+  useEffect(() => {
+    getLyraMarket();
+  }, []);
+
+  const market = useLyraMarket();
   const { data: walletData } = useAccount();
+
   return (
     <ContentColumns>
       <div className="left-section">
@@ -51,7 +61,7 @@ export const Main = () => {
         <VaultActivityContainer />
       </div>
       <div className="right-section">
-        {walletData ? <ManageLiquidity /> : <ConnectWalletPanel />}
+        {walletData && market ? <ManageLiquidity /> : <ConnectWalletPanel />}
       </div>
     </ContentColumns>
   );

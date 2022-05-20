@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import {disabledGray, lightGray} from "../theme";
 
 const Button = styled.button`
   padding: 9.5px 27px;
@@ -8,6 +9,12 @@ const Button = styled.button`
   border-radius: 30px;
   border: none;
   cursor: pointer;
+
+  &:disabled {
+    background: ${lightGray};
+    pointer-events: none;
+    color: ${disabledGray};
+  }
 `;
 
 export default Button;

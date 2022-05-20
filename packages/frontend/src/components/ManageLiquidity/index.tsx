@@ -1,12 +1,28 @@
+import { Tabs } from "antd";
+import HackMoneyVaultABI from "contracts/abi/HackMoneyVault.json";
+import { DEPLOYED_CONTRACTS } from "contracts/constants";
+import { BigNumber, utils } from "ethers";
+import { useAtomValue } from "jotai";
 import { message, Tabs } from "antd";
 import { FC, ReactElement } from "react";
-import { ethers } from "ethers";
 import styled from "styled-components";
-import { FlexColumn } from "../styles";
+import {
+  erc20ABI,
+  useAccount,
+  useBalance,
+  useContractRead,
+  useContractWrite,
+  useNetwork,
+  useWaitForTransaction,
+} from "wagmi";
+import { useLyraMarket } from "../../state/lyra/hooks/getMarket";
+import { depositAtom } from "../../state/position/atoms";
+import { useVault } from "../../state/vault/hooks";
+import { disabledGray, lightGray } from "../../theme";
 import Button from "../Button";
-import YourPosition from "./YourPosition";
+import { FlexColumn } from "../styles";
 import CurrencyInput from "./CurrencyInput";
-import { lightGray } from "../../theme";
+import YourPosition from "./YourPosition";
 
 const { TabPane } = Tabs;
 
@@ -67,6 +83,12 @@ const ActionButton = styled(Button)`
     animation-name: buttonHoverIn;
     background-position: 0 -50px;
   }
+
+  &:disabled {
+    background: ${lightGray};
+    pointer-events: none;
+    color: ${disabledGray};
+  }
 `;
 
 const TabContent = styled(FlexColumn)`
@@ -80,6 +102,84 @@ const DepositDisclaimer = styled.div`
 `;
 
 const ManageLiquidity: FC = (props: any) => {
+
+  const market = useLyraMarket();
+
+  const account = useAccount();
+  const { data: balanceData } = useBalance({
+    addressOrName: account.data?.address,
+    token: market?.baseToken.address,
+    formatUnits: market?.baseToken.decimals,
+  });
+
+  // FIXME: Should be account vault balance, but the shares user have in the first round is 0. Otherwise we need to use both sums for current round deposit and shares user have
+  // const { data: accountVaultBalance } = useVault('accountVaultBalance', []);
+  const { data: depositReceipt } = useVault("depositReceipts", [
+    account.data?.address,
+  ]);
+  const accountVaultBalance = depositReceipt && depositReceipt[1];
+
+  const network = useNetwork();
+  const lyraVaultAddress = DEPLOYED_CONTRACTS.LyraVault[network.activeChain?.id || 69];
+  const { data: allowance } = useContractRead(
+    {
+      addressOrName: market?.baseToken.address || "",
+      contractInterface: erc20ABI,
+    },
+    "allowance",
+    {
+      args: [
+        account?.data?.address,
+        lyraVaultAddress
+      ],
+      watch: true,
+    }
+  );
+
+  const depositValue = useAtomValue(depositAtom);
+
+  const { data: approvalData, write: approve } = useContractWrite(
+    {
+      addressOrName: market?.baseToken.address || "",
+      contractInterface: erc20ABI,
+    },
+    "approve",
+    {
+      args: [
+        lyraVaultAddress,
+        utils.parseUnits(depositValue || "0", market?.baseToken.decimals),
+      ],
+    }
+  );
+
+  const { isLoading: approvalIsPending } = useWaitForTransaction({
+    hash: approvalData?.hash,
+    confirmations: 2,
+  });
+
+  const enoughAllowance = allowance?.gte(
+    BigNumber.from(
+      utils.parseUnits(depositValue || "0", market?.baseToken.decimals)
+    )
+  );
+
+  const { data: depositData, write: deposit } = useContractWrite(
+    {
+      addressOrName: lyraVaultAddress,
+      contractInterface: HackMoneyVaultABI,
+    },
+    "deposit",
+    {
+      args: [utils.parseUnits(depositValue || "0", market?.baseToken.decimals)],
+    }
+  );
+
+  const { isLoading: depositIsPending } = useWaitForTransaction({
+    hash: depositData?.hash,
+    confirmations: 2,
+  });
+
+
   // TODO: add contract query on position
 
   const handleDepositClick = () => {
@@ -107,14 +207,41 @@ const ManageLiquidity: FC = (props: any) => {
   };
 
   console.log(props.theme);
+
   return (
     <LiquidityWidget>
-      <YourPosition position={ethers.utils.parseUnits("1", 6)} />
+      <YourPosition
+        position={(accountVaultBalance as unknown as BigNumber) || 0}
+        token={market?.baseToken}
+      />
       <Tabs centered defaultActiveKey="1" renderTabBar={renderTabBar}>
         <TabPane tab="DEPOSIT" key="1">
           <TabContent>
-            <CurrencyInput currency="USDC" />
-            <ActionButton onClick={handleDepositClick}>Deposit</ActionButton>
+
+            <CurrencyInput
+              currency={market?.baseToken.symbol}
+              maxAmount={balanceData?.formatted}
+            />
+            {enoughAllowance ? (
+              <ActionButton
+                disabled={depositIsPending}
+                onClick={() => {
+                  deposit();
+                }}
+              >
+                {depositIsPending ? "Depositing..." : "Deposit"}
+              </ActionButton>
+            ) : (
+              <ActionButton
+                disabled={approvalIsPending}
+                onClick={() => {
+                  approve();
+                }}
+              >
+                {approvalIsPending ? "Approving..." : "Approve"}
+              </ActionButton>
+            )}
+
             <DepositDisclaimer>
               Your deposit will be deployed in the vault's weekly strategy on
               Friday at 11am UTC

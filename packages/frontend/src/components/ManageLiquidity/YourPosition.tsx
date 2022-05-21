@@ -1,15 +1,6 @@
 import { ethers } from "ethers";
 import styled from "styled-components";
-
-type Token = {
-  decimals: number;
-  symbol: string;
-}
-
-export type PositionProps = {
-  position: ethers.BigNumber | undefined;
-  token: Token | undefined;
-};
+import { BalanceDestructured } from ".";
 
 const Container = styled.div`
   font-weight: 500;
@@ -34,12 +25,20 @@ const PositionValue = styled.span`
   text-transform: uppercase;
 `;
 
-const Position = ({ position, token }: PositionProps) => {
+interface Props {
+  balance: BalanceDestructured;
+}
+
+const Position = ({ balance }: Props) => {
+  const position = balance.availableNowValue
+    .add(balance.lockedInStrategyValue)
+    .add(balance.pendingUnlockValue);
   return (
     <Container>
       <Label>Your position</Label>
       <PositionValue>
-        {ethers.utils.formatUnits(position || 0, token?.decimals)} {token?.symbol}
+        {ethers.utils.formatUnits(position, balance.token?.decimals)}{" "}
+        {balance.token?.symbol}
       </PositionValue>
     </Container>
   );

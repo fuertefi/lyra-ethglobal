@@ -1,5 +1,7 @@
 import { Tooltip } from "antd";
+import { BigNumber, ethers } from "ethers";
 import styled from "styled-components";
+import { BalanceDestructured, Token } from ".";
 import { ActionButton } from "./ActionButton";
 import CurrencyInput from "./CurrencyInput";
 
@@ -26,11 +28,12 @@ const InfoIcon = styled.img`
 
 interface WithdrawItemProps {
   label: string;
-  value: string;
+  value: BigNumber;
+  token: Token | undefined;
   tooltip: string;
 }
 
-const WithdrawItem = ({ label, value, tooltip }: WithdrawItemProps) => {
+const WithdrawItem = ({ label, value, token, tooltip }: WithdrawItemProps) => {
   return (
     <>
       <WithdrawItemContainer>
@@ -40,31 +43,38 @@ const WithdrawItem = ({ label, value, tooltip }: WithdrawItemProps) => {
             <InfoIcon src="/info_icon.svg" alt="" />
           </Tooltip>
         </span>
-        <span>{value}</span>
+        <span>{ethers.utils.formatUnits(value || 0, token?.decimals)} {token?.symbol}</span>
       </WithdrawItemContainer>
       <hr style={{ border: "1px solid #414447", width: "100%" }} />
     </>
   );
 };
 
-export const WithdrawPanel = () => {
+interface Props {
+  balance: BalanceDestructured;
+}
+
+export const WithdrawPanel = ({ balance }: Props) => {
   return (
     <>
       <CurrencyInput />
       <div>
         <WithdrawItem
           label="available now"
-          value="0.5 ETH"
-          tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+          value={balance.availableNowValue}
+          token={balance.token}
+          tooltip="This is equal to the value of your funds that are currently not invested in the vault's weekly strategy. These funds can be withdrawn from the vault immediately."
         />
         <WithdrawItem
           label="locked in strategy"
-          value="1 ETH"
+          value={balance.lockedInStrategyValue}
+          token={balance.token}
           tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         />
         <WithdrawItem
           label="pending unlock"
-          value="0 ETH"
+          value={balance.pendingUnlockValue}
+          token={balance.token}
           tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         />
       </div>

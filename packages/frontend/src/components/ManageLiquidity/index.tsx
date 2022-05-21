@@ -12,6 +12,18 @@ import { DepositPanel } from "./DepositPanel";
 import { WithdrawPanel } from "./WithdrawPanel";
 import YourPosition from "./YourPosition";
 
+export type Token = {
+  decimals: number;
+  symbol: string;
+};
+
+export type BalanceDestructured = {
+  availableNowValue: BigNumber;
+  lockedInStrategyValue: BigNumber;
+  pendingUnlockValue: BigNumber;
+  token: Token | undefined;
+};
+
 const { TabPane } = Tabs;
 
 const LiquidityWidget = styled.div`
@@ -79,7 +91,12 @@ const ManageLiquidity: FC = (props: any) => {
   const { data: depositReceipt } = useVault("depositReceipts", [
     account.data?.address,
   ]);
-  const accountVaultBalance = depositReceipt && depositReceipt[1];
+  const balance: BalanceDestructured = {
+    availableNowValue: BigNumber.from(depositReceipt && depositReceipt[1]),
+    lockedInStrategyValue: BigNumber.from(depositReceipt && depositReceipt[1]),
+    pendingUnlockValue: BigNumber.from(depositReceipt && depositReceipt[1]),
+    token: market?.baseToken,
+  };
   const network = useNetwork();
   const lyraVaultAddress =
     DEPLOYED_CONTRACTS.LyraVault[network.activeChain?.id || 69];
@@ -89,10 +106,7 @@ const ManageLiquidity: FC = (props: any) => {
   return (
     <>
       <LiquidityWidget>
-        <YourPosition
-          position={(accountVaultBalance as unknown as BigNumber) || 0}
-          token={market?.baseToken}
-        />
+        <YourPosition balance={balance} />
         <Tabs centered defaultActiveKey="1" renderTabBar={renderTabBar}>
           <TabPane tab="DEPOSIT" key="1">
             <TabContent>
@@ -105,7 +119,7 @@ const ManageLiquidity: FC = (props: any) => {
           </TabPane>
           <TabPane tab="WITHDRAW" key="2">
             <TabContent>
-              <WithdrawPanel />
+              <WithdrawPanel balance={balance} />
             </TabContent>
           </TabPane>
         </Tabs>

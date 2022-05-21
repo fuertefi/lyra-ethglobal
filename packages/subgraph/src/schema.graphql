@@ -1,0 +1,12 @@
+type Strategy @entity {
+  id: ID!
+  createdAt: BigInt
+  transactionHash: Bytes!
+  vault: Vault
+}
+
+type Vault @entity {
+  id: ID!
+  address: Bytes!
+  strategy: Strategy
+}

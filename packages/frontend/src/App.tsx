@@ -1,4 +1,4 @@
-import "@rainbow-me/rainbowkit/styles.css";
+import { ApolloProvider } from "@apollo/client";
 import {
   apiProvider,
   configureChains,
@@ -6,12 +6,15 @@ import {
   getDefaultWallets,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
-import { chain, createClient, WagmiProvider } from "wagmi";
+import "@rainbow-me/rainbowkit/styles.css";
+import { useMemo } from "react";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { chain, createClient, WagmiProvider } from "wagmi";
+import "./antd.css";
 import { Layout } from "./components/Layout";
 import { Main } from "./pages/Main";
-import "./antd.css";
 import { theme } from "./theme";
+import { hackMoneyClient } from "./utils/apollo-client";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -62,25 +65,28 @@ const wagmiClient = createClient({
 });
 
 function App() {
+  const client = useMemo(() => hackMoneyClient[69], []);
   return (
-    <WagmiProvider client={wagmiClient}>
-      <RainbowKitProvider
-        chains={chains}
-        theme={darkTheme({
-          accentColor: "#06C799",
-          accentColorForeground: "black",
-          borderRadius: "large",
-          fontStack: "system",
-        })}
-      >
-        <ThemeProvider theme={theme}>
-          <GlobalStyle />
-          <Layout>
-            <Main />
-          </Layout>
-        </ThemeProvider>
-      </RainbowKitProvider>
-    </WagmiProvider>
+    <ApolloProvider client={client}>
+      <WagmiProvider client={wagmiClient}>
+        <RainbowKitProvider
+          chains={chains}
+          theme={darkTheme({
+            accentColor: "#06C799",
+            accentColorForeground: "black",
+            borderRadius: "large",
+            fontStack: "system",
+          })}
+        >
+          <ThemeProvider theme={theme}>
+            <GlobalStyle />
+            <Layout>
+              <Main />
+            </Layout>
+          </ThemeProvider>
+        </RainbowKitProvider>
+      </WagmiProvider>
+    </ApolloProvider>
   );
 }
 

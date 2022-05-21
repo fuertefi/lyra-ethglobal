@@ -14,11 +14,14 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - Purpose
-        - Sender
+        - Strategy
+        - Vault
+        - Round
       abis:
         - name: HackMoneyVault
           file: ../contracts/abi/HackMoneyVault.json
+        - name: HackMoneyStrategy
+          file: ../contracts/abi/HackMoneyStrategy.json
       eventHandlers:
         - event: StrategyUpdated(address)
           handler: handleStrategyUpdated

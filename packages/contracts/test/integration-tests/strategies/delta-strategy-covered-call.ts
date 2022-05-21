@@ -29,7 +29,7 @@ const strategyDetail: DeltaShortStrategyDetailStruct = {
   size: toBN('10'),
 };
 
-describe('Covered Call Delta Strategy integration test', async () => {
+xdescribe('Covered Call Delta Strategy integration test', async () => {
   // mocked tokens
   let susd: MockERC20;
   let seth: MockERC20;

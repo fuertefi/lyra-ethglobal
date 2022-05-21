@@ -15,7 +15,7 @@ task("trade", "Trade in new round").setAction(async (_, hre) => {
     deployer
   );
 
-  await hackMoneyVault.trade();
+  await hackMoneyVault.trade(2);
 });
 
 module.exports = {};

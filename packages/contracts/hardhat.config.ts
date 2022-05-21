@@ -1,21 +1,24 @@
-import '@eth-optimism/plugins/hardhat/compiler';
-import { lyraContractPaths } from '@lyrafinance/protocol/dist/test/utils/package/index-paths';
-import '@nomiclabs/hardhat-ethers';
-import '@nomiclabs/hardhat-waffle';
-import '@typechain/hardhat';
-import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-import 'hardhat-contract-sizer';
-import 'hardhat-dependency-compiler';
-import 'hardhat-gas-reporter';
-import 'hardhat-tracer';
-import 'solidity-coverage';
+import "@eth-optimism/plugins/hardhat/compiler";
+import { lyraContractPaths } from "@lyrafinance/protocol/dist/test/utils/package/index-paths";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+import "@typechain/hardhat";
+import * as dotenv from "dotenv";
+import * as fs from "fs";
+import "hardhat-contract-sizer";
+import "hardhat-dependency-compiler";
+import "hardhat-gas-reporter";
+import "hardhat-tracer";
+import "solidity-coverage";
+
+require("./tasks/startNewRound");
+require("./tasks/accounts");
 
 dotenv.config();
 
-const mnemonic = fs.existsSync('.secret')
-  ? fs.readFileSync('.secret').toString().trim()
-  : 'test test test test test test test test test test test junk';
+const mnemonic = fs.existsSync(".secret")
+  ? fs.readFileSync(".secret").toString().trim()
+  : "test test test test test test test test test test test junk";
 
 const etherscanKey = process.env.ETHERSCAN_KEY;
 
@@ -26,26 +29,28 @@ export default {
   networks: {
     hardhat: {},
     local: {
-      url: 'http://127.0.0.1:8545',
+      url: "http://127.0.0.1:8545",
       accounts: { mnemonic },
       gasPrice: 0,
     },
     kovan: {
-      url: 'https://kovan.infura.io/v3/',
+      url: "https://kovan.infura.io/v3/",
     },
-    'local-ovm': {
-      url: 'http://127.0.0.1:8545',
+    "local-ovm": {
+      url: "http://127.0.0.1:8545",
       accounts: { mnemonic },
       gasPrice: 0,
       ovm: true,
     },
-    'kovan-ovm': {
-      url: 'https://kovan.optimism.io',
+    "kovan-ovm": {
+      url: "https://kovan.optimism.io",
+      chainId: 69,
       ovm: true,
+      accounts: [process.env.PRIVATE_KEY],
     },
   },
   solidity: {
-    version: '0.8.9',
+    version: "0.8.9",
     settings: {
       optimizer: {
         enabled: true,
@@ -53,10 +58,10 @@ export default {
       },
     },
   },
-  // typechain: {
-  //   outDir: 'typechain',
-  //   target: 'ethers-v5',
-  // },
+  typechain: {
+    outDir: "typechain-types",
+    target: "ethers-v5",
+  },
   contractSizer: {
     alphaSort: true,
   },

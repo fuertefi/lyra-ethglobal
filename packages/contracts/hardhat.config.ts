@@ -13,6 +13,8 @@ import "solidity-coverage";
 
 require("./tasks/startNewRound");
 require("./tasks/accounts");
+require("./tasks/trade");
+require("./tasks/getStrategyCollateral");
 
 dotenv.config();
 

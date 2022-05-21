@@ -12,8 +12,10 @@ task("startNewRound", "Start new round")
     const vaultAddress = DEPLOYED_CONTRACTS.LyraVault[chainId];
     const [deployer] = await hre.ethers.getSigners();
 
-    const HackMoneyVaultFactory = new HackMoneyVault__factory(deployer);
-    const hackMoneyVault = HackMoneyVaultFactory.attach(vaultAddress);
+    const hackMoneyVault = HackMoneyVault__factory.connect(
+      vaultAddress,
+      deployer
+    );
 
     await hackMoneyVault.startNextRound(boardid);
   });

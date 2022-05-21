@@ -1,0 +1,34 @@
+specVersion: 0.0.2
+schema:
+  file: ./src/schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: HackMoneyVault
+    network: optimism-kovan
+    source:
+      address: "0xf8c3b27c5175c04839e7073a805f195bcf812840"
+      abi: HackMoneyVault
+      startBlock: 3156327
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Strategy
+        - Vault
+        - Round
+      abis:
+        - name: HackMoneyVault
+          file: ../contracts/abi/HackMoneyVault.json
+        - name: HackMoneyStrategy
+          file: ../contracts/abi/HackMoneyStrategy.json
+      eventHandlers:
+        - event: StrategyUpdated(address)
+          handler: handleStrategyUpdated
+        - event: Trade(address,uint256,uint256,uint256,uint256)
+          handler: handleTrade
+        - event: RoundStarted(uint16,uint104)
+          handler: handleRoundStarted
+        - event: RoundClosed(uint16,uint104)
+          handler: handleRoundClosed
+      file: ./src/mapping.ts

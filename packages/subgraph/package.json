@@ -1,0 +1,21 @@
+{
+  "name": "@scaffold-eth/subgraph",
+  "license": "UNLICENSED",
+  "version": "1.0.0",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "prepare-kovan": "mustache configs/config_kovan_ovm.json subgraph.template.yaml > subgraph.yaml && graph codegen",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ igorline/covered-strangle",
+    "create-local": "graph create --node http://localhost:8020/ scaffold-eth/your-contract",
+    "remove-local": "graph remove --node http://localhost:8020/ scaffold-eth/your-contract",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 scaffold-eth/your-contract"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.29.1",
+    "@graphprotocol/graph-ts": "^0.26.0"
+  },
+  "devDependencies": {
+    "mustache": "^3.1.0"
+  }
+}

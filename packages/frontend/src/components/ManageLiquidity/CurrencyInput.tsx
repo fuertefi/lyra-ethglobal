@@ -81,7 +81,7 @@ const ErrorIcon = styled.span`
 `;
 
 type CurrencyInputProps = {
-  currency?: string;
+  currency?: string | undefined;
   maxAmount?: string | undefined;
 };
 

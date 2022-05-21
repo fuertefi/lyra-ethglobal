@@ -1,7 +1,9 @@
 import { Tooltip } from "antd";
 import { BigNumber, ethers } from "ethers";
+import { useAtom } from "jotai";
 import styled from "styled-components";
 import { BalanceDestructured, Token } from ".";
+import { depositAtom } from "../../state/position/atoms";
 import { ActionButton } from "./ActionButton";
 import CurrencyInput from "./CurrencyInput";
 
@@ -33,19 +35,25 @@ interface WithdrawItemProps {
   tooltip: string;
 }
 
-const WithdrawItem = ({ label, value, token, tooltip }: WithdrawItemProps) => {
-  // only display 5 decimal points
-  const valueStr = (+ethers.utils.formatUnits(value, token?.decimals)).toFixed(5);
+const WithdrawItem = ({ label, value: itemValue, token, tooltip }: WithdrawItemProps) => {
+  const [ _, setValue ] = useAtom(depositAtom);
+  // only display 7 decimal points
+  const itemValueDisplay = (+ethers.utils.formatUnits(itemValue, token?.decimals)).toFixed(7);
+  const handleItemValueClick = () => {
+    setValue(ethers.utils.formatUnits(itemValue, token?.decimals));
+  }
   return (
     <>
       <WithdrawItemContainer>
         <span>
-          {label}
+          <span style={{ cursor: "pointer" }} onClick={handleItemValueClick}>
+            {label}
+          </span>
           <Tooltip placement="right" title={tooltip} color="#404349">
             <InfoIcon src="/info_icon.svg" alt="" />
           </Tooltip>
         </span>
-        <span>{valueStr} {token?.symbol}</span>
+        <span>{itemValueDisplay} {token?.symbol}</span>
       </WithdrawItemContainer>
       <hr style={{ border: "1px solid #414447", width: "100%" }} />
     </>
@@ -57,9 +65,13 @@ interface Props {
 }
 
 export const WithdrawPanel = ({ balance }: Props) => {
+  console.log(balance)
+  const position = balance.availableNowValue
+    .add(balance.lockedInStrategyValue)
+    .add(balance.pendingUnlockValue);
   return (
     <>
-      <CurrencyInput />
+      <CurrencyInput currency={balance.token?.symbol} maxAmount={ethers.utils.formatUnits(position, balance.token?.decimals)} />
       <div>
         <WithdrawItem
           label="available now"

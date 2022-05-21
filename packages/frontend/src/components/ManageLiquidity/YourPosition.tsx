@@ -33,8 +33,8 @@ const Position = ({ balance }: Props) => {
   const position = balance.availableNowValue
     .add(balance.lockedInStrategyValue)
     .add(balance.pendingUnlockValue);
-  // only display 5 decimal points
-  const positionStr = (+ethers.utils.formatUnits(position, balance.token?.decimals)).toFixed(5);
+  // only display 7 decimal points
+  const positionStr = (+ethers.utils.formatUnits(position, balance.token?.decimals)).toFixed(7);
   return (
     <Container>
       <Label>Your position</Label>

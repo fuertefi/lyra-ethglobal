@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import styled from "styled-components";
+import { useAccount } from "wagmi";
+import HistoricPnl from "../components/HistoricPnl";
 import ManageLiquidity from "../components/ManageLiquidity";
+import { ConnectWalletPanel } from "../components/ManageLiquidity/ConnectWalletPanel";
 import StrategyDetailsPanel from "../components/Strategy/StrategyDetailsPanel";
 import VaultDescription from "../components/Strategy/VaultDescription";
 import { VaultActivityContainer } from "../components/VaultActivity/VaultActivityContainer";
 import { useGetLyraMarket, useLyraMarket } from "../state/lyra/hooks/getMarket";
-import { useAccount } from "wagmi";
-import { ConnectWalletPanel } from "../components/ManageLiquidity/ConnectWalletPanel";
-
 
 const ContentColumns = styled.div`
   display: flex;
@@ -54,6 +54,7 @@ export const Main = () => {
           Vaults imitate the payoff of selling out-of-the-money covered calls, and one out-of-the-money cash secured puts in equal parts on a weekly basis. Covered strangle is a classic short volatility strategy – it will perform best in USD terms if the price of underlying goes up and lose money if the price of the underlying declines. Compared to a covered call, it has a more protected downside for the cost of a more limited upside.
         </StyledVaultDescription>
         <StrategyDetailsPanel />
+        <HistoricPnl />
         <VaultActivityContainer />
       </div>
       <div className="right-section">

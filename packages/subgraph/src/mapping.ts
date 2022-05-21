@@ -1,5 +1,5 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts";
-import { HackMoneyStrategy } from "../generated/HackMoneyStrategy/HackMoneyStrategy";
+import { HackMoneyStrategy } from "../generated/HackMoneyVault/HackMoneyStrategy";
 import {
   HackMoneyVault,
   RoundStarted,
@@ -44,4 +44,6 @@ export function handleRoundStarted(event: RoundStarted): void {
   round.expiry = strategyContract.activeExpiry();
 
   round.save();
+  vault.round = round.id;
+  vault.save();
 }

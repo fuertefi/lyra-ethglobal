@@ -28,6 +28,7 @@ export function getOrCreateRound(_id: BigInt): Round {
   let round = Round.load(_id.toString());
   if (!round) {
     round = new Round(_id.toString());
+    round.createdAt = BigInt.fromI32(0);
     round.save();
   }
   return round as Round;

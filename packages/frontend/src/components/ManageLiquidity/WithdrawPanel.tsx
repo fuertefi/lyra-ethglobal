@@ -34,6 +34,8 @@ interface WithdrawItemProps {
 }
 
 const WithdrawItem = ({ label, value, token, tooltip }: WithdrawItemProps) => {
+  // only display 5 decimal points
+  const valueStr = (+ethers.utils.formatUnits(value, token?.decimals)).toFixed(5);
   return (
     <>
       <WithdrawItemContainer>
@@ -43,7 +45,7 @@ const WithdrawItem = ({ label, value, token, tooltip }: WithdrawItemProps) => {
             <InfoIcon src="/info_icon.svg" alt="" />
           </Tooltip>
         </span>
-        <span>{ethers.utils.formatUnits(value || 0, token?.decimals)} {token?.symbol}</span>
+        <span>{valueStr} {token?.symbol}</span>
       </WithdrawItemContainer>
       <hr style={{ border: "1px solid #414447", width: "100%" }} />
     </>

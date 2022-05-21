@@ -3,13 +3,13 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 
 const httpLinkOK = new HttpLink({
-  uri: "https://api.thegraph.com/subgraphs/name/igorline/covered-strangle-t",
+  uri: "https://api.thegraph.com/subgraphs/name/igorline/covered-strangle",
 });
 
 const wsLinkOK =
   typeof window !== "undefined"
     ? new WebSocketLink({
-        uri: "wss://api.thegraph.com/subgraphs/name/igorline/covered-strangle-t",
+        uri: "wss://api.thegraph.com/subgraphs/name/igorline/covered-strangle",
         options: {
           reconnect: true,
         },

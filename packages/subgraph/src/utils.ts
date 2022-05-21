@@ -1,5 +1,5 @@
 import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
-import { Strategy, Vault } from "../generated/schema";
+import { Round, Strategy, Vault } from "../generated/schema";
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -22,4 +22,13 @@ export function getOrCreateVault(): Vault {
     vault.save();
   }
   return vault as Vault;
+}
+
+export function getOrCreateRound(_id: BigInt): Round {
+  let round = Round.load(_id.toString());
+  if (!round) {
+    round = new Round(_id.toString());
+    round.save();
+  }
+  return round as Round;
 }

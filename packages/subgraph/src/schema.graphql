@@ -9,4 +9,13 @@ type Vault @entity {
   id: ID!
   address: Bytes!
   strategy: Strategy
+  round: Round
+}
+
+type Round @entity {
+  id: ID!
+  roundInProgress: Boolean
+  lockedAmount: BigInt
+  expiry: BigInt
+  createdAt: BigInt
 }

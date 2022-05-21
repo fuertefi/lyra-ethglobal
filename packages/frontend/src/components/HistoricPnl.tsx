@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Area,
   AreaChart,
@@ -537,7 +537,7 @@ const Container = styled.div`
 const InnerContainer = styled.div`
   width: 100%;
   height: 100%;
-  padding: 53px 36px 29px;
+  padding: 20px 36px 20px;
 `;
 
 const AxisLabel = (props: any) => {
@@ -619,52 +619,64 @@ const HistoricPnl = () => {
     setActive(true);
   };
 
+  const SectionHeader = styled.header`
+    font-weight: 700;
+    font-family: "Satoshi";
+    margin-top: 40px;
+    margin-bottom: 20px;
+  `;
+
   return (
-    <Container>
-      <InnerContainer>
-        <ResponsiveContainer width="100%" height={150}>
-          <AreaChart
-            data={data}
-            margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-            onMouseMove={mouseMove}
-            onMouseEnter={() => {
-              setActive(true);
-            }}
-            onMouseLeave={() => {
-              setActive(false);
-            }}
-          >
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={formatTick}
-              minTickGap={52}
-            ></XAxis>
-            <YAxis orientation="right" tickLine={false} />
-            <Area
-              dataKey="index"
-              stroke={theme?.charts.stroke}
-              strokeWidth={2}
-              fillOpacity={1}
-              fill={theme?.charts.background}
-            />
-            {chartActive && (
-              <>
-                <ReferenceLine
-                  y={activeY}
-                  stroke={lightGray}
-                  strokeDasharray="3 3"
-                />
-                <ReferenceLine
-                  x={activeX}
-                  stroke={lightGray}
-                  strokeDasharray="3 3"
-                />
-              </>
-            )}
-            <ReferenceLine x={data[0].date} stroke={lightGray} />
-            {/*
+    <>
+      <SectionHeader>Vault Performance</SectionHeader>
+      <Container>
+        <InnerContainer>
+          <span style={{ display: "block", marginBottom: "20px" }}>
+            Yield (Cumulative) ETH | USD
+          </span>
+          <ResponsiveContainer width="100%" height={150}>
+            <AreaChart
+              data={data}
+              margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+              onMouseMove={mouseMove}
+              onMouseEnter={() => setActive(true)}
+              onMouseLeave={() => setActive(false)}
+            >
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={formatTick}
+                minTickGap={52}
+              ></XAxis>
+              <YAxis
+                orientation="right"
+                tickLine={false}
+                style={{ position: "relative" }}
+              />
+              <Area
+                dataKey="index"
+                stroke={theme?.charts.stroke}
+                strokeWidth={2}
+                fillOpacity={1}
+                fill={theme?.charts.background}
+              />
+              {chartActive && (
+                <>
+                  <ReferenceLine
+                    y={activeY}
+                    stroke={lightGray}
+                    strokeDasharray="3 3"
+                  />
+                  <ReferenceLine
+                    x={activeX}
+                    stroke={lightGray}
+                    strokeDasharray="3 3"
+                  />
+                </>
+              )}
+              <ReferenceLine x={data[0].date} stroke={lightGray} />
+              {/*
           <Tooltip
             active={false}
             filterNull={false}
@@ -681,31 +693,39 @@ const HistoricPnl = () => {
             }}
           />
             */}
-            <Tooltip
-              active={false}
-              filterNull={false}
-              cursor={false}
-              content={
-                <ReferenceTooltip
-                  tooltipPos={{ x: mouseX, y: ((360 - activeY) / 360) * 120 }}
-                  align="yaxis"
-                />
-              }
-              isAnimationActive={false}
-              position={{ x: 0, y: 0 }}
-              wrapperStyle={{
-                visibility: "visible",
-                color: "red",
-                width: "100%",
-                height: "100%",
-                // position: "absolute",
-                transform: "none",
-              }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </InnerContainer>
-    </Container>
+              <Tooltip
+                active={false}
+                filterNull={false}
+                cursor={false}
+                content={
+                  <ReferenceTooltip
+                    tooltipPos={{ x: mouseX, y: ((360 - activeY) / 360) * 120 }}
+                    align="yaxis"
+                  />
+                }
+                isAnimationActive={false}
+                position={{ x: 0, y: 0 }}
+                wrapperStyle={{
+                  visibility: "visible",
+                  color: "red",
+                  width: "100%",
+                  height: "100%",
+                  // position: "absolute",
+                  transform: "none",
+                }}
+              />
+        
+            </AreaChart>
+          </ResponsiveContainer>
+        </InnerContainer>
+        <span
+          style={{ display: "block", marginLeft: "36px", marginBottom: "20px" }}
+        >
+          Projected APY: &nbsp;
+          <span style={{ color: "#06C799" }}>+30%</span>
+        </span>
+      </Container>
+    </>
   );
 };
 

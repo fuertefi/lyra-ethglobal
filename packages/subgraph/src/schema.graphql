@@ -18,4 +18,7 @@ type Round @entity {
   lockedAmount: BigInt
   expiry: BigInt
   createdAt: BigInt
+  size: BigInt!
+  positions: [BigInt!]!
+  premiumReceived: BigInt!
 }

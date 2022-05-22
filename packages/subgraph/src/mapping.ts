@@ -4,6 +4,7 @@ import {
   HackMoneyVault,
   RoundStarted,
   StrategyUpdated,
+  Trade,
 } from "../generated/HackMoneyVault/HackMoneyVault";
 import {
   getOrCreateRound,
@@ -46,4 +47,26 @@ export function handleRoundStarted(event: RoundStarted): void {
   round.save();
   vault.round = round.id;
   vault.save();
+}
+
+export function handleTrade(event: Trade): void {
+  let hackMoneyVault = HackMoneyVault.bind(event.address);
+  let vaultState = hackMoneyVault.vaultState();
+  let currentRound = BigInt.fromI32(vaultState.value0);
+  let round = getOrCreateRound(currentRound);
+
+  let positions = round.positions;
+  let i = positions.indexOf(event.params.positionId_1)
+  if (i == -1) {
+    positions.push(event.params.positionId_1)
+  }
+  i = positions.indexOf(event.params.positionId_2)
+  if (i == -1) {
+    positions.push(event.params.positionId_2)
+  }
+  round.positions = positions;
+
+  round.size = round.size.plus(event.params.capitalUsed);
+  round.premiumReceived = round.premiumReceived.plus(event.params.premium);
+  round.save();
 }

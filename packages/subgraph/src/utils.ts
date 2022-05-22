@@ -29,6 +29,9 @@ export function getOrCreateRound(_id: BigInt): Round {
   if (!round) {
     round = new Round(_id.toString());
     round.createdAt = BigInt.fromI32(0);
+    round.positions = []
+    round.size = BigInt.fromI32(0);
+    round.premiumReceived = BigInt.fromI32(0);
     round.save();
   }
   return round as Round;

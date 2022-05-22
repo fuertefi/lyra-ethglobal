@@ -8,6 +8,9 @@ export const ROUND_QUERY = gql`
       createdAt
       roundInProgress
       expiry
+      size
+      premiumReceived
+      positions
     }
   }
 `;

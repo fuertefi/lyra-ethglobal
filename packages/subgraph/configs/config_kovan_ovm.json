@@ -1,6 +1,6 @@
 {
-  "HackMoneyVaultAddress": "0x005b6F03c82C15A74A7C508F33916BB787Fa3c80",
-  "HackMoneyStrategyAddress": "0x3f1Ebee7210BA75929003C84a3055cdF99dc89b0",
+  "HackMoneyVaultAddress": "0x4d5d4a4dedfcdd93d250ec0321d0cb02f44dc9a2",
+  "HackMoneyStrategyAddress": "0xf1c934b974370e526806113e1e205858b4f12592",
   "network": "optimism-kovan",
   "startBlock": 3156327,
   "abi_path": "../contracts/abi"

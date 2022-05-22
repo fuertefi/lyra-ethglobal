@@ -6,7 +6,7 @@ dataSources:
     name: HackMoneyVault
     network: optimism-kovan
     source:
-      address: "0xf8c3b27c5175c04839e7073a805f195bcf812840"
+      address: "0x4d5d4a4dedfcdd93d250ec0321d0cb02f44dc9a2"
       abi: HackMoneyVault
       startBlock: 3156327
     mapping:

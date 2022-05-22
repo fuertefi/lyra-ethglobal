@@ -39,7 +39,8 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject",
-    "codegen:hackmoneyvault": "apollo client:codegen --target typescript --globalTypesFile=types/global_apollo.ts --includes=./src/queries/hackmoneyvault/**/*.ts  --endpoint 'https://api.thegraph.com/subgraphs/name/igorline/covered-strangle-t'"
+    "codegen:hackmoneyvault": "apollo client:codegen --target typescript --globalTypesFile=types/global_apollo.ts --includes=./src/queries/hackmoneyvault/**/*.ts  --endpoint 'https://api.thegraph.com/subgraphs/name/igorline/covered-strangle'",
+    "codegen:lyra": "apollo client:codegen --target typescript --globalTypesFile=types/global_apollo.ts --includes=./src/queries/lyra/**/*.ts  --endpoint 'https://api.thegraph.com/subgraphs/name/lyra-finance/kovan'"
   },
   "eslintConfig": {
     "extends": [

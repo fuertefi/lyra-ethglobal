@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import useChainlinkETHPrice from "../../hooks/useChainlinkETHPrice";
 import useRound from "../../hooks/useRound";
+import usePositions from "../../hooks/useLyraPositions";
 import {
   getCurrentStrategy,
   StrategyDetails,
@@ -14,6 +15,8 @@ import { useLyraMarket } from "../../state/lyra/hooks/getMarket";
 import { useVault } from "../../state/vault/hooks";
 import StrategyCap from "./StrategyCap";
 import SingleColumnPanel, { DoubleColumnPanel } from "./StrategyMetrics";
+import {ethers} from "ethers";
+import {Positions_positions} from "../../queries/lyra/__generated__/Positions";
 
 const StrategyDetailsContainer = styled.div`
   width: 100%;
@@ -46,6 +49,7 @@ const StrategyDetailsPanel = () => {
   const lyraMarket = useLyraMarket();
   const ethPrice = useChainlinkETHPrice() || 0;
   const { data: roundData } = useRound();
+  const { data: positions } = usePositions(roundData?.positions || []);
 
   if (!vaultParams || !vaultBalance || !lyraMarket?.baseToken.symbol)
     return null;
@@ -58,6 +62,12 @@ const StrategyDetailsPanel = () => {
           "MMM dd"
         )}`
       : "-";
+
+  const formatPositions = (positions: Positions_positions[]) => (
+    positions?.map((i, index, arr) => `${index <= arr.length - 1 ? " ": ""}${parseFloat(ethers.utils.formatUnits(i.size, 18)).toFixed(2)
+    } calls ${parseFloat(ethers.utils.formatUnits(i.strike?.strikePrice, 18))}`))
+
+    const optionsData = roundData?.roundInProgress ? `Sold ${formatPositions(positions || [])}` : '-';
 
   return (
     <>
@@ -78,7 +88,7 @@ const StrategyDetailsPanel = () => {
           />
           <SingleColumnPanel
             headline="Strategy Collateral"
-            text={`${parseFloat(formatUnits(vaultBalance, decimals))} ${
+            text={`${parseFloat(formatUnits(roundData?.lockedAmount, decimals))} ${
               lyraMarket?.baseToken.symbol
             }`}
             tooltip={
@@ -101,7 +111,7 @@ const StrategyDetailsPanel = () => {
           />
           <DoubleColumnPanel
             headline={"Options Positions"}
-            text={""}
+            text={optionsData}
             tooltip={
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }

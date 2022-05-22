@@ -5,6 +5,7 @@ import "hardhat/console.sol";
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Multicall} from "@openzeppelin/contracts/utils/Multicall.sol";
 
 import {BaseVault} from "./BaseVault.sol";
 import {Vault} from "../libraries/Vault.sol";
@@ -12,7 +13,7 @@ import {Vault} from "../libraries/Vault.sol";
 import {IHackMoneyStrategy} from "../interfaces/IHackMoneyStrategy.sol";
 
 /// @notice LyraVault help users run option-selling strategies on Lyra AMM.
-contract HackMoneyVault is Ownable, BaseVault {
+contract HackMoneyVault is Multicall, Ownable, BaseVault {
     IERC20 public immutable premiumAsset;
     IERC20 public immutable collateralAsset;
 
@@ -32,6 +33,7 @@ contract HackMoneyVault is Ownable, BaseVault {
         uint positionId_2,
         uint premium,
         uint capitalUsed
+        // uint exchangeValue
     );
 
     event RoundStarted(uint16 roundId, uint104 lockAmount);
@@ -73,15 +75,14 @@ contract HackMoneyVault is Ownable, BaseVault {
     /// @dev anyone can trigger a trade
     function trade(uint size) public {
         require(vaultState.roundInProgress, "round closed");
-        console.log("inside trade");
         // perform trades through strategy
         (
             uint positionId_1,
             uint positionId_2,
             uint premiumReceived,
             uint capitalUsed
-        ) = strategy.doTrade(size, lyraRewardRecipient);
-        console.log("after do trade");
+            // uint exchangeValue
+        ) = strategy.doTrade(size);
         // update the remaining locked amount
         vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
 
@@ -92,6 +93,7 @@ contract HackMoneyVault is Ownable, BaseVault {
             positionId_2,
             premiumReceived,
             capitalUsed
+            // exchangeValue
         );
     }
 
@@ -120,7 +122,7 @@ contract HackMoneyVault is Ownable, BaseVault {
 
     /// @notice start the next round
     /// @param boardId board id (asset + expiry) for next round.
-    function startNextRound(uint boardId, uint size) external onlyOwner {
+    function startNextRound(uint boardId) external onlyOwner {
         require(!vaultState.roundInProgress, "round opened");
         require(block.timestamp > vaultState.nextRoundReadyTimestamp, "CD");
 
@@ -140,7 +142,6 @@ contract HackMoneyVault is Ownable, BaseVault {
             collateralAsset.transfer(address(strategy), lockedBalance),
             "collateralAsset transfer failed"
         );
-        trade(size);
     }
 
     /// @notice set set new address to receive Lyra trading reward on behalf of the vault

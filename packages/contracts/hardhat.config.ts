@@ -76,4 +76,7 @@ export default {
   dependencyCompiler: {
     paths: lyraContractPaths,
   },
+  mocha: {
+    timeout: 60000000,
+  },
 };

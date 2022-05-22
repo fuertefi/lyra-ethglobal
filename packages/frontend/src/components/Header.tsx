@@ -4,7 +4,6 @@ import { useAccount } from "wagmi";
 
 const StyledHeader = styled.div`
   display: flex;
-  flex-direction: row;
   max-width: 1272px;
   margin: 0 auto;
   justify-content: space-between;

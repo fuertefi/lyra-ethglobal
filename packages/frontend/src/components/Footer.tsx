@@ -1,12 +1,10 @@
 import styled from "styled-components";
 
-const Container = styled.div`
+const StyledFooter = styled.div`
   display: flex;
-  flex-direction: row;
   max-width: 1272px;
-  margin: 0 auto;
+  margin: 0 auto 53px;
   justify-content: space-between;
-  margin-bottom: 53px;
 `;
 
 const WhiteText = styled.span`
@@ -18,11 +16,11 @@ const GreenText = styled.span`
 
 export const Footer = () => {
   return (
-    <Container>
+    <StyledFooter>
       <span>
         <GreenText>Covered Strangle</GreenText> Strategy on Lyra. HackMoney 2022
       </span>
       <WhiteText>The Future of Finance</WhiteText>
-    </Container>
+    </StyledFooter>
   );
 };

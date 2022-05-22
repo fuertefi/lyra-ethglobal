@@ -33,16 +33,18 @@ const InfoIcon = styled.img`
 
 interface WithdrawItemProps {
   label: string;
-  value: BigNumber;
+  itemValue: BigNumber;
   token: Token | undefined;
   tooltip: string;
+  isClickable?: boolean;
 }
 
 const WithdrawItem = ({
   label,
-  value: itemValue,
+  itemValue,
   token,
   tooltip,
+  isClickable = true,
 }: WithdrawItemProps) => {
   const [_, setValue] = useAtom(inputAtom);
   // only display 7 decimal points
@@ -57,9 +59,13 @@ const WithdrawItem = ({
     <>
       <WithdrawItemContainer>
         <span>
-          <span style={{ cursor: "pointer" }} onClick={handleItemValueClick}>
-            {label}
-          </span>
+          {isClickable ? (
+            <span style={{ cursor: "pointer" }} onClick={handleItemValueClick}>
+              {label}
+            </span>
+          ) : (
+            <span>{label}</span>
+          )}
           <Tooltip placement="right" title={tooltip} color="#404349">
             <InfoIcon src="/info_icon.svg" alt="" />
           </Tooltip>
@@ -89,7 +95,9 @@ export const WithdrawPanel = ({
   const position = balance.availableNowValue
     .add(balance.lockedInStrategyValue)
     .add(balance.pendingUnlockValue);
-  const maxAmount = balance.availableNowValue;
+  const maxAmount = balance.availableNowValue.add(
+    balance.lockedInStrategyValue
+  );
   var withdrawValue = useAtomValue(inputAtom);
   if (isNaN(+(withdrawValue as string))) {
     withdrawValue = "0";
@@ -125,25 +133,32 @@ export const WithdrawPanel = ({
       <div>
         <WithdrawItem
           label="available now"
-          value={balance.availableNowValue}
+          itemValue={balance.availableNowValue}
           token={balance.token}
           tooltip="This is equal to the value of your funds that are currently not invested in the vault's weekly strategy. These funds can be withdrawn from the vault immediately."
         />
         <WithdrawItem
           label="locked in strategy"
-          value={balance.lockedInStrategyValue}
+          itemValue={balance.lockedInStrategyValue}
           token={balance.token}
           tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         />
         <WithdrawItem
           label="pending unlock"
-          value={balance.pendingUnlockValue}
+          itemValue={balance.pendingUnlockValue}
           token={balance.token}
           tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+          isClickable={false}
         />
       </div>
-      <ActionButton disabled={withdrawIsPending} onClick={handleWithdrawClick}>
-        Withdraw
+      <ActionButton
+        disabled={withdrawIsPending || position.toNumber() == 0}
+        onClick={handleWithdrawClick}
+      >
+        {parseFloat(withdrawValue as string) >
+        balance.availableNowValue.toNumber()
+          ? "Request and Withdraw"
+          : "Withdraw"}
       </ActionButton>
     </>
   );

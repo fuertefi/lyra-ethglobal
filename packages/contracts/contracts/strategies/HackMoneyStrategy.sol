@@ -134,29 +134,18 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
 
         collateralToAdd = collateralToAdd1 + collateralToAdd2;
 
-        // require(
-        //     collateralAsset.transferFrom(
-        //         address(vault),
-        //         address(this),
-        //         collateralToAdd
-        //     ),
-        //     "collateral transfer from vault failed"
-        // );
-        console.log("selling strike 1 ");
         uint premiumReceived1;
         (positionId1, premiumReceived1) = _sellStrike(
             strike1,
             collateralToAdd1,
             lyraRewardRecipient
         );
-        console.log("selling strike 2 ");
         uint premiumReceived2;
         (positionId2, premiumReceived2) = _sellStrike(
             strike2,
             collateralToAdd2,
             lyraRewardRecipient
         );
-        console.log("selling premiums  ");
         uint additionalPremium;
         (positionId1, positionId2, additionalPremium) = _tradePremiums(
             premiumReceived1 + premiumReceived2,
@@ -192,12 +181,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         )
     {
         // exchange susd to seth
-        uint baseBalanceBefore = baseAsset.balanceOf(address(this));
-        _exchangePremiums(size);
-        uint sellAmount = (baseAsset.balanceOf(address(this)) -
-            baseBalanceBefore) / 2;
-        console.log("exchange made");
-        //uint size = baseAsset.balanceOf(address(this)) / 2;
+        uint sellAmount = _exchangePremiums(size) / 2;
         (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
         uint premiumReceived1;
         (positionId1, premiumReceived1) = _sellPremiums(
@@ -206,7 +190,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             collateralToAdd1,
             lyraRewardRecipient
         );
-        console.log("sell premium 1 made");
         uint premiumReceived2;
         (positionId2, premiumReceived2) = _sellPremiums(
             strike2,
@@ -214,7 +197,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             collateralToAdd2,
             lyraRewardRecipient
         );
-        console.log("sell premium 2 made");
         premiumReceived = premiumReceived1 + premiumReceived2;
     }
 

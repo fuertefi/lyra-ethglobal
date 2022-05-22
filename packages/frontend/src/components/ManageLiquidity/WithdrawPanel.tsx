@@ -1,7 +1,10 @@
+import { Market } from "@lyrafinance/lyra-js";
 import { Tooltip } from "antd";
-import { BigNumber, ethers } from "ethers";
-import { useAtom } from "jotai";
+import HackMoneyVaultABI from "contracts/abi/HackMoneyVault.json";
+import { BigNumber, ethers, utils } from "ethers";
+import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { BalanceDestructured, Token } from ".";
 import { inputAtom } from "../../state/position/atoms";
 import { ActionButton } from "./ActionButton";
@@ -35,13 +38,21 @@ interface WithdrawItemProps {
   tooltip: string;
 }
 
-const WithdrawItem = ({ label, value: itemValue, token, tooltip }: WithdrawItemProps) => {
-  const [ _, setValue ] = useAtom(inputAtom);
+const WithdrawItem = ({
+  label,
+  value: itemValue,
+  token,
+  tooltip,
+}: WithdrawItemProps) => {
+  const [_, setValue] = useAtom(inputAtom);
   // only display 7 decimal points
-  const itemValueDisplay = (+ethers.utils.formatUnits(itemValue, token?.decimals)).toFixed(7);
+  const itemValueDisplay = (+ethers.utils.formatUnits(
+    itemValue,
+    token?.decimals
+  )).toFixed(7);
   const handleItemValueClick = () => {
     setValue(ethers.utils.formatUnits(itemValue, token?.decimals));
-  }
+  };
   return (
     <>
       <WithdrawItemContainer>
@@ -53,7 +64,9 @@ const WithdrawItem = ({ label, value: itemValue, token, tooltip }: WithdrawItemP
             <InfoIcon src="/info_icon.svg" alt="" />
           </Tooltip>
         </span>
-        <span>{itemValueDisplay} {token?.symbol}</span>
+        <span>
+          {itemValueDisplay} {token?.symbol}
+        </span>
       </WithdrawItemContainer>
       <hr style={{ border: "1px solid #414447", width: "100%" }} />
     </>
@@ -61,17 +74,54 @@ const WithdrawItem = ({ label, value: itemValue, token, tooltip }: WithdrawItemP
 };
 
 interface Props {
+  market: Market | undefined;
+  account: any;
+  lyraVaultAddress: string;
   balance: BalanceDestructured;
 }
 
-export const WithdrawPanel = ({ balance }: Props) => {
-  console.log(balance)
+export const WithdrawPanel = ({
+  market,
+  account,
+  lyraVaultAddress,
+  balance,
+}: Props) => {
   const position = balance.availableNowValue
     .add(balance.lockedInStrategyValue)
     .add(balance.pendingUnlockValue);
+  const maxAmount = balance.availableNowValue;
+  var withdrawValue = useAtomValue(inputAtom);
+  if (isNaN(+(withdrawValue as string))) {
+    withdrawValue = "0";
+  }
+  const { data: withdrawData, write: withdraw } = useContractWrite(
+    {
+      addressOrName: lyraVaultAddress,
+      contractInterface: HackMoneyVaultABI,
+    },
+    "initiateWithdraw",
+    {
+      args: [
+        utils.parseUnits(withdrawValue || "0", market?.baseToken.decimals),
+      ],
+    }
+  );
+
+  const { isLoading: withdrawIsPending } = useWaitForTransaction({
+    hash: withdrawData?.hash,
+    confirmations: 2,
+  });
+
+  const handleWithdrawClick = () => {
+    withdraw();
+  };
+
   return (
     <>
-      <CurrencyInput currency={balance.token?.symbol} maxAmount={ethers.utils.formatUnits(position, balance.token?.decimals)} />
+      <CurrencyInput
+        currency={balance.token?.symbol}
+        maxAmount={ethers.utils.formatUnits(maxAmount, balance.token?.decimals)}
+      />
       <div>
         <WithdrawItem
           label="available now"
@@ -92,7 +142,9 @@ export const WithdrawPanel = ({ balance }: Props) => {
           tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         />
       </div>
-      <ActionButton>Withdraw</ActionButton>
+      <ActionButton disabled={withdrawIsPending} onClick={handleWithdrawClick}>
+        Withdraw
+      </ActionButton>
     </>
   );
 };

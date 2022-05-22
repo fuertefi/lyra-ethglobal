@@ -92,9 +92,11 @@ const ManageLiquidity: FC = (props: any) => {
     account.data?.address,
   ]);
   const balance: BalanceDestructured = {
-    availableNowValue: BigNumber.from(depositReceipt && depositReceipt[1] || 0),
-    lockedInStrategyValue: BigNumber.from(depositReceipt && depositReceipt[1] || 0),
-    pendingUnlockValue: BigNumber.from(depositReceipt && depositReceipt[1] || 0),
+    availableNowValue: BigNumber.from(
+      (depositReceipt && depositReceipt[1]) || 0
+    ),
+    lockedInStrategyValue: BigNumber.from(0),
+    pendingUnlockValue: BigNumber.from(0),
     token: market?.baseToken,
   };
   const network = useNetwork();
@@ -119,7 +121,12 @@ const ManageLiquidity: FC = (props: any) => {
           </TabPane>
           <TabPane tab="WITHDRAW" key="2">
             <TabContent>
-              <WithdrawPanel balance={balance} />
+              <WithdrawPanel
+                market={market}
+                account={account}
+                lyraVaultAddress={lyraVaultAddress}
+                balance={balance}
+              />
             </TabContent>
           </TabPane>
         </Tabs>

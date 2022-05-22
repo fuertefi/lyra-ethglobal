@@ -92,16 +92,17 @@ export const WithdrawPanel = ({
   lyraVaultAddress,
   balance,
 }: Props) => {
-  const position = balance.availableNowValue
+  const position: BigNumber = balance.availableNowValue
     .add(balance.lockedInStrategyValue)
     .add(balance.pendingUnlockValue);
-  const maxAmount = balance.availableNowValue.add(
+  const maxAmount: BigNumber = balance.availableNowValue.add(
     balance.lockedInStrategyValue
   );
-  var withdrawValue = useAtomValue(inputAtom);
-  if (isNaN(+(withdrawValue as string))) {
-    withdrawValue = "0";
+  var withdrawValStr: string = useAtomValue(inputAtom) || "0";
+  if (isNaN(+(withdrawValStr))) {
+    withdrawValStr = "0";
   }
+  const withdrawValBigNumber: BigNumber = utils.parseUnits(withdrawValStr, market?.baseToken.decimals!);
   const { data: withdrawData, write: withdraw } = useContractWrite(
     {
       addressOrName: lyraVaultAddress,
@@ -109,9 +110,7 @@ export const WithdrawPanel = ({
     },
     "initiateWithdraw",
     {
-      args: [
-        utils.parseUnits(withdrawValue || "0", market?.baseToken.decimals),
-      ],
+      args: [ withdrawValBigNumber ],
     }
   );
 
@@ -152,11 +151,10 @@ export const WithdrawPanel = ({
         />
       </div>
       <ActionButton
-        disabled={withdrawIsPending || position.toNumber() == 0}
+        disabled={withdrawIsPending || position.eq(0)}
         onClick={handleWithdrawClick}
       >
-        {parseFloat(withdrawValue as string) >
-        balance.availableNowValue.toNumber()
+        {balance.availableNowValue.lt(withdrawValBigNumber)
           ? "Request and Withdraw"
           : "Withdraw"}
       </ActionButton>

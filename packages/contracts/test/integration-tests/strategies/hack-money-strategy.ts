@@ -24,7 +24,7 @@ const strategyDetail: HackMoneyStrategyDetailStruct = {
   maxDeltaGap: toBN("0.25"), // accept delta from 0.10~0.20 or 0.80~0.90
   minVol: toBN("0.8"), // min vol to sell. (also used to calculate min premium for call selling vault)
   maxVol: toBN("1.3"), // max vol to sell.
-  size: toBN("200"),
+  size: toBN("100"),
 };
 
 describe("Hack Money Strategy integration test", async () => {
@@ -208,7 +208,7 @@ describe("Hack Money Strategy integration test", async () => {
       expect(state.totalPending.eq(toBN("100000"))).to.be.true;
     });
     it("manager can start round 1", async () => {
-      await vault.connect(manager).startNextRound(boardId);
+      await vault.connect(manager).startNextRound(boardId, strategyDetail.size);
     });
 
     it("should trade when called first time", async () => {

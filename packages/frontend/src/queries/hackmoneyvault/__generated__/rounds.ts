@@ -14,6 +14,9 @@ export interface rounds_rounds {
   createdAt: any | null;
   roundInProgress: boolean | null;
   expiry: any | null;
+  size: any;
+  premiumReceived: any;
+  positions: any[];
 }
 
 export interface rounds {

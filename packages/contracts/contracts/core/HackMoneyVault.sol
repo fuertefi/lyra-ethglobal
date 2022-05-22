@@ -1,5 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
+// Hardhat
+import "hardhat/console.sol";
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -69,9 +71,9 @@ contract HackMoneyVault is Ownable, BaseVault {
     }
 
     /// @dev anyone can trigger a trade
-    function trade(uint size) external {
+    function trade(uint size) public {
         require(vaultState.roundInProgress, "round closed");
-
+        console.log("inside trade");
         // perform trades through strategy
         (
             uint positionId_1,
@@ -79,7 +81,7 @@ contract HackMoneyVault is Ownable, BaseVault {
             uint premiumReceived,
             uint capitalUsed
         ) = strategy.doTrade(size, lyraRewardRecipient);
-
+        console.log("after do trade");
         // update the remaining locked amount
         vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
 
@@ -118,7 +120,7 @@ contract HackMoneyVault is Ownable, BaseVault {
 
     /// @notice start the next round
     /// @param boardId board id (asset + expiry) for next round.
-    function startNextRound(uint boardId) external onlyOwner {
+    function startNextRound(uint boardId, uint size) external onlyOwner {
         require(!vaultState.roundInProgress, "round opened");
         require(block.timestamp > vaultState.nextRoundReadyTimestamp, "CD");
 
@@ -132,8 +134,13 @@ contract HackMoneyVault is Ownable, BaseVault {
         vaultState.lockedAmountLeft = lockedBalance;
         vaultState.roundInProgress = true;
         lastQueuedWithdrawAmount = uint128(queuedWithdrawAmount);
-
         emit RoundStarted(vaultState.round, uint104(lockedBalance));
+
+        require(
+            collateralAsset.transfer(address(strategy), lockedBalance),
+            "collateralAsset transfer failed"
+        );
+        trade(size);
     }
 
     /// @notice set set new address to receive Lyra trading reward on behalf of the vault

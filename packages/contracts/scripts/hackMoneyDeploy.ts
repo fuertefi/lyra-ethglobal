@@ -25,7 +25,7 @@ const strategyDetail: HackMoneyStrategyDetailStruct = {
   maxTimeToExpiry: lyraConstants.WEEK_SEC * 2,
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
-  maxDeltaGap: toBN("0.25"), // accept delta from 0.10~0.20 or 0.80~0.90
+  maxDeltaGap: toBN("0.05"), // accept delta from 0.10~0.20 or 0.80~0.90
   minVol: toBN("0.8"), // min vol to sell. (also used to calculate min premium for call selling vault)
   maxVol: toBN("1.3"), // max vol to sell.
   size: toBN("15"),
@@ -63,7 +63,7 @@ async function main() {
 
   const LyraVaultFactory = new LyraVault__factory(deployer);
   const decimals = 18;
-  const cap = ethers.utils.parseEther("100000"); // 100k USD as cap
+  const cap = ethers.utils.parseEther("100"); // 100 ETH
   const lyraVault = await LyraVaultFactory.connect(deployer).deploy(
     sUSD.address,
     ZERO_ADDRESS,

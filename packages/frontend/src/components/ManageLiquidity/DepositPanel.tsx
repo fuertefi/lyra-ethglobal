@@ -11,7 +11,7 @@ import {
   useContractWrite,
   useWaitForTransaction,
 } from "wagmi";
-import { depositAtom } from "../../state/position/atoms";
+import { inputAtom } from "../../state/position/atoms";
 import { ActionButton } from "./ActionButton";
 import CurrencyInput from "./CurrencyInput";
 
@@ -45,7 +45,10 @@ export const DepositPanel = ({ market, account, lyraVaultAddress }: Props) => {
     }
   );
 
-  const depositValue = useAtomValue(depositAtom);
+  var depositValue = useAtomValue(inputAtom);
+  if (isNaN(+(depositValue as string))) {
+    depositValue = "0";
+  }
 
   const { data: approvalData, write: approve } = useContractWrite(
     {

@@ -3,7 +3,7 @@ import { BigNumber, ethers } from "ethers";
 import { useAtom } from "jotai";
 import styled from "styled-components";
 import { BalanceDestructured, Token } from ".";
-import { depositAtom } from "../../state/position/atoms";
+import { inputAtom } from "../../state/position/atoms";
 import { ActionButton } from "./ActionButton";
 import CurrencyInput from "./CurrencyInput";
 
@@ -36,7 +36,7 @@ interface WithdrawItemProps {
 }
 
 const WithdrawItem = ({ label, value: itemValue, token, tooltip }: WithdrawItemProps) => {
-  const [ _, setValue ] = useAtom(depositAtom);
+  const [ _, setValue ] = useAtom(inputAtom);
   // only display 7 decimal points
   const itemValueDisplay = (+ethers.utils.formatUnits(itemValue, token?.decimals)).toFixed(7);
   const handleItemValueClick = () => {

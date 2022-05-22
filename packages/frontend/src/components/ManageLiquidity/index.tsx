@@ -92,9 +92,9 @@ const ManageLiquidity: FC = (props: any) => {
     account.data?.address,
   ]);
   const balance: BalanceDestructured = {
-    availableNowValue: BigNumber.from(depositReceipt && depositReceipt[1]),
-    lockedInStrategyValue: BigNumber.from(depositReceipt && depositReceipt[1]),
-    pendingUnlockValue: BigNumber.from(depositReceipt && depositReceipt[1]),
+    availableNowValue: BigNumber.from(depositReceipt && depositReceipt[1] || 0),
+    lockedInStrategyValue: BigNumber.from(depositReceipt && depositReceipt[1] || 0),
+    pendingUnlockValue: BigNumber.from(depositReceipt && depositReceipt[1] || 0),
     token: market?.baseToken,
   };
   const network = useNetwork();

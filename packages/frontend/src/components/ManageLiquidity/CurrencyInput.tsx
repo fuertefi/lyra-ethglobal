@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { useState } from "react";
 import styled from "styled-components";
-import { depositAtom } from "../../state/position/atoms";
+import { inputAtom } from "../../state/position/atoms";
 import { ErrorIcon as ErrorIconSvg } from "../Icons";
 
 interface InputProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -90,17 +90,16 @@ export const CurrencyInput = ({
   maxAmount = "0",
 }: CurrencyInputProps) => {
   const [error, setError] = useState<string>();
-
-  const [value, setValue] = useAtom(depositAtom);
+  const [value, setValue] = useAtom(inputAtom);
 
   const validateAmount = (amount: string) => {
-    console.log(parseFloat(amount) > parseFloat(maxAmount));
-    if (parseFloat(amount) > parseFloat(maxAmount)) {
+    if (isNaN(+amount) || +amount === 0) {
+      setError("Not a valid number");
+    } else if (parseFloat(amount) > parseFloat(maxAmount)) {
       setError("Amount exceeds balance");
     } else {
       setError(undefined);
     }
-
     setValue(amount);
   };
 

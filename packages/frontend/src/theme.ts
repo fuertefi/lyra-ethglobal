@@ -4,6 +4,7 @@ export const white = "#FFFFFF";
 export const black = "#131517";
 export const darkGray = "#1F2124";
 export const disabledGray = "#696D74";
+export const accentGreen = "#06C799";
 
 export const theme = {
   position: {
@@ -28,7 +29,7 @@ export const theme = {
     },
   },
   button: {
-    bg: "#06C799",
+    bg: accentGreen,
     color: black,
   },
   icons: {
@@ -51,5 +52,9 @@ export const theme = {
     accent: {
       color: "#CED4DC",
     },
+  },
+  charts: {
+    background: "#233A35",
+    stroke: accentGreen,
   },
 };

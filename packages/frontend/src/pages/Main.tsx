@@ -26,12 +26,6 @@ const ContentColumns = styled.div`
   }
 `;
 
-const Header = styled.header`
-  font-family: "Clash Display";
-  font-size: 48px;
-  margin-bottom: 37px;
-`;
-
 const StyledVaultDescription = styled(VaultDescription)`
   margin-bottom: 50px;
 `;
@@ -48,9 +42,6 @@ export const Main = () => {
   return (
     <ContentColumns>
       <div className="left-section">
-        <Header>
-          Strategy<strong>Name</strong>
-        </Header>
         <StyledVaultDescription>
           Vaults imitate the payoff of selling out-of-the-money covered calls, and one out-of-the-money cash secured puts in equal parts on a weekly basis. Covered strangle is a classic short volatility strategy – it will perform best in USD terms if the price of underlying goes up and lose money if the price of the underlying declines. Compared to a covered call, it has a more protected downside for the cost of a more limited upside.
         </StyledVaultDescription>

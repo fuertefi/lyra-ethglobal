@@ -1,16 +1,24 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import styled from "styled-components";
 import { useAccount } from "wagmi";
 
+const StyledHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  max-width: 1272px;
+  margin: 0 auto;
+  justify-content: space-between;
+`;
 export const Header = () => {
   const { data: walletData } = useAccount();
   return (
-    <>
-      <div style={{ marginTop: "103px", marginLeft: "124px" }}>
+    <StyledHeader>
+      <div style={{ marginTop: "103px" }}>
         <img src="/covered_strangle.svg" alt="" width="533" />
         <br />
         <img src="/strategy_on_lyra.svg" alt="" />
       </div>
-      <div style={{ position: "absolute", top: "33px", right: "56px" }}>
+      <div style={{ marginTop: "33px" }}>
         {walletData && (
           <ConnectButton
             chainStatus="name"
@@ -19,6 +27,6 @@ export const Header = () => {
           />
         )}
       </div>
-    </>
+    </StyledHeader>
   );
 };

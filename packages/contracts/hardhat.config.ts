@@ -15,6 +15,7 @@ require("./tasks/startNewRound");
 require("./tasks/accounts");
 require("./tasks/trade");
 require("./tasks/getStrategyCollateral");
+require("./tasks/closeRound");
 
 dotenv.config();
 

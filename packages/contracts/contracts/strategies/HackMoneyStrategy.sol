@@ -35,7 +35,9 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         uint maxDeltaGap; // 5% ?
         uint minVol; // 80%
         uint maxVol; // 130%
+        // TODO: Do we need this?
         uint size; // 15
+        // TODO: This we don't use as of now. Maybe we should consider. TBC
         uint maxVolVariance; // 10%
         uint gwavPeriod;
     }
@@ -43,6 +45,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     HackMoneyStrategyDetail public strategyDetail;
     uint public activeExpiry;
     uint public currentBoardId;
+    // TODO: Should we move this into strategy details 
     uint public ivLimit = 2 * 1e18;
     address public lyraRewardRecipient;
 
@@ -118,6 +121,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
      * @return premiumReceived
      * @return collateralToAdd
      */
+    // FIXME: does it make more sense to specify total size?
     function doTrade(uint size)
         external
         onlyVault
@@ -134,6 +138,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         (positionId1, positionId2, premiumReceived, collateralToAdd) = _tradeOptions();
     }
 
+    // TODO: Refactor
     function _tradeOptions() internal returns (
         uint positionId1,
         uint positionId2,
@@ -328,6 +333,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         // update active strikes
         _addActiveStrike(strike.id, result.positionId);
 
+        // TODO: Remove this check as well?
         require(
             result.totalCost >= minExpectedPremium,
             "premium received is below min expected premium"
@@ -339,6 +345,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     /**
      * @dev use premium in strategy to reduce position size if collateral ratio is out of range
      */
+    // TODO: Remove this
     function reducePosition(
         uint,
         uint,
@@ -439,6 +446,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
      * @param collateralToLock collateral available to lock.
      * @return size how many options we can sell.
      */
+    // TODO: Never used. Remove?
     function _getPositionSize(uint strikePrice, uint collateralToLock)
         internal
         view
@@ -459,6 +467,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
      * @dev verify if the strike is valid for the strategy
      * @return isValid true if vol is withint [minVol, maxVol] and delta is within targetDelta +- maxDeltaGap
      */
+    // TODO: Remove as never used or use in the code
     function isValidStrike(Strike memory strike, bool isSmallStrike)
         public
         view
@@ -481,6 +490,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     /**
      * @dev check if the vol variance for the given strike is within certain range
      */
+    // TODO: Remove as never used
     function _isValidVolVariance(uint strikeId)
         internal
         view
@@ -505,6 +515,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             secondsToExpiry <= strategyDetail.maxTimeToExpiry);
     }
 
+    // TODO: Think how to handle dynamic fees of synthetix not to sell cheap.. https://blog.synthetix.io/dynamic-exchange-fees-explained/
     function _exchangePremiums(uint size) internal returns (uint baseReceived) {
         ExchangeRateParams memory exchangeParams = getExchangeParams();
         //uint quoteBal = quoteAsset.balanceOf(address(this));

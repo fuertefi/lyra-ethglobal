@@ -51,6 +51,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     uint public managementFee;
 
     // Gap is left to avoid storage collisions. Though RibbonVault is not upgradeable, we add this as a safety measure.
+    // TODO: Do we need this?
     uint[30] private ____gap;
 
     // *IMPORTANT* NO NEW STORAGE VARIABLES SHOULD BE ADDED HERE

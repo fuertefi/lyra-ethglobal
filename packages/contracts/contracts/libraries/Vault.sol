@@ -9,6 +9,7 @@ library Vault {
   // Fees are 6-decimal places. For example: 20 * 10**6 = 20%
   uint internal constant FEE_MULTIPLIER = 10**6;
 
+  // TODO: Let's make this variable as we don't have any time to wait for next listings to be available
   uint internal constant ROUND_DELAY = 1 days;
 
   struct VaultParams {

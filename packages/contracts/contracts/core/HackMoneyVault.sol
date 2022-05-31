@@ -23,6 +23,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
     // Amount locked for scheduled withdrawals last week;
     uint128 public lastQueuedWithdrawAmount;
     // % of funds to be used for weekly option purchase
+    // TODO: Do we need this?
     uint public optionAllocation;
 
     event StrategyUpdated(address strategy);
@@ -84,6 +85,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
             // uint exchangeValue
         ) = strategy.doTrade(size);
         // update the remaining locked amount
+        // TODO: This might be fucked up as capitalUsed now returns total sum with premiums exchanged. I still need to have amount we have been able to get from exchange as I need to display this in the UI
         vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
 
         // todo: udpate events
@@ -99,6 +101,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
 
     /// @dev anyone close part of the position with premium made by the strategy if a position is dangerous
     /// @param positionId the positiion to close
+    // TODO: We don't need this
     function reducePosition(uint positionId, uint closeAmount) external {
         strategy.reducePosition(positionId, closeAmount, lyraRewardRecipient);
     }
@@ -128,6 +131,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
 
         strategy.setBoard(boardId);
 
+        // FIXME: Do we have tests for this?
         (uint lockedBalance, uint queuedWithdrawAmount) = _rollToNextRound(
             uint(lastQueuedWithdrawAmount)
         );
@@ -138,6 +142,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
         lastQueuedWithdrawAmount = uint128(queuedWithdrawAmount);
         emit RoundStarted(vaultState.round, uint104(lockedBalance));
 
+        // TODO: should we use lockedAmount?
         require(
             collateralAsset.transfer(address(strategy), lockedBalance),
             "collateralAsset transfer failed"
@@ -151,6 +156,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
     }
 
     // helper to set strategy size
+    // TODO: Do we need this?
     function getLockedAmountLeft() public view returns (uint lockedAmountLeft) {
         lockedAmountLeft = uint(vaultState.lockedAmountLeft);
     }

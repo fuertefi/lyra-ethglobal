@@ -10,15 +10,9 @@ interface IHackMoneyStrategy {
             uint positionId1,
             uint positionId2,
             uint premium,
-            uint collateralAdded
-            // uint exchangeValue
+            uint collateralAdded,
+            uint premiumExchangeValue
         );
-
-    function reducePosition(
-        uint positionId,
-        uint closeAmount,
-        address rewardRecipient
-    ) external;
 
     function returnFundsAndClearStrikes() external;
 }

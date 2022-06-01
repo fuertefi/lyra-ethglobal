@@ -32,12 +32,8 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         uint maxTimeToExpiry;
         int mintargetDelta; // 15%
         int maxtargetDelta; // 85%
-        uint maxDeltaGap; // 5% ?
         uint minVol; // 80%
-        uint maxVol; // 130%
         uint size; // 15
-        uint maxVolVariance; // 10%
-        uint gwavPeriod;
     }
 
     HackMoneyStrategyDetail public strategyDetail;
@@ -80,7 +76,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     /**
      * @dev update lyra reward recipient
      */
-    function setLyraRewardRecipient(address _lyraRewardRecipient) external onlyOwner {
+    function setLyraRewardRecipient(address _lyraRewardRecipient)
+        external
+        onlyOwner
+    {
         lyraRewardRecipient = _lyraRewardRecipient;
     }
 
@@ -125,21 +124,32 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             uint positionId1,
             uint positionId2,
             uint premiumReceived,
-            uint collateralToAdd
-            // uint exchangeValue
+            uint collateralToAdd,
+            uint premiumExchangeValue
         )
+    // uint exchangeValue
     {
         strategyDetail.size = size;
 
-        (positionId1, positionId2, premiumReceived, collateralToAdd) = _tradeOptions();
+        (
+            positionId1,
+            positionId2,
+            premiumReceived,
+            collateralToAdd,
+            premiumExchangeValue
+        ) = _tradeOptions();
     }
 
-    function _tradeOptions() internal returns (
-        uint positionId1,
-        uint positionId2,
-        uint premiumReceived,
-        uint collateralToAdd
-    ) {
+    function _tradeOptions()
+        internal
+        returns (
+            uint positionId1,
+            uint positionId2,
+            uint premiumReceived,
+            uint collateralToAdd,
+            uint premiumExchangeValue
+        )
+    {
         (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
 
         uint premiumReceived1;
@@ -147,18 +157,21 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         uint collateralToAdd1;
         uint collateralToAdd2;
 
-        (positionId1, premiumReceived1, collateralToAdd1) = _tradeStrike(strike1);
-        (positionId2, premiumReceived2, collateralToAdd2) = _tradeStrike(strike2);
+        (positionId1, premiumReceived1, collateralToAdd1) = _tradeStrike(
+            strike1
+        );
+        (positionId2, premiumReceived2, collateralToAdd2) = _tradeStrike(
+            strike2
+        );
 
         uint additionalPremium;
-        uint exchangeValue;
-        (, , additionalPremium, exchangeValue) = _tradePremiums(
+        (, , additionalPremium, premiumExchangeValue) = _tradePremiums(
             premiumReceived,
             collateralToAdd1,
             collateralToAdd2
         );
 
-        collateralToAdd = collateralToAdd1 + collateralToAdd2 + exchangeValue;
+        collateralToAdd = collateralToAdd1 + collateralToAdd2; // + exchangeValue;
 
         premiumReceived =
             premiumReceived1 +
@@ -166,13 +179,17 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             additionalPremium;
     }
 
-    function _tradeStrike(Strike memory strike) internal returns (uint positionId, uint premiumReceived, uint collateralToAdd) {
+    function _tradeStrike(Strike memory strike)
+        internal
+        returns (
+            uint positionId,
+            uint premiumReceived,
+            uint collateralToAdd
+        )
+    {
         (collateralToAdd, ) = getRequiredCollateral(strike);
 
-        (positionId, premiumReceived) = _sellStrike(
-            strike,
-            collateralToAdd
-        );
+        (positionId, premiumReceived) = _sellStrike(strike, collateralToAdd);
     }
 
     /**
@@ -195,7 +212,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         )
     {
         // exchange susd to seth
-        exchangeValue = _exchangePremiums(size); 
+        exchangeValue = _exchangePremiums(size);
         uint sellAmount = exchangeValue / 2;
         (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
         uint premiumReceived1;
@@ -240,10 +257,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
      * @return positionId
      * @return premiumReceived
      */
-    function _sellStrike(
-        Strike memory strike,
-        uint setCollateralTo
-    ) internal returns (uint, uint) {
+    function _sellStrike(Strike memory strike, uint setCollateralTo)
+        internal
+        returns (uint, uint)
+    {
         // get minimum expected premium based on minIv
         uint minExpectedPremium = _getPremiumLimit(
             strike,
@@ -262,7 +279,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
                 optionType: optionType,
                 amount: strategyDetail.size,
                 setCollateralTo: setCollateralTo,
-                minTotalCost: 0,
+                minTotalCost: minExpectedPremium,
                 maxTotalCost: type(uint).max,
                 rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
             })
@@ -275,11 +292,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
 
         // update active strikes
         _addActiveStrike(strike.id, result.positionId);
-
-        // require(
-            // result.totalCost >= minExpectedPremium,
-            // "premium received is below min expected premium"
-        // );
 
         return (result.positionId, result.totalCost);
     }
@@ -336,17 +348,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         return (result.positionId, result.totalCost);
     }
 
-    /**
-     * @dev use premium in strategy to reduce position size if collateral ratio is out of range
-     */
-    function reducePosition(
-        uint,
-        uint,
-        address
-    ) external pure {
-        revert("not supported");
-    }
-
     function _getTradeStrikes()
         internal
         view
@@ -385,7 +386,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             Strike memory currentStrike = getStrikes(
                 _toDynamic(currentStrikeId)
             )[0];
-            (uint currentDeltaGap, int currentDelta) = _getDeltaGap(currentStrike, false);
+            (uint currentDeltaGap, int currentDelta) = _getDeltaGap(
+                currentStrike,
+                false
+            );
             if (currentDeltaGap < bigDeltaGap) {
                 bigStrike = currentStrike;
                 bigDeltaGap = currentDeltaGap;
@@ -434,67 +438,9 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         deltaGap = _abs(targetDelta - delta);
     }
 
-    /**
-     * @param strikePrice the strike price
-     * @param collateralToLock collateral available to lock.
-     * @return size how many options we can sell.
-     */
-    function _getPositionSize(uint strikePrice, uint collateralToLock)
-        internal
-        view
-        returns (uint size)
-    {
-        // calculate required collat based on collatBuffer and collatPercent
-        //fullCollat = _isBaseCollat() ? amount : amount.multiplyDecimal(strikePrice);
-        size = _isBaseCollat()
-            ? collateralToLock
-            : collateralToLock.divideDecimal(strikePrice);
-    }
-
     /////////////////
     // Validation ///
     /////////////////
-
-    /**
-     * @dev verify if the strike is valid for the strategy
-     * @return isValid true if vol is withint [minVol, maxVol] and delta is within targetDelta +- maxDeltaGap
-     */
-    function isValidStrike(Strike memory strike, bool isSmallStrike)
-        public
-        view
-        returns (bool isValid)
-    {
-        if (activeExpiry != strike.expiry) {
-            return false;
-        }
-
-        int targetDelta = isSmallStrike
-            ? strategyDetail.maxtargetDelta
-            : strategyDetail.mintargetDelta;
-        uint[] memory strikeId = _toDynamic(strike.id);
-        int callDelta = getDeltas(strikeId)[0];
-        int delta = _isCall() ? callDelta : callDelta - SignedDecimalMath.UNIT;
-        uint deltaGap = _abs(targetDelta - delta);
-        return deltaGap < strategyDetail.maxDeltaGap;
-    }
-
-    /**
-     * @dev check if the vol variance for the given strike is within certain range
-     */
-    function _isValidVolVariance(uint strikeId)
-        internal
-        view
-        returns (bool isValid)
-    {
-        uint volGWAV = gwavOracle.volGWAV(strikeId, strategyDetail.gwavPeriod);
-        uint volSpot = getVols(_toDynamic(strikeId))[0];
-
-        uint volDiff = (volGWAV >= volSpot)
-            ? volGWAV - volSpot
-            : volSpot - volGWAV;
-
-        return isValid = volDiff < strategyDetail.maxVolVariance;
-    }
 
     /**
      * @dev check if the expiry of the board is valid according to the strategy

@@ -17,13 +17,13 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
     IERC20 public immutable premiumAsset;
     IERC20 public immutable collateralAsset;
 
+    uint public roundDelay = 6 hours;
+
     IHackMoneyStrategy public strategy;
     address public lyraRewardRecipient;
 
     // Amount locked for scheduled withdrawals last week;
     uint128 public lastQueuedWithdrawAmount;
-    // % of funds to be used for weekly option purchase
-    uint public optionAllocation;
 
     event StrategyUpdated(address strategy);
 
@@ -32,8 +32,8 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
         uint positionId_1,
         uint positionId_2,
         uint premium,
-        uint capitalUsed
-        // uint exchangeValue
+        uint capitalUsed,
+        uint premiumExchangeValue
     );
 
     event RoundStarted(uint16 roundId, uint104 lockAmount);
@@ -80,8 +80,8 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
             uint positionId_1,
             uint positionId_2,
             uint premiumReceived,
-            uint capitalUsed
-            // uint exchangeValue
+            uint capitalUsed,
+            uint premiumExchangeValue
         ) = strategy.doTrade(size);
         // update the remaining locked amount
         vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
@@ -92,15 +92,9 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
             positionId_1,
             positionId_2,
             premiumReceived,
-            capitalUsed
-            // exchangeValue
+            capitalUsed,
+            premiumExchangeValue
         );
-    }
-
-    /// @dev anyone close part of the position with premium made by the strategy if a position is dangerous
-    /// @param positionId the positiion to close
-    function reducePosition(uint positionId, uint closeAmount) external {
-        strategy.reducePosition(positionId, closeAmount, lyraRewardRecipient);
     }
 
     /// @dev close the current round, enable user to deposit for the next round
@@ -109,9 +103,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
         vaultState.lastLockedAmount = lockAmount;
         vaultState.lockedAmountLeft = 0;
         vaultState.lockedAmount = 0;
-        vaultState.nextRoundReadyTimestamp =
-            block.timestamp +
-            Vault.ROUND_DELAY;
+        vaultState.nextRoundReadyTimestamp = block.timestamp + roundDelay;
         vaultState.roundInProgress = false;
 
         // won't be able to close if positions are not settled
@@ -150,8 +142,13 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
         lyraRewardRecipient = recipient;
     }
 
-    // helper to set strategy size
+    // helper to set AmountLeft
     function getLockedAmountLeft() public view returns (uint lockedAmountLeft) {
         lockedAmountLeft = uint(vaultState.lockedAmountLeft);
+    }
+
+    // helper set round delay
+    function setRoundDelay(uint newRoundDelay) external onlyOwner {
+        roundDelay = newRoundDelay;
     }
 }

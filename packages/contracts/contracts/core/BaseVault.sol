@@ -50,9 +50,6 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     /// @notice Management fee charged on entire AUM in rollToNextOption. Only charged when there is no loss.
     uint public managementFee;
 
-    // Gap is left to avoid storage collisions. Though RibbonVault is not upgradeable, we add this as a safety measure.
-    uint[30] private ____gap;
-
     // *IMPORTANT* NO NEW STORAGE VARIABLES SHOULD BE ADDED HERE
     // This is to prevent storage collisions. All storage variables should be appended to RibbonThetaVaultStorage
     // or RibbonDeltaVaultStorage instead. Read this documentation to learn more:
@@ -72,6 +69,8 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     event Deposit(address indexed account, uint amount, uint round);
 
     event InitiateWithdraw(address indexed account, uint shares, uint round);
+
+    event InstantWithdraw(address indexed account, uint amount, uint round);
 
     event Redeem(address indexed account, uint share, uint round);
 
@@ -286,7 +285,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
 
         emit InstantWithdraw(msg.sender, amount, currentRound);
 
-        transferAsset(msg.sender, amount);
+        _transferAsset(msg.sender, amount);
     }
 
     /**

@@ -40,16 +40,16 @@ const strategyDetail: HackMoneyStrategyDetailStruct = {
 
 describe("Hack Money Vault integration test", async () => {
   let deployer: SignerWithAddress;
-  let manager: SignerWithAddress;
-  let randomUser: SignerWithAddress;
-  let randomUser2: SignerWithAddress;
+  // let manager: SignerWithAddress;
+  // let randomUser: SignerWithAddress;
+  // let randomUser2: SignerWithAddress;
 
   before("assign roles", async () => {
     const addresses = await ethers.getSigners();
     deployer = addresses[0];
-    manager = addresses[1];
-    randomUser = addresses[8];
-    randomUser2 = addresses[9];
+    // manager = addresses[1];
+    // randomUser = addresses[8];
+    // randomUser2 = addresses[9];
   });
 
   it("deploy on kovan fork, deposit and try to trade", async () => {
@@ -71,9 +71,9 @@ describe("Hack Money Vault integration test", async () => {
 
     const whaleAddress = "0x15aDBea538f541271dA5E4436E41285e386E3336";
 
-    const balance = await ethers.provider.getBalance(
-      "0xD34F2e9916473C5eFA8A255f5b8738eCd4205317"
-    );
+    // const balance = await ethers.provider.getBalance(
+    // "0xD34F2e9916473C5eFA8A255f5b8738eCd4205317"
+    // );
 
     await network.provider.request({
       method: "hardhat_impersonateAccount",
@@ -84,7 +84,7 @@ describe("Hack Money Vault integration test", async () => {
     console.log("contract name:", lyraGlobal.SynthetixAdapter.contractName);
     console.log("address:", lyraGlobal.SynthetixAdapter.address);
 
-    let lyraMarket = await getMarketDeploys(networkId, "sETH");
+    const lyraMarket = await getMarketDeploys(networkId, "sETH");
     const whale = await ethers.getSigner(whaleAddress);
     const sETH = new Contract(
       lyraMarket.BaseAsset.address,

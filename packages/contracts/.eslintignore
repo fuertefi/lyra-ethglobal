@@ -1,0 +1,16 @@
+# folders
+artifacts/
+build/
+cache/
+dist/
+lib/
+scripts/
+node_modules/
+typechain/
+typechain-types/
+coverage/
+
+# files
+.solcover.js
+package.json
+docify.js

@@ -179,13 +179,13 @@ describe("Hack Money Strategy integration test", async () => {
   });
 
   describe("start the first round", async () => {
-    let strikes: BigNumber[] = [];
+    // let strikes: BigNumber[] = [];
     before("create fake seth for users", async () => {
       await seth.mint(randomUser.address, toBN("100000"));
       await seth.mint(randomUser2.address, toBN("100000"));
     });
     before("set strikes array", async () => {
-      strikes = await lyraTestSystem.optionMarket.getBoardStrikes(boardId);
+      // strikes = await lyraTestSystem.optionMarket.getBoardStrikes(boardId);
     });
     it("user should be able to deposit through vault", async () => {
       // user 1 deposits

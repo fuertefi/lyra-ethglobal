@@ -17,8 +17,8 @@ import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath
 import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol";
 
 contract HackMoneyStrategyBase is VaultAdapter {
-    using DecimalMath for uint;
-    using SignedDecimalMath for int;
+    using DecimalMath for uint256;
+    using SignedDecimalMath for int256;
 
     HackMoneyVault public immutable vault;
     OptionType public immutable optionType;
@@ -27,10 +27,10 @@ contract HackMoneyStrategyBase is VaultAdapter {
     /// @dev asset used as collateral in AMM to sell. Should be the same as vault asset
     IERC20 public collateralAsset;
 
-    mapping(uint => uint) public lastTradeTimestamp;
+    mapping(uint256 => uint256) public lastTradeTimestamp;
 
-    uint[] public activeStrikeIds;
-    mapping(uint => uint) public strikeToPositionId;
+    uint256[] public activeStrikeIds;
+    mapping(uint256 => uint256) public strikeToPositionId;
 
     ///////////
     // ADMIN //
@@ -79,8 +79,8 @@ contract HackMoneyStrategyBase is VaultAdapter {
             _feeCounter
         );
 
-        quoteAsset.approve(address(vault), type(uint).max);
-        baseAsset.approve(address(vault), type(uint).max);
+        quoteAsset.approve(address(vault), type(uint256).max);
+        baseAsset.approve(address(vault), type(uint256).max);
         collateralAsset = _isBaseCollat() ? baseAsset : quoteAsset;
     }
 
@@ -94,17 +94,17 @@ contract HackMoneyStrategyBase is VaultAdapter {
      */
     function _returnFundsToVaut() internal virtual {
         ExchangeRateParams memory exchangeParams = getExchangeParams();
-        uint quoteBal = quoteAsset.balanceOf(address(this));
+        uint256 quoteBal = quoteAsset.balanceOf(address(this));
 
         if (_isBaseCollat()) {
             // exchange quote asset to base asset, and send base asset back to vault
-            uint baseBal = baseAsset.balanceOf(address(this));
-            uint minQuoteExpected = quoteBal
+            uint256 baseBal = baseAsset.balanceOf(address(this));
+            uint256 minQuoteExpected = quoteBal
                 .divideDecimal(exchangeParams.spotPrice)
                 .multiplyDecimal(
                     DecimalMath.UNIT - exchangeParams.baseQuoteFeeRate
                 );
-            uint baseReceived = exchangeFromExactQuote(
+            uint256 baseReceived = exchangeFromExactQuote(
                 quoteBal,
                 minQuoteExpected
             );
@@ -132,11 +132,11 @@ contract HackMoneyStrategyBase is VaultAdapter {
      */
     function _getPremiumLimit(
         Strike memory strike,
-        uint vol,
-        uint size
-    ) internal view returns (uint limitPremium) {
+        uint256 vol,
+        uint256 size
+    ) internal view returns (uint256 limitPremium) {
         ExchangeRateParams memory exchangeParams = getExchangeParams();
-        (uint callPremium, uint putPremium) = getPurePremium(
+        (uint256 callPremium, uint256 putPremium) = getPurePremium(
             _getSecondsToExpiry(strike.expiry),
             vol,
             exchangeParams.spotPrice,
@@ -151,11 +151,15 @@ contract HackMoneyStrategyBase is VaultAdapter {
     /**
      * @dev use latest optionMarket delta cutoff to determine whether trade delta is out of bounds
      */
-    function _isOutsideDeltaCutoff(uint strikeId) internal view returns (bool) {
+    function _isOutsideDeltaCutoff(uint256 strikeId)
+        internal
+        view
+        returns (bool)
+    {
         MarketParams memory marketParams = getMarketParams();
-        int callDelta = getDeltas(_toDynamic(strikeId))[0];
+        int256 callDelta = getDeltas(_toDynamic(strikeId))[0];
         return
-            callDelta > (int(DecimalMath.UNIT) - marketParams.deltaCutOff) ||
+            callDelta > (int256(DecimalMath.UNIT) - marketParams.deltaCutOff) ||
             callDelta < marketParams.deltaCutOff;
     }
 
@@ -166,7 +170,9 @@ contract HackMoneyStrategyBase is VaultAdapter {
     /**
      * @dev add strike id to activeStrikeIds array
      */
-    function _addActiveStrike(uint strikeId, uint tradedPositionId) internal {
+    function _addActiveStrike(uint256 strikeId, uint256 tradedPositionId)
+        internal
+    {
         if (!_isActiveStrike(strikeId)) {
             strikeToPositionId[strikeId] = tradedPositionId;
             activeStrikeIds.push(strikeId);
@@ -176,7 +182,7 @@ contract HackMoneyStrategyBase is VaultAdapter {
     /**
      * @dev add the last traded timestamp for a specific strike.
      */
-    function _setLastTradedAt(uint strikeId, uint timestamp) internal {
+    function _setLastTradedAt(uint256 strikeId, uint256 timestamp) internal {
         lastTradeTimestamp[strikeId] = timestamp;
     }
 
@@ -186,8 +192,8 @@ contract HackMoneyStrategyBase is VaultAdapter {
      **/
     function _clearAllActiveStrikes() internal {
         if (activeStrikeIds.length != 0) {
-            for (uint i = 0; i < activeStrikeIds.length; i++) {
-                uint strikeId = activeStrikeIds[i];
+            for (uint256 i = 0; i < activeStrikeIds.length; i++) {
+                uint256 strikeId = activeStrikeIds[i];
                 OptionPosition memory position = getPositions(
                     _toDynamic(strikeToPositionId[strikeId])
                 )[0];
@@ -203,7 +209,7 @@ contract HackMoneyStrategyBase is VaultAdapter {
         }
     }
 
-    function _isActiveStrike(uint strikeId)
+    function _isActiveStrike(uint256 strikeId)
         internal
         view
         returns (bool isActive)
@@ -226,30 +232,34 @@ contract HackMoneyStrategyBase is VaultAdapter {
             : true;
     }
 
-    function _getSecondsToExpiry(uint expiry) internal view returns (uint) {
+    function _getSecondsToExpiry(uint256 expiry)
+        internal
+        view
+        returns (uint256)
+    {
         require(block.timestamp <= expiry, "timestamp expired");
         return expiry - block.timestamp;
     }
 
-    function _abs(int val) internal pure returns (uint) {
-        return val >= 0 ? uint(val) : uint(-val);
+    function _abs(int256 val) internal pure returns (uint256) {
+        return val >= 0 ? uint256(val) : uint256(-val);
     }
 
-    function _min(uint x, uint y) internal pure returns (uint) {
+    function _min(uint256 x, uint256 y) internal pure returns (uint256) {
         return (x < y) ? x : y;
     }
 
-    function _max(uint x, uint y) internal pure returns (uint) {
+    function _max(uint256 x, uint256 y) internal pure returns (uint256) {
         return (x > y) ? x : y;
     }
 
     // temporary fix - eth core devs promised Q2 2022 fix
-    function _toDynamic(uint val)
+    function _toDynamic(uint256 val)
         internal
         pure
-        returns (uint[] memory dynamicArray)
+        returns (uint256[] memory dynamicArray)
     {
-        dynamicArray = new uint[](1);
+        dynamicArray = new uint256[](1);
         dynamicArray[0] = val;
     }
 }

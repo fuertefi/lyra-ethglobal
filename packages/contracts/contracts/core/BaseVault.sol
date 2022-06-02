@@ -17,7 +17,7 @@ import "hardhat/console.sol";
 
 contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     using SafeERC20 for IERC20;
-    using SafeMath for uint;
+    using SafeMath for uint256;
     using ShareMath for Vault.DepositReceipt;
 
     /************************************************
@@ -30,7 +30,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     /// @notice On every round's close, the pricePerShare value of an rTHETA token is stored
     /// This is used to determine the number of shares to be returned
     /// to a user with their DepositReceipt.depositAmount
-    mapping(uint => uint) public roundPricePerShare;
+    mapping(uint256 => uint256) public roundPricePerShare;
 
     /// @notice Stores pending user withdrawals
     mapping(address => Vault.Withdrawal) public withdrawals;
@@ -45,10 +45,10 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     address public feeRecipient;
 
     /// @notice Performance fee charged on premiums earned in rollToNextOption. Only charged when there is no loss.
-    uint public performanceFee;
+    uint256 public performanceFee;
 
     /// @notice Management fee charged on entire AUM in rollToNextOption. Only charged when there is no loss.
-    uint public managementFee;
+    uint256 public managementFee;
 
     // *IMPORTANT* NO NEW STORAGE VARIABLES SHOULD BE ADDED HERE
     // This is to prevent storage collisions. All storage variables should be appended to RibbonThetaVaultStorage
@@ -60,32 +60,40 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      ***********************************************/
 
     // Round per year scaled up FEE_MULTIPLIER
-    uint private immutable roundPerYear;
+    uint256 private immutable roundPerYear;
 
     /************************************************
      *  EVENTS
      ***********************************************/
 
-    event Deposit(address indexed account, uint amount, uint round);
+    event Deposit(address indexed account, uint256 amount, uint256 round);
 
-    event InitiateWithdraw(address indexed account, uint shares, uint round);
+    event InitiateWithdraw(
+        address indexed account,
+        uint256 shares,
+        uint256 round
+    );
 
-    event InstantWithdraw(address indexed account, uint amount, uint round);
+    event InstantWithdraw(
+        address indexed account,
+        uint256 amount,
+        uint256 round
+    );
 
-    event Redeem(address indexed account, uint share, uint round);
+    event Redeem(address indexed account, uint256 share, uint256 round);
 
-    event ManagementFeeSet(uint managementFee, uint newManagementFee);
+    event ManagementFeeSet(uint256 managementFee, uint256 newManagementFee);
 
-    event PerformanceFeeSet(uint performanceFee, uint newPerformanceFee);
+    event PerformanceFeeSet(uint256 performanceFee, uint256 newPerformanceFee);
 
-    event CapSet(uint oldCap, uint newCap, address manager);
+    event CapSet(uint256 oldCap, uint256 newCap, address manager);
 
-    event Withdraw(address indexed account, uint amount, uint shares);
+    event Withdraw(address indexed account, uint256 amount, uint256 shares);
 
     event CollectVaultFees(
-        uint performanceFee,
-        uint vaultFee,
-        uint round,
+        uint256 performanceFee,
+        uint256 vaultFee,
+        uint256 round,
         address indexed feeRecipient
     );
 
@@ -98,19 +106,21 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      */
     constructor(
         address _feeRecipient,
-        uint _roundDuration,
+        uint256 _roundDuration,
         string memory _tokenName,
         string memory _tokenSymbol,
         Vault.VaultParams memory _vaultParams
     ) ERC20(_tokenName, _tokenSymbol) {
         feeRecipient = _feeRecipient;
-        uint _roundPerYear = uint(365 days).mul(Vault.FEE_MULTIPLIER).div(
+        uint256 _roundPerYear = uint256(365 days).mul(Vault.FEE_MULTIPLIER).div(
             _roundDuration
         );
         roundPerYear = _roundPerYear;
         vaultParams = _vaultParams;
 
-        uint assetBalance = IERC20(vaultParams.asset).balanceOf(address(this));
+        uint256 assetBalance = IERC20(vaultParams.asset).balanceOf(
+            address(this)
+        );
         ShareMath.assertUint104(assetBalance);
         vaultState.lastLockedAmount = uint104(assetBalance);
         vaultState.round = 1;
@@ -134,7 +144,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @notice Sets the management fee for the vault
      * @param newManagementFee is the management fee (6 decimals). ex: 2 * 10 ** 6 = 2%
      */
-    function setManagementFee(uint newManagementFee) external onlyOwner {
+    function setManagementFee(uint256 newManagementFee) external onlyOwner {
         require(
             newManagementFee < 100 * Vault.FEE_MULTIPLIER,
             "Invalid management fee"
@@ -152,7 +162,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @notice Sets the performance fee for the vault
      * @param newPerformanceFee is the performance fee (6 decimals). ex: 20 * 10 ** 6 = 20%
      */
-    function setPerformanceFee(uint newPerformanceFee) external onlyOwner {
+    function setPerformanceFee(uint256 newPerformanceFee) external onlyOwner {
         require(
             newPerformanceFee < 100 * Vault.FEE_MULTIPLIER,
             "Invalid performance fee"
@@ -167,7 +177,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @notice Sets a new cap for deposits
      * @param newCap is the new cap for deposits
      */
-    function setCap(uint newCap) external onlyOwner {
+    function setCap(uint256 newCap) external onlyOwner {
         require(newCap > 0, "!newCap");
 
         emit CapSet(vaultParams.cap, newCap, msg.sender);
@@ -184,7 +194,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @notice Deposits the `asset` from msg.sender.
      * @param amount is the amount of `asset` to deposit
      */
-    function deposit(uint amount) external nonReentrant {
+    function deposit(uint256 amount) external nonReentrant {
         require(amount > 0, "!amount");
 
         _depositFor(amount, msg.sender);
@@ -203,7 +213,10 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @param amount is the amount of `asset` to deposit
      * @param creditor is the address that can claim/withdraw deposited amount
      */
-    function depositFor(uint amount, address creditor) external nonReentrant {
+    function depositFor(uint256 amount, address creditor)
+        external
+        nonReentrant
+    {
         require(amount > 0, "!amount");
         require(creditor != address(0), "!creditor");
 
@@ -222,9 +235,9 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @param amount is the amount of `asset` deposited
      * @param creditor is the address to receieve the deposit
      */
-    function _depositFor(uint amount, address creditor) private {
-        uint currentRound = vaultState.round;
-        uint totalWithDepositedAmount = totalBalance().add(amount);
+    function _depositFor(uint256 amount, address creditor) private {
+        uint256 currentRound = vaultState.round;
+        uint256 totalWithDepositedAmount = totalBalance().add(amount);
 
         require(totalWithDepositedAmount <= vaultParams.cap, "Exceed cap");
 
@@ -233,17 +246,17 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
         Vault.DepositReceipt memory depositReceipt = depositReceipts[creditor];
 
         // process unprocessed pending deposit from the previous rounds
-        uint unredeemedShares = depositReceipt.getSharesFromReceipt(
+        uint256 unredeemedShares = depositReceipt.getSharesFromReceipt(
             currentRound,
             roundPricePerShare[depositReceipt.round],
             vaultParams.decimals
         );
 
-        uint depositAmount = amount;
+        uint256 depositAmount = amount;
 
         // If we have a pending deposit in the current round, we add on to the pending deposit
         if (currentRound == depositReceipt.round) {
-            uint newAmount = uint(depositReceipt.amount).add(amount);
+            uint256 newAmount = uint256(depositReceipt.amount).add(amount);
             depositAmount = newAmount;
         }
 
@@ -255,7 +268,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
             unredeemedShares: uint128(unredeemedShares)
         });
 
-        uint newTotalPending = uint(vaultState.totalPending).add(amount);
+        uint256 newTotalPending = uint256(vaultState.totalPending).add(amount);
         ShareMath.assertUint128(newTotalPending);
 
         vaultState.totalPending = uint128(newTotalPending);
@@ -292,7 +305,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @notice Initiates a withdrawal that can be processed once the round completes
      * @param numShares is the number of shares to withdraw
      */
-    function initiateWithdraw(uint numShares) external nonReentrant {
+    function initiateWithdraw(uint256 numShares) external nonReentrant {
         require(numShares > 0, "!numShares");
 
         // We do a max redeem before initiating a withdrawal
@@ -305,16 +318,16 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
         }
 
         // This caches the `round` variable used in shareBalances
-        uint currentRound = vaultState.round;
+        uint256 currentRound = vaultState.round;
         Vault.Withdrawal storage withdrawal = withdrawals[msg.sender];
 
         bool withdrawalIsSameRound = withdrawal.round == currentRound;
 
         emit InitiateWithdraw(msg.sender, numShares, currentRound);
 
-        uint existingShares = uint(withdrawal.shares);
+        uint256 existingShares = uint256(withdrawal.shares);
 
-        uint withdrawalShares;
+        uint256 withdrawalShares;
         if (withdrawalIsSameRound) {
             withdrawalShares = existingShares.add(numShares);
         } else {
@@ -326,8 +339,9 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
         ShareMath.assertUint128(withdrawalShares);
         withdrawals[msg.sender].shares = uint128(withdrawalShares);
 
-        uint newQueuedWithdrawShares = uint(vaultState.queuedWithdrawShares)
-            .add(numShares);
+        uint256 newQueuedWithdrawShares = uint256(
+            vaultState.queuedWithdrawShares
+        ).add(numShares);
         ShareMath.assertUint128(newQueuedWithdrawShares);
         vaultState.queuedWithdrawShares = uint128(newQueuedWithdrawShares);
 
@@ -340,8 +354,8 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     function completeWithdraw() external nonReentrant {
         Vault.Withdrawal storage withdrawal = withdrawals[msg.sender];
 
-        uint withdrawalShares = withdrawal.shares;
-        uint withdrawalRound = withdrawal.round;
+        uint256 withdrawalShares = withdrawal.shares;
+        uint256 withdrawalRound = withdrawal.round;
 
         // This checks if there is a withdrawal
         require(withdrawalShares > 0, "Not initiated");
@@ -351,10 +365,10 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
         // We leave the round number as non-zero to save on gas for subsequent writes
         withdrawals[msg.sender].shares = 0;
         vaultState.queuedWithdrawShares = uint128(
-            uint(vaultState.queuedWithdrawShares).sub(withdrawalShares)
+            uint256(vaultState.queuedWithdrawShares).sub(withdrawalShares)
         );
 
-        uint withdrawAmount = ShareMath.sharesToAsset(
+        uint256 withdrawAmount = ShareMath.sharesToAsset(
             withdrawalShares,
             roundPricePerShare[withdrawalRound],
             vaultParams.decimals
@@ -373,7 +387,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @notice Redeems shares that are owed to the account
      * @param numShares is the number of shares to redeem
      */
-    function redeem(uint numShares) external nonReentrant {
+    function redeem(uint256 numShares) external nonReentrant {
         require(numShares > 0, "!numShares");
         _redeem(numShares, false);
     }
@@ -390,16 +404,16 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @param numShares is the number of shares to redeem, could be 0 when isMax=true
      * @param isMax is flag for when callers do a max redemption
      */
-    function _redeem(uint numShares, bool isMax) internal {
+    function _redeem(uint256 numShares, bool isMax) internal {
         Vault.DepositReceipt memory depositReceipt = depositReceipts[
             msg.sender
         ];
 
         // This handles the null case when depositReceipt.round = 0
         // Because we start with round = 1 at `initialize`
-        uint currentRound = vaultState.round;
+        uint256 currentRound = vaultState.round;
 
-        uint unredeemedShares = depositReceipt.getSharesFromReceipt(
+        uint256 unredeemedShares = depositReceipt.getSharesFromReceipt(
             currentRound,
             roundPricePerShare[depositReceipt.round],
             vaultParams.decimals
@@ -439,28 +453,28 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @return lockedBalance is the new balance used to calculate next option purchase size or collateral size
      * @return queuedWithdrawAmount is the new queued withdraw amount for this round
      */
-    function _rollToNextRound(uint lastQueuedWithdrawAmount)
+    function _rollToNextRound(uint256 lastQueuedWithdrawAmount)
         internal
-        returns (uint, uint)
+        returns (uint256, uint256)
     {
         (
-            uint lockedBalance,
-            uint queuedWithdrawAmount,
-            uint newPricePerShare,
-            uint mintShares
+            uint256 lockedBalance,
+            uint256 queuedWithdrawAmount,
+            uint256 newPricePerShare,
+            uint256 mintShares
         ) = VaultLifecycle.rollover(
                 totalSupply(),
                 vaultParams.asset,
                 vaultParams.decimals,
-                uint(vaultState.totalPending),
+                uint256(vaultState.totalPending),
                 vaultState.queuedWithdrawShares
             );
 
         // Finalize the pricePerShare at the end of the round
-        uint currentRound = vaultState.round;
+        uint256 currentRound = vaultState.round;
         roundPricePerShare[currentRound] = newPricePerShare;
 
-        uint withdrawAmountDiff = queuedWithdrawAmount >
+        uint256 withdrawAmountDiff = queuedWithdrawAmount >
             lastQueuedWithdrawAmount
             ? queuedWithdrawAmount.sub(lastQueuedWithdrawAmount)
             : 0;
@@ -484,8 +498,11 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @param pastWeekBalance is the balance we are about to lock for next round
      * @return vaultFee is the fee deducted
      */
-    function _collectVaultFees(uint pastWeekBalance) internal returns (uint) {
-        (uint performanceFeeInAsset, , uint vaultFee) = VaultLifecycle
+    function _collectVaultFees(uint256 pastWeekBalance)
+        internal
+        returns (uint256)
+    {
+        (uint256 performanceFeeInAsset, , uint256 vaultFee) = VaultLifecycle
             .getVaultFees(
                 vaultState,
                 pastWeekBalance,
@@ -511,7 +528,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @param recipient is the receiving address
      * @param amount is the transfer amount
      */
-    function _transferAsset(address recipient, uint amount) internal {
+    function _transferAsset(address recipient, uint256 amount) internal {
         address asset = vaultParams.asset;
         IERC20(asset).safeTransfer(recipient, amount);
     }
@@ -525,9 +542,13 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @param account is the address to lookup balance for
      * @return the amount of `asset` custodied by the vault for the user
      */
-    function accountVaultBalance(address account) external view returns (uint) {
-        uint _decimals = vaultParams.decimals;
-        uint assetPerShare = ShareMath.pricePerShare(
+    function accountVaultBalance(address account)
+        external
+        view
+        returns (uint256)
+    {
+        uint256 _decimals = vaultParams.decimals;
+        uint256 assetPerShare = ShareMath.pricePerShare(
             totalSupply(),
             totalBalance(),
             vaultState.totalPending,
@@ -542,8 +563,8 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @param account is the account to lookup share balance for
      * @return the share balance
      */
-    function shares(address account) public view returns (uint) {
-        (uint heldByAccount, uint heldByVault) = shareBalances(account);
+    function shares(address account) public view returns (uint256) {
+        (uint256 heldByAccount, uint256 heldByVault) = shareBalances(account);
         return heldByAccount.add(heldByVault);
     }
 
@@ -556,7 +577,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     function shareBalances(address account)
         public
         view
-        returns (uint heldByAccount, uint heldByVault)
+        returns (uint256 heldByAccount, uint256 heldByVault)
     {
         Vault.DepositReceipt memory depositReceipt = depositReceipts[account];
 
@@ -564,7 +585,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
             return (balanceOf(account), 0);
         }
 
-        uint unredeemedShares = depositReceipt.getSharesFromReceipt(
+        uint256 unredeemedShares = depositReceipt.getSharesFromReceipt(
             vaultState.round,
             roundPricePerShare[depositReceipt.round],
             vaultParams.decimals
@@ -576,7 +597,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     /**
      * @notice The price of a unit of share denominated in the `asset`
      */
-    function pricePerShare() external view returns (uint) {
+    function pricePerShare() external view returns (uint256) {
         return
             ShareMath.pricePerShare(
                 totalSupply(),
@@ -590,9 +611,9 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
      * @notice Returns the vault's total balance, including the amounts locked into a short position
      * @return total balance of the vault, including the amounts locked in third party protocols
      */
-    function totalBalance() public view returns (uint) {
+    function totalBalance() public view returns (uint256) {
         return
-            uint(vaultState.lockedAmount).add(
+            uint256(vaultState.lockedAmount).add(
                 IERC20(vaultParams.asset).balanceOf(address(this))
             );
     }

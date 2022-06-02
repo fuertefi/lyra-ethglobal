@@ -399,6 +399,19 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         }
     }
 
+    function getStrikes()
+        public
+        view
+        returns (uint smallStrikePrice, uint bigStrikePrice)
+    {
+        (
+            Strike memory smallStrike,
+            Strike memory bigStrike
+        ) = _getTradeStrikes();
+        smallStrikePrice = smallStrike.strikePrice;
+        bigStrikePrice = bigStrike.strikePrice;
+    }
+
     /////////////////////////////
     // Trade Parameter Helpers //
     /////////////////////////////

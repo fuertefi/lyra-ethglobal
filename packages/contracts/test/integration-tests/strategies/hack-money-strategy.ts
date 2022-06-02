@@ -168,7 +168,7 @@ describe("Hack Money Strategy integration test", async () => {
     await vault.connect(manager).setStrategy(strategy.address);
   });
 
-  describe("check strategy setup", async () => {
+  xdescribe("check strategy setup", async () => {
     it("deploys with correct vault and optionType", async () => {
       expect(await strategy.optionType()).to.be.eq(
         TestSystem.OptionType.SHORT_CALL_BASE
@@ -204,9 +204,7 @@ describe("Hack Money Strategy integration test", async () => {
       await seth.mint(randomUser.address, toBN("100000"));
       await seth.mint(randomUser2.address, toBN("100000"));
     });
-    before("set strikes array", async () => {
-      strikes = await lyraTestSystem.optionMarket.getBoardStrikes(boardId);
-    });
+
     it("user should be able to deposit through vault", async () => {
       // user 1 deposits
       await seth
@@ -235,8 +233,15 @@ describe("Hack Money Strategy integration test", async () => {
       // const [collateralToAdd2] = await strategy.getRequiredCollateral(strikeObj2);
       // const collateralToAdd = collateralToAdd1.add(collateralToAdd2);
 
+      const strikes = await vault.getStrikes();
+      console.log(strikes);
+
       //const vaultStateBefore = await vault.vaultState();
       const strategySUSDBalanceBefore = await susd.balanceOf(strategy.address);
+      console.log(
+        "strategySUSDBalanceBefore:",
+        strategySUSDBalanceBefore.toString()
+      );
 
       // 3400 is a good strike
       await vault.connect(randomUser).trade(strategyDetail.size);

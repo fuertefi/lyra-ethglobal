@@ -163,6 +163,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         (positionId2, premiumReceived2, collateralToAdd2) = _tradeStrike(
             strike2
         );
+        premiumReceived = premiumReceived1 + premiumReceived2;
 
         uint additionalPremium;
         (, , additionalPremium, premiumExchangeValue) = _tradePremiums(
@@ -173,10 +174,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
 
         collateralToAdd = collateralToAdd1 + collateralToAdd2; // + exchangeValue;
 
-        premiumReceived =
-            premiumReceived1 +
-            premiumReceived2 +
-            additionalPremium;
+        premiumReceived += additionalPremium;
     }
 
     function _tradeStrike(Strike memory strike)

@@ -17,7 +17,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
     IERC20 public immutable premiumAsset;
     IERC20 public immutable collateralAsset;
 
-    uint256 public roundDelay = 6 hours;
+    uint256 public roundDelay = 5 hours;
 
     IHackMoneyStrategy public strategy;
     address public lyraRewardRecipient;

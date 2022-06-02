@@ -1,7 +1,10 @@
-import { OptionMarket } from '@lyrafinance/protocol/dist/typechain-types';
-import { BigNumber } from 'ethers';
+import { OptionMarket } from "@lyrafinance/protocol/dist/typechain-types";
+import { BigNumber } from "ethers";
 
-export async function strikeIdToDetail(optionMarket: OptionMarket, strikeId: BigNumber) {
+export async function strikeIdToDetail(
+  optionMarket: OptionMarket,
+  strikeId: BigNumber
+) {
   const [strike, board] = await optionMarket.getStrikeAndBoard(strikeId);
   return {
     id: strike.id,

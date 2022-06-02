@@ -41,13 +41,33 @@ describe("Hack Money Strategy integration test", async () => {
   let randomUser2: SignerWithAddress;
 
   // testing parameters
-  const spotPrice = toBN("2800");
+  const spotPrice = toBN("1800");
   let boardId = BigNumber.from(0);
   const boardParameter = {
     expiresIn: lyraConstants.DAY_SEC * 7,
-    baseIV: "0.8",
-    strikePrices: ["2500", "2600", "2700", "2800", "2900", "3000", "3100"],
-    skews: ["1.3", "1.2", "1.1", "1", "1.1", "1.3", "1.3"],
+    baseIV: "0.85",
+    strikePrices: [
+      "1500",
+      "1600",
+      "1700",
+      "1750",
+      "1800",
+      "1900",
+      "2000",
+      "2100",
+      "2200",
+    ],
+    skews: [
+      "1.23",
+      "1.15",
+      "1.05",
+      "1.03",
+      "1",
+      "0.97",
+      "0.95",
+      "0.95",
+      "0.95",
+    ],
   };
   const initialPoolDeposit = toBN("1500000"); // 1.5m
 

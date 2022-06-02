@@ -164,6 +164,8 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             strike2
         );
 
+        premiumReceived = premiumReceived1 + premiumReceived2;
+
         uint additionalPremium;
         (, , additionalPremium, premiumExchangeValue) = _tradePremiums(
             premiumReceived,
@@ -173,10 +175,8 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
 
         collateralToAdd = collateralToAdd1 + collateralToAdd2; // + exchangeValue;
 
-        premiumReceived =
-            premiumReceived1 +
-            premiumReceived2 +
-            additionalPremium;
+        premiumReceived += additionalPremium;
+        console.log("trade done");
     }
 
     function _tradeStrike(Strike memory strike)
@@ -213,20 +213,24 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     {
         // exchange susd to seth
         exchangeValue = _exchangePremiums(size);
+        console.log("exchange done");
         uint sellAmount = exchangeValue / 2;
         (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
         uint premiumReceived1;
+        console.log("selling premiums with first strike");
         (positionId1, premiumReceived1) = _sellPremiums(
             strike1,
             sellAmount,
             collateralToAdd1
         );
+        console.log("selling premiums with second strike");
         uint premiumReceived2;
         (positionId2, premiumReceived2) = _sellPremiums(
             strike2,
             sellAmount,
             collateralToAdd2
         );
+        console.log("premium sold");
         premiumReceived = premiumReceived1 + premiumReceived2;
     }
 
@@ -466,13 +470,30 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
 
     function _exchangePremiums(uint size) internal returns (uint baseReceived) {
         ExchangeRateParams memory exchangeParams = getExchangeParams();
+        console.log("exchange params");
+        console.log(exchangeParams.spotPrice);
+        console.log(exchangeParams.quoteBaseFeeRate);
+        console.log(exchangeParams.baseQuoteFeeRate);
+
         //uint quoteBal = quoteAsset.balanceOf(address(this));
         // exchange quote asset to base asset
+
         uint minQuoteExpected = size
             .divideDecimal(exchangeParams.spotPrice)
             .multiplyDecimal(
                 DecimalMath.UNIT - exchangeParams.baseQuoteFeeRate
             );
+
+        console.log("minQuoteExpected:", minQuoteExpected);
         baseReceived = exchangeFromExactQuote(size, minQuoteExpected);
+        console.log("baseReceived:", baseReceived);
+    }
+
+    function getSETHExchangeParams()
+        public
+        view
+        returns (ExchangeRateParams memory)
+    {
+        return getExchangeParams();
     }
 }

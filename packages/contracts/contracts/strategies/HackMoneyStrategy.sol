@@ -164,19 +164,22 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             strike2
         );
 
-        premiumReceived = premiumReceived1 + premiumReceived2;
+        //premiumReceived = premiumReceived1 + premiumReceived2;
 
-        uint additionalPremium;
-        (, , additionalPremium, premiumExchangeValue) = _tradePremiums(
-            premiumReceived,
-            collateralToAdd1,
-            collateralToAdd2
-        );
+        // uint additionalPremium;
+        // (, , additionalPremium, premiumExchangeValue) = _tradePremiums(
+        //     premiumReceived,
+        //     collateralToAdd1,
+        //     collateralToAdd2
+        // );
 
         collateralToAdd = collateralToAdd1 + collateralToAdd2; // + exchangeValue;
 
-        premiumReceived += additionalPremium;
-        console.log("trade done");
+        //premiumReceived += additionalPremium;
+        //     premiumReceived =
+        //         premiumReceived1 +
+        //         premiumReceived2 +
+        //         additionalPremium;
     }
 
     function _tradeStrike(Strike memory strike)
@@ -279,7 +282,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             TradeInputParameters({
                 strikeId: strike.id,
                 positionId: strikeToPositionId[strike.id],
-                iterations: 4,
+                iterations: 100,
                 optionType: optionType,
                 amount: strategyDetail.size,
                 setCollateralTo: setCollateralTo,

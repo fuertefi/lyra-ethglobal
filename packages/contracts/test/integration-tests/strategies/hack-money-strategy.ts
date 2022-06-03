@@ -254,7 +254,12 @@ describe("Hack Money Strategy integration test", async () => {
       const tradeTransactionReceipt = await tradeTransaction.wait(1);
       console.log(tradeTransactionReceipt.events?.length);
       //console.log(tradeTransactionReceipt.events);
-      const tradeEventArgs = tradeTransactionReceipt.events?.at(110)?.args;
+      const tradeEventLength = tradeTransactionReceipt.events?.length
+        ? tradeTransactionReceipt.events?.length - 1
+        : 0;
+      //const tradeEventArgs = tradeTransactionReceipt.events?.at(110)?.args;
+      const tradeEventArgs =
+        tradeTransactionReceipt.events?.at(tradeEventLength)?.args;
       console.log("getting premium");
       const premium = ethers.utils.formatEther(tradeEventArgs?.premium);
       console.log("getting capitalUsed");

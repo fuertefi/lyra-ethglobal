@@ -5,73 +5,83 @@ import {SafeMath} from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import {Vault} from "./Vault.sol";
 
 library ShareMath {
-  using SafeMath for uint;
+    using SafeMath for uint256;
 
-  function assetToShares(
-    uint assetAmount,
-    uint assetPerShare,
-    uint decimals
-  ) internal pure returns (uint) {
-    // If this throws, it means that vault's roundPricePerShare[currentRound] has not been set yet
-    // which should never happen.
-    require(assetPerShare > 0, "Invalid assetPerShare");
+    function assetToShares(
+        uint256 assetAmount,
+        uint256 assetPerShare,
+        uint256 decimals
+    ) internal pure returns (uint256) {
+        // If this throws, it means that vault's roundPricePerShare[currentRound] has not been set yet
+        // which should never happen.
+        require(assetPerShare > 0, "Invalid assetPerShare");
 
-    return assetAmount.mul(10**decimals).div(assetPerShare);
-  }
-
-  function sharesToAsset(
-    uint shares,
-    uint assetPerShare,
-    uint decimals
-  ) internal pure returns (uint) {
-    // If this throws, it means that vault's roundPricePerShare[currentRound] has not been set yet
-    // which should never happen.
-    require(assetPerShare > 0, "Invalid assetPerShare");
-
-    return shares.mul(assetPerShare).div(10**decimals);
-  }
-
-  /**
-   * @notice Returns the shares unredeemed by the user given their DepositReceipt
-   * @param depositReceipt is the user's deposit receipt
-   * @param currentRound is the `round` stored on the vault
-   * @param assetPerShare is the price in asset per share
-   * @param decimals is the number of decimals the asset/shares use
-   * @return unredeemedShares is the user's virtual balance of shares that are owed
-   */
-  function getSharesFromReceipt(
-    Vault.DepositReceipt memory depositReceipt,
-    uint currentRound,
-    uint assetPerShare,
-    uint decimals
-  ) internal pure returns (uint unredeemedShares) {
-    if (depositReceipt.round > 0 && depositReceipt.round < currentRound) {
-      uint sharesFromRound = assetToShares(depositReceipt.amount, assetPerShare, decimals);
-
-      return uint(depositReceipt.unredeemedShares).add(sharesFromRound);
+        return assetAmount.mul(10**decimals).div(assetPerShare);
     }
-    return depositReceipt.unredeemedShares;
-  }
 
-  function pricePerShare(
-    uint totalSupply,
-    uint totalBalance,
-    uint pendingAmount,
-    uint decimals
-  ) internal pure returns (uint) {
-    uint singleShare = 10**decimals;
-    return totalSupply > 0 ? singleShare.mul(totalBalance.sub(pendingAmount)).div(totalSupply) : singleShare;
-  }
+    function sharesToAsset(
+        uint256 shares,
+        uint256 assetPerShare,
+        uint256 decimals
+    ) internal pure returns (uint256) {
+        // If this throws, it means that vault's roundPricePerShare[currentRound] has not been set yet
+        // which should never happen.
+        require(assetPerShare > 0, "Invalid assetPerShare");
 
-  /************************************************
-   *  HELPERS
-   ***********************************************/
+        return shares.mul(assetPerShare).div(10**decimals);
+    }
 
-  function assertUint104(uint num) internal pure {
-    require(num <= type(uint104).max, "Overflow uint104");
-  }
+    /**
+     * @notice Returns the shares unredeemed by the user given their DepositReceipt
+     * @param depositReceipt is the user's deposit receipt
+     * @param currentRound is the `round` stored on the vault
+     * @param assetPerShare is the price in asset per share
+     * @param decimals is the number of decimals the asset/shares use
+     * @return unredeemedShares is the user's virtual balance of shares that are owed
+     */
+    function getSharesFromReceipt(
+        Vault.DepositReceipt memory depositReceipt,
+        uint256 currentRound,
+        uint256 assetPerShare,
+        uint256 decimals
+    ) internal pure returns (uint256 unredeemedShares) {
+        if (depositReceipt.round > 0 && depositReceipt.round < currentRound) {
+            uint256 sharesFromRound = assetToShares(
+                depositReceipt.amount,
+                assetPerShare,
+                decimals
+            );
 
-  function assertUint128(uint num) internal pure {
-    require(num <= type(uint128).max, "Overflow uint128");
-  }
+            return
+                uint256(depositReceipt.unredeemedShares).add(sharesFromRound);
+        }
+        return depositReceipt.unredeemedShares;
+    }
+
+    function pricePerShare(
+        uint256 totalSupply,
+        uint256 totalBalance,
+        uint256 pendingAmount,
+        uint256 decimals
+    ) internal pure returns (uint256) {
+        uint256 singleShare = 10**decimals;
+        return
+            totalSupply > 0
+                ? singleShare.mul(totalBalance.sub(pendingAmount)).div(
+                    totalSupply
+                )
+                : singleShare;
+    }
+
+    /************************************************
+     *  HELPERS
+     ***********************************************/
+
+    function assertUint104(uint256 num) internal pure {
+        require(num <= type(uint104).max, "Overflow uint104");
+    }
+
+    function assertUint128(uint256 num) internal pure {
+        require(num <= type(uint128).max, "Overflow uint128");
+    }
 }

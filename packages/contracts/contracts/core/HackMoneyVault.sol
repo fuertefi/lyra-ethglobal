@@ -17,7 +17,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
     IERC20 public immutable premiumAsset;
     IERC20 public immutable collateralAsset;
 
-    uint public roundDelay = 6 hours;
+    uint256 public roundDelay = 5 hours;
 
     IHackMoneyStrategy public strategy;
     address public lyraRewardRecipient;
@@ -29,11 +29,11 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
 
     event Trade(
         address user,
-        uint positionId_1,
-        uint positionId_2,
-        uint premium,
-        uint capitalUsed,
-        uint premiumExchangeValue
+        uint256 positionId_1,
+        uint256 positionId_2,
+        uint256 premium,
+        uint256 capitalUsed,
+        uint256 premiumExchangeValue
     );
 
     event RoundStarted(uint16 roundId, uint104 lockAmount);
@@ -43,7 +43,7 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
     constructor(
         address _susd,
         address _feeRecipient,
-        uint _roundDuration,
+        uint256 _roundDuration,
         string memory _tokenName,
         string memory _tokenSymbol,
         Vault.VaultParams memory _vaultParams
@@ -68,20 +68,20 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
         }
 
         strategy = IHackMoneyStrategy(_strategy);
-        collateralAsset.approve(_strategy, type(uint).max);
+        collateralAsset.approve(_strategy, type(uint256).max);
         emit StrategyUpdated(_strategy);
     }
 
     /// @dev anyone can trigger a trade
-    function trade(uint size) public {
+    function trade(uint256 size) public {
         require(vaultState.roundInProgress, "round closed");
         // perform trades through strategy
         (
-            uint positionId_1,
-            uint positionId_2,
-            uint premiumReceived,
-            uint capitalUsed,
-            uint premiumExchangeValue
+            uint256 positionId_1,
+            uint256 positionId_2,
+            uint256 premiumReceived,
+            uint256 capitalUsed,
+            uint256 premiumExchangeValue
         ) = strategy.doTrade(size);
         // update the remaining locked amount
         vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
@@ -114,15 +114,16 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
 
     /// @notice start the next round
     /// @param boardId board id (asset + expiry) for next round.
-    function startNextRound(uint boardId) external onlyOwner {
+    function startNextRound(uint256 boardId) external onlyOwner {
         require(!vaultState.roundInProgress, "round opened");
         require(block.timestamp > vaultState.nextRoundReadyTimestamp, "CD");
 
         strategy.setBoard(boardId);
 
-        (uint lockedBalance, uint queuedWithdrawAmount) = _rollToNextRound(
-            uint(lastQueuedWithdrawAmount)
-        );
+        (
+            uint256 lockedBalance,
+            uint256 queuedWithdrawAmount
+        ) = _rollToNextRound(uint256(lastQueuedWithdrawAmount));
 
         vaultState.lockedAmount = uint104(lockedBalance);
         vaultState.lockedAmountLeft = lockedBalance;
@@ -143,12 +144,16 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
     }
 
     // helper to set AmountLeft
-    function getLockedAmountLeft() public view returns (uint lockedAmountLeft) {
-        lockedAmountLeft = uint(vaultState.lockedAmountLeft);
+    function getLockedAmountLeft()
+        public
+        view
+        returns (uint256 lockedAmountLeft)
+    {
+        lockedAmountLeft = uint256(vaultState.lockedAmountLeft);
     }
 
     // helper set round delay
-    function setRoundDelay(uint newRoundDelay) external onlyOwner {
+    function setRoundDelay(uint256 newRoundDelay) external onlyOwner {
         roundDelay = newRoundDelay;
     }
 }

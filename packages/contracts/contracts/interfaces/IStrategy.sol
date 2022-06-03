@@ -2,21 +2,21 @@
 pragma solidity ^0.8.9;
 
 interface IStrategy {
-  function setBoard(uint boardId) external;
+    function setBoard(uint256 boardId) external;
 
-  function doTrade(uint strikeId, address rewardRecipient)
-    external
-    returns (
-      uint positionId,
-      uint premium,
-      uint collateralAdded
-    );
+    function doTrade(uint256 strikeId, address rewardRecipient)
+        external
+        returns (
+            uint256 positionId,
+            uint256 premium,
+            uint256 collateralAdded
+        );
 
-  function reducePosition(
-    uint positionId,
-    uint closeAmount,
-    address rewardRecipient
-  ) external;
+    function reducePosition(
+        uint256 positionId,
+        uint256 closeAmount,
+        address rewardRecipient
+    ) external;
 
-  function returnFundsAndClearStrikes() external;
+    function returnFundsAndClearStrikes() external;
 }

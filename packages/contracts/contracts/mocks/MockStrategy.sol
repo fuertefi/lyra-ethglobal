@@ -5,59 +5,65 @@ import {IStrategy} from "../interfaces/IStrategy.sol";
 import {IERC20Detailed} from "../interfaces/IERC20Detailed.sol";
 
 contract MockStrategy is IStrategy {
-  IERC20Detailed public immutable collateral;
-  IERC20Detailed public immutable premium;
+    IERC20Detailed public immutable collateral;
+    IERC20Detailed public immutable premium;
 
-  uint public tradePremiumAmount;
-  uint public tradeCollateralAmount;
+    uint256 public tradePremiumAmount;
+    uint256 public tradeCollateralAmount;
 
-  bool public isSettlted;
+    bool public isSettlted;
 
-  uint public boardId;
+    uint256 public boardId;
 
-  constructor(IERC20Detailed _premiumToken, IERC20Detailed _collateralToken) {
-    collateral = _collateralToken;
-    premium = _premiumToken;
-  }
+    constructor(IERC20Detailed _premiumToken, IERC20Detailed _collateralToken) {
+        collateral = _collateralToken;
+        premium = _premiumToken;
+    }
 
-  function setBoard(uint _boardId) external {
-    boardId = _boardId;
-  }
+    function setBoard(uint256 _boardId) external {
+        boardId = _boardId;
+    }
 
-  function setMockedTradeAmount(uint _premium, uint _collateral) public {
-    tradePremiumAmount = _premium;
-    tradeCollateralAmount = _collateral;
-  }
+    function setMockedTradeAmount(uint256 _premium, uint256 _collateral)
+        public
+    {
+        tradePremiumAmount = _premium;
+        tradeCollateralAmount = _collateral;
+    }
 
-  function doTrade(uint, address)
-    external
-    returns (
-      uint positionId,
-      uint premiumReceived,
-      uint collateralAdded
-    )
-  {
-    // get collateral from caller
-    collateral.transferFrom(msg.sender, address(this), tradeCollateralAmount);
-    return (0, premiumReceived, tradeCollateralAmount);
-  }
+    function doTrade(uint256, address)
+        external
+        returns (
+            uint256 positionId,
+            uint256 premiumReceived,
+            uint256 collateralAdded
+        )
+    {
+        // get collateral from caller
+        collateral.transferFrom(
+            msg.sender,
+            address(this),
+            tradeCollateralAmount
+        );
+        return (0, premiumReceived, tradeCollateralAmount);
+    }
 
-  function reducePosition(
-    uint,
-    uint,
-    address
-  ) external {}
+    function reducePosition(
+        uint256,
+        uint256,
+        address
+    ) external {}
 
-  function setMockIsSettled(bool _isSettled) public {
-    isSettlted = _isSettled;
-  }
+    function setMockIsSettled(bool _isSettled) public {
+        isSettlted = _isSettled;
+    }
 
-  function returnFundsAndClearStrikes() external {
-    // return collateral and premium to msg.sender
-    uint colBalance = collateral.balanceOf(address(this));
-    collateral.transfer(msg.sender, colBalance);
+    function returnFundsAndClearStrikes() external {
+        // return collateral and premium to msg.sender
+        uint256 colBalance = collateral.balanceOf(address(this));
+        collateral.transfer(msg.sender, colBalance);
 
-    uint premiumBalance = premium.balanceOf(address(this));
-    premium.transfer(msg.sender, premiumBalance);
-  }
+        uint256 premiumBalance = premium.balanceOf(address(this));
+        premium.transfer(msg.sender, premiumBalance);
+    }
 }

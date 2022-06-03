@@ -7,9 +7,9 @@ library Vault {
      ***********************************************/
 
     // Fees are 6-decimal places. For example: 20 * 10**6 = 20%
-    uint internal constant FEE_MULTIPLIER = 10**6;
+    uint256 internal constant FEE_MULTIPLIER = 10**6;
 
-    uint internal constant ROUND_DELAY = 1 days;
+    uint256 internal constant ROUND_DELAY = 1 days;
 
     struct VaultParams {
         // Token decimals for vault shares
@@ -30,7 +30,7 @@ library Vault {
         // used for calculating performance fee deduction
         uint104 lastLockedAmount;
         // locked amount left to be used for collateral;
-        uint lockedAmountLeft;
+        uint256 lockedAmountLeft;
         // 32 byte slot 2
         // Stores the total tally of how much of `asset` there is
         // to be used to mint rTHETA tokens
@@ -38,7 +38,7 @@ library Vault {
         // Amount locked for scheduled withdrawals;
         uint128 queuedWithdrawShares;
         // The timestamp next round will be ready to start
-        uint nextRoundReadyTimestamp;
+        uint256 nextRoundReadyTimestamp;
         // true if the current round is in progress, false if the round is idle
         bool roundInProgress;
     }

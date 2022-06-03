@@ -26,15 +26,11 @@ import {
 import { HackMoneyStrategyDetailStruct } from "../../../typechain-types/HackMoneyStrategy";
 
 const strategyDetail: HackMoneyStrategyDetailStruct = {
-  maxVolVariance: toBN("0.1"),
-  gwavPeriod: 600,
   minTimeToExpiry: lyraConstants.DAY_SEC,
   maxTimeToExpiry: lyraConstants.WEEK_SEC * 2,
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
-  maxDeltaGap: toBN("0.05"), // accept delta from 0.10~0.20 or 0.80~0.90
   minVol: toBN("0.8"), // min vol to sell. (also used to calculate min premium for call selling vault)
-  maxVol: toBN("1.3"), // max vol to sell.
   size: toBN("100"),
 };
 

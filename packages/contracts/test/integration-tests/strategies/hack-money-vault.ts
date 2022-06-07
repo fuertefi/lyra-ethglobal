@@ -1,8 +1,4 @@
-import {
-  getGlobalDeploys,
-  getMarketDeploys,
-  lyraConstants,
-} from "@lyrafinance/protocol";
+import { lyraConstants } from "@lyrafinance/protocol";
 import {
   MAX_UINT,
   OptionType,
@@ -11,30 +7,28 @@ import {
 } from "@lyrafinance/protocol/dist/scripts/util/web3utils";
 import {
   BasicFeeCounter__factory,
-  ERC20,
+  ERC20__factory,
 } from "@lyrafinance/protocol/dist/typechain-types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { Contract } from "ethers";
 import { ethers, network } from "hardhat";
-import { DEPLOYED_CONTRACTS } from "../../../constants";
 import { HackMoneyVault__factory } from "../../../typechain-types";
 import {
   HackMoneyStrategyLibraryAddresses,
   HackMoneyStrategy__factory,
 } from "../../../typechain-types/factories/HackMoneyStrategy__factory";
 import { HackMoneyStrategyDetailStruct } from "../../../typechain-types/HackMoneyStrategy";
+import { targets as lyraGlobal } from "./lyra-mainnet.json";
+
+const lyraMarket = lyraGlobal.markets.sETH;
 
 const strategyDetail: HackMoneyStrategyDetailStruct = {
-  maxVolVariance: toBN("0.1"),
-  gwavPeriod: 600,
   minTimeToExpiry: lyraConstants.DAY_SEC,
   maxTimeToExpiry: lyraConstants.WEEK_SEC * 2,
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
-  maxDeltaGap: toBN("0.05"), // accept delta from 0.10~0.20 or 0.80~0.90
+  // maxDeltaGap: toBN("0.05"), // accept delta from 0.10~0.20 or 0.80~0.90
   minVol: toBN("0.8"), // min vol to sell. (also used to calculate min premium for call selling vault)
-  maxVol: toBN("1.3"), // max vol to sell.
   size: toBN("100"),
 };
 
@@ -53,8 +47,8 @@ describe("Hack Money Vault integration test", async () => {
   });
 
   it("deploy on kovan fork, deposit and try to trade", async () => {
-    const chainId = 69;
-    const networkId = "kovan-ovm";
+    const chainId = 10;
+    const networkId = "mainnet-ovm";
     await network.provider.request({
       method: "hardhat_reset",
       params: [
@@ -62,14 +56,14 @@ describe("Hack Money Vault integration test", async () => {
           forking: {
             // TODO: Remove into env
             jsonRpcUrl:
-              "https://opt-kovan.g.alchemy.com/v2/pfOaw3tye3hUXAWJcP115s1h1RsoYp8A",
-            blockNumber: 3236641,
+              "https://opt-mainnet.g.alchemy.com/v2/dW3_J05iOi-kuyk1Zgy7bwXip_gXMeSX",
+            blockNumber: 8663305,
           },
         },
       ],
     });
 
-    const whaleAddress = "0x15aDBea538f541271dA5E4436E41285e386E3336";
+    const whaleAddress = "0xa5f7a39e55d7878bc5bd754ee5d6bd7a7662355b";
 
     // const balance = await ethers.provider.getBalance(
     // "0xD34F2e9916473C5eFA8A255f5b8738eCd4205317"
@@ -80,24 +74,29 @@ describe("Hack Money Vault integration test", async () => {
       params: [whaleAddress],
     });
 
-    const lyraGlobal = await getGlobalDeploys(networkId);
-    console.log("contract name:", lyraGlobal.SynthetixAdapter.contractName);
-    console.log("address:", lyraGlobal.SynthetixAdapter.address);
-
-    const lyraMarket = await getMarketDeploys(networkId, "sETH");
     const whale = await ethers.getSigner(whaleAddress);
-    const sETH = new Contract(
-      lyraMarket.BaseAsset.address,
-      lyraMarket.BaseAsset.abi,
-      whale
-    ) as ERC20;
-    const sUSD = new Contract(
-      lyraGlobal.QuoteAsset.address,
-      lyraGlobal.QuoteAsset.abi,
+    const sETH = ERC20__factory.connect(
+      "0xE405de8F52ba7559f9df3C368500B6E6ae6Cee49",
       deployer
     );
+    // const sETH = new Contract(
+    // lyraMarket.BaseAsset.address,
+    // lyraMarket.BaseAsset.abi,
+    // whale
+    // ) as ERC20;
+    const sUSD = ERC20__factory.connect(
+      "0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9",
+      deployer
+    );
+    // const sUSD = new Contract(
+    // lyraGlobal.QuoteAsset.address,
+    // lyraGlobal.QuoteAsset.abi,
+    // deployer
+    // );
 
-    await sETH.transfer(deployer.address, ethers.utils.parseEther("100"));
+    await sETH
+      .connect(whale)
+      .transfer(deployer.address, ethers.utils.parseEther("100"));
 
     const HackMoneyVaultFactory = new HackMoneyVault__factory(deployer);
     const decimals = 18;
@@ -117,16 +116,17 @@ describe("Hack Money Vault integration test", async () => {
 
     const linkAddresses: HackMoneyStrategyLibraryAddresses = {
       "@lyrafinance/protocol/contracts/lib/BlackScholes.sol:BlackScholes":
-        lyraGlobal.BlackScholes.address,
+        "0x409f9A1Ee61E94B91b11e3696DF2108EFc7C3EF5",
     };
     const LyraStrategyFactory = new HackMoneyStrategy__factory(
       linkAddresses,
       deployer
     );
+    console.log("pre strategy deploy");
     const lyraStrategy = await LyraStrategyFactory.connect(deployer).deploy(
       lyraVault.address,
       OptionType.SHORT_CALL_BASE,
-      lyraGlobal.GWAV.address
+      "0xD2CaAaD2A055Be091f514D240799Ca155Da75a24"
     );
 
     const BasicFeeCounterFactory = new BasicFeeCounter__factory(deployer);
@@ -135,7 +135,7 @@ describe("Hack Money Vault integration test", async () => {
     await lyraStrategy
       .connect(deployer)
       .initAdapter(
-        DEPLOYED_CONTRACTS.CurveAddress[chainId],
+        "0x0100fBf414071977B19fC38e6fc7c32FE444F5C9",
         lyraMarket.OptionToken.address,
         lyraMarket.OptionMarket.address,
         lyraMarket.LiquidityPool.address,
@@ -169,7 +169,7 @@ describe("Hack Money Vault integration test", async () => {
 
     vaultBalance = await lyraVault.totalBalance();
     expect(vaultBalance).to.equal(ethers.utils.parseEther("11"));
-    await expect(lyraVault.trade(5))
+    await expect(lyraVault.trade(ethers.utils.parseEther("5")))
       .to.emit(lyraVault, "Trade")
       .withArgs(deployer.address, 182, 183, 1817, 10);
 

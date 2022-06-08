@@ -277,7 +277,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
                 optionType: optionType,
                 amount: strategyDetail.size,
                 setCollateralTo: setCollateralTo,
-                minTotalCost: minExpectedPremium,
+                minTotalCost: 0,
                 maxTotalCost: type(uint).max,
                 rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
             })

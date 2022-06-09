@@ -87,6 +87,27 @@ contract HackMoneyStrategyBase is VaultAdapter {
         collateralAsset = _isBaseCollat() ? baseAsset : quoteAsset;
     }
 
+    //////////////////////
+    // APPROVAL ACTIONS //
+    //////////////////////
+
+    function approveERC20(
+        address token,
+        address spender,
+        uint amount
+    ) external onlyOwner {
+        IERC20(token).approve(spender, amount);
+    }
+
+    function approveSynthetixDelegate(
+        address delegateApprovals,
+        address exchanger
+    ) external onlyOwner {
+        IDelegateApprovals(delegateApprovals).approveExchangeOnBehalf(
+            exchanger
+        );
+    }
+
     ///////////////////
     // VAULT ACTIONS //
     ///////////////////

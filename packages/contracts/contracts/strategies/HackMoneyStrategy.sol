@@ -338,10 +338,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         // update active strikes
         _addActiveStrike(strike.id, result.positionId);
 
-        // require(
-        //     result.totalCost >= minExpectedPremium,
-        //     "premium received is below min expected premium"
-        // );
+        require(
+            result.totalCost >= minExpectedPremium,
+            "premium received is below min expected premium"
+        );
 
         return (result.positionId, result.totalCost);
     }

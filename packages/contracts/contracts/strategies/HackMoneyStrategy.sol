@@ -173,7 +173,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         );
 
         collateralToAdd = collateralToAdd1 + collateralToAdd2; // + exchangeValue;
-
         premiumReceived += additionalPremium;
     }
 
@@ -210,7 +209,9 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         )
     {
         // exchange susd to seth
+
         exchangeValue = _exchangePremiums(size);
+
         uint sellAmount = exchangeValue / 2;
         (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
         uint premiumReceived1;
@@ -311,7 +312,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             strategyDetail.minVol,
             size
         );
-
         uint strikeId = strike.id;
         uint initIv = strike.boardIv.multiplyDecimal(strike.skew);
 
@@ -324,7 +324,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
                 optionType: optionType,
                 amount: size,
                 setCollateralTo: size + collateralToAdd,
-                minTotalCost: minExpectedPremium,
+                minTotalCost: 0,
                 maxTotalCost: type(uint).max,
                 rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
             })
@@ -338,10 +338,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         // update active strikes
         _addActiveStrike(strike.id, result.positionId);
 
-        require(
-            result.totalCost >= minExpectedPremium,
-            "premium received is below min expected premium"
-        );
+        // require(
+        //     result.totalCost >= minExpectedPremium,
+        //     "premium received is below min expected premium"
+        // );
 
         return (result.positionId, result.totalCost);
     }

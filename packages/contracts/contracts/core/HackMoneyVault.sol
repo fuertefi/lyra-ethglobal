@@ -84,6 +84,11 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
             uint premiumExchangeValue
         ) = strategy.doTrade(size);
         // update the remaining locked amount
+        console.log(
+            "vaultState.lockedAmountLeft:",
+            vaultState.lockedAmountLeft
+        );
+        console.log("capitalUsed:", capitalUsed);
         vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
 
         // todo: udpate events

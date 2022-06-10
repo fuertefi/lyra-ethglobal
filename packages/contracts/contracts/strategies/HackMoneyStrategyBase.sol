@@ -11,6 +11,7 @@ import {GWAVOracle} from "@lyrafinance/protocol/contracts/periphery/GWAVOracle.s
 
 // Libraries
 import {Vault} from "../libraries/Vault.sol";
+import {IDelegateApprovals} from "../interfaces/IDelegateApprovals.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {HackMoneyVault} from "../core/HackMoneyVault.sol";
 import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol";
@@ -81,7 +82,30 @@ contract HackMoneyStrategyBase is VaultAdapter {
 
         quoteAsset.approve(address(vault), type(uint).max);
         baseAsset.approve(address(vault), type(uint).max);
+        IDelegateApprovals(0x2A23bc0EA97A89abD91214E8e4d20F02Fe14743f)
+            .approveExchangeOnBehalf(_synthetixAdapter);
         collateralAsset = _isBaseCollat() ? baseAsset : quoteAsset;
+    }
+
+    //////////////////////
+    // APPROVAL ACTIONS //
+    //////////////////////
+
+    function approveERC20(
+        address token,
+        address spender,
+        uint amount
+    ) external onlyOwner {
+        IERC20(token).approve(spender, amount);
+    }
+
+    function approveSynthetixDelegate(
+        address delegateApprovals,
+        address exchanger
+    ) external onlyOwner {
+        IDelegateApprovals(delegateApprovals).approveExchangeOnBehalf(
+            exchanger
+        );
     }
 
     ///////////////////

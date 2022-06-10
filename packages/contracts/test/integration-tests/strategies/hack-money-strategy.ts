@@ -233,8 +233,8 @@ describe("Hack Money Strategy integration test", async () => {
       // const [collateralToAdd2] = await strategy.getRequiredCollateral(strikeObj2);
       // const collateralToAdd = collateralToAdd1.add(collateralToAdd2);
 
-      const { smallStrikePrice, bigStrikePrice } = await strategy.getStrikes();
-      console.log(smallStrikePrice.toString(), bigStrikePrice.toString());
+      // const { smallStrikePrice, bigStrikePrice } = await strategy.getStrikes();
+      // console.log(smallStrikePrice.toString(), bigStrikePrice.toString());
 
       const strategySETHBalanceBefore = await seth.balanceOf(strategy.address);
       console.log(

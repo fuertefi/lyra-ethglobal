@@ -1,13 +1,11 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
-pragma experimental ABIEncoderV2;
 
 // Hardhat
 import "hardhat/console.sol";
 
 // Lyra
-import {VaultAdapter} from "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol";
-import {GWAVOracle} from "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol";
+import {LyraAdapter} from "@lyrafinance/protocol/contracts/periphery/LyraAdapter.sol";
 
 // Libraries
 import {Vault} from "../libraries/Vault.sol";
@@ -16,13 +14,12 @@ import {LyraVault} from "../core/LyraVault.sol";
 import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol";
 import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol";
 
-contract StrategyBase is VaultAdapter {
+contract StrategyBase is LyraAdapter {
   using DecimalMath for uint;
   using SignedDecimalMath for int;
 
   LyraVault public immutable vault;
   OptionType public immutable optionType;
-  GWAVOracle public immutable gwavOracle;
 
   /// @dev asset used as collateral in AMM to sell. Should be the same as vault asset
   IERC20 public collateralAsset;
@@ -41,47 +38,23 @@ contract StrategyBase is VaultAdapter {
     _;
   }
 
-  constructor(
-    LyraVault _vault,
-    OptionType _optionType,
-    GWAVOracle _gwavOracle
-  ) VaultAdapter() {
+  constructor(LyraVault _vault, OptionType _optionType) LyraAdapter() {
     vault = _vault;
     optionType = _optionType;
-    gwavOracle = _gwavOracle;
   }
 
   function initAdapter(
-    address _curveSwap,
-    address _optionToken,
+    address _lyraRegistry,
     address _optionMarket,
-    address _liquidityPool,
-    address _shortCollateral,
-    address _synthetixAdapter,
-    address _optionPricer,
-    address _greekCache,
-    address _quoteAsset,
-    address _baseAsset,
+    address _curveSwap,
     address _feeCounter
   ) external onlyOwner {
-    // set addressese for LyraVaultAdapter
-    setLyraAddresses(
-      _curveSwap,
-      _optionToken,
-      _optionMarket,
-      _liquidityPool,
-      _shortCollateral,
-      _synthetixAdapter,
-      _optionPricer,
-      _greekCache,
-      _quoteAsset,
-      _baseAsset,
-      _feeCounter
-    );
+    // set addresses for LyraAdapter
+    setLyraAddresses(_lyraRegistry, _optionMarket, _curveSwap, _feeCounter);
 
     quoteAsset.approve(address(vault), type(uint).max);
     baseAsset.approve(address(vault), type(uint).max);
-    collateralAsset = _isBaseCollat() ? baseAsset : quoteAsset;
+    collateralAsset = _isBaseCollat() ? IERC20(address(baseAsset)) : IERC20(address(quoteAsset));
   }
 
   ///////////////////
@@ -92,8 +65,8 @@ contract StrategyBase is VaultAdapter {
    * @dev exchange asset back to collateral asset and send it back to the vault
    * @dev override this function if you want to customize asset management flow
    */
-  function _returnFundsToVaut() internal virtual {
-    ExchangeRateParams memory exchangeParams = getExchangeParams();
+  function _returnFundsToVault() internal virtual {
+    ExchangeRateParams memory exchangeParams = _getExchangeParams();
     uint quoteBal = quoteAsset.balanceOf(address(this));
 
     if (_isBaseCollat()) {
@@ -102,7 +75,7 @@ contract StrategyBase is VaultAdapter {
       uint minQuoteExpected = quoteBal.divideDecimal(exchangeParams.spotPrice).multiplyDecimal(
         DecimalMath.UNIT - exchangeParams.baseQuoteFeeRate
       );
-      uint baseReceived = exchangeFromExactQuote(quoteBal, minQuoteExpected);
+      uint baseReceived = _exchangeFromExactQuote(quoteBal, minQuoteExpected);
       require(baseAsset.transfer(address(vault), baseBal + baseReceived), "failed to return funds from strategy");
     } else {
       // send quote balance directly
@@ -124,8 +97,8 @@ contract StrategyBase is VaultAdapter {
     uint vol,
     uint size
   ) internal view returns (uint limitPremium) {
-    ExchangeRateParams memory exchangeParams = getExchangeParams();
-    (uint callPremium, uint putPremium) = getPurePremium(
+    ExchangeRateParams memory exchangeParams = _getExchangeParams();
+    (uint callPremium, uint putPremium) = _getPurePremium(
       _getSecondsToExpiry(strike.expiry),
       vol,
       exchangeParams.spotPrice,
@@ -133,15 +106,6 @@ contract StrategyBase is VaultAdapter {
     );
 
     limitPremium = _isCall() ? callPremium.multiplyDecimal(size) : putPremium.multiplyDecimal(size);
-  }
-
-  /**
-   * @dev use latest optionMarket delta cutoff to determine whether trade delta is out of bounds
-   */
-  function _isOutsideDeltaCutoff(uint strikeId) internal view returns (bool) {
-    MarketParams memory marketParams = getMarketParams();
-    int callDelta = getDeltas(_toDynamic(strikeId))[0];
-    return callDelta > (int(DecimalMath.UNIT) - marketParams.deltaCutOff) || callDelta < marketParams.deltaCutOff;
   }
 
   //////////////////////////////
@@ -173,7 +137,7 @@ contract StrategyBase is VaultAdapter {
     if (activeStrikeIds.length != 0) {
       for (uint i = 0; i < activeStrikeIds.length; i++) {
         uint strikeId = activeStrikeIds[i];
-        OptionPosition memory position = getPositions(_toDynamic(strikeToPositionId[strikeId]))[0];
+        OptionPosition memory position = _getPositions(_toDynamic(strikeToPositionId[strikeId]))[0];
         // revert if position state is not settled
         require(position.state != PositionState.ACTIVE, "cannot clear active position");
         delete strikeToPositionId[strikeId];

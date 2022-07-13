@@ -18,7 +18,7 @@ contract LyraVault is Ownable, BaseVault {
   address public lyraRewardRecipient;
 
   // Amount locked for scheduled withdrawals last week;
-  uint128 public lastQueuedWithdrawAmount;
+  uint public lastQueuedWithdrawAmount;
   // % of funds to be used for weekly option purchase
   uint public optionAllocation;
 
@@ -76,6 +76,9 @@ contract LyraVault is Ownable, BaseVault {
 
   /// @dev close the current round, enable user to deposit for the next round
   function closeRound() external {
+    require(strategy.activeExpiry() < block.timestamp, "cannot close round if board not expired");
+    require(vaultState.roundInProgress, "round closed");
+
     uint104 lockAmount = vaultState.lockedAmount;
     vaultState.lastLockedAmount = lockAmount;
     vaultState.lockedAmountLeft = 0;
@@ -92,17 +95,17 @@ contract LyraVault is Ownable, BaseVault {
   /// @notice start the next round
   /// @param boardId board id (asset + expiry) for next round.
   function startNextRound(uint boardId) external onlyOwner {
-    require(!vaultState.roundInProgress, "round opened");
+    require(!vaultState.roundInProgress, "round in progress");
     require(block.timestamp > vaultState.nextRoundReadyTimestamp, "CD");
 
     strategy.setBoard(boardId);
 
-    (uint lockedBalance, uint queuedWithdrawAmount) = _rollToNextRound(uint(lastQueuedWithdrawAmount));
+    (uint lockedBalance, uint queuedWithdrawAmount) = _rollToNextRound(lastQueuedWithdrawAmount);
 
     vaultState.lockedAmount = uint104(lockedBalance);
     vaultState.lockedAmountLeft = lockedBalance;
     vaultState.roundInProgress = true;
-    lastQueuedWithdrawAmount = uint128(queuedWithdrawAmount);
+    lastQueuedWithdrawAmount = queuedWithdrawAmount;
 
     emit RoundStarted(vaultState.round, uint104(lockedBalance));
   }

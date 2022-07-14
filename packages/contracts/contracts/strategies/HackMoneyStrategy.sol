@@ -8,10 +8,6 @@ import "hardhat/console.sol";
 // standard strategy interface
 import "../interfaces/IHackMoneyStrategy.sol";
 
-// Lyra
-import {VaultAdapter} from "@lyrafinance/protocol/contracts/periphery/VaultAdapter.sol";
-import {GWAVOracle} from "@lyrafinance/protocol/contracts/periphery/GWAVOracle.sol";
-
 // Libraries
 import {Vault} from "../libraries/Vault.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -49,11 +45,9 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     // ADMIN //
     ///////////
 
-    constructor(
-        HackMoneyVault _vault,
-        OptionType _optionType,
-        GWAVOracle _gwavOracle
-    ) HackMoneyStrategyBase(_vault, _optionType, _gwavOracle) {}
+    constructor(HackMoneyVault _vault, OptionType _optionType)
+        HackMoneyStrategyBase(_vault, _optionType)
+    {}
 
     /**
      * @dev update the strategy detail for the new round.
@@ -93,7 +87,11 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
      * @param boardId lyra board Id.
      */
     function setBoard(uint boardId) external onlyVault {
-        Board memory board = getBoard(boardId);
+        console.log(boardId);
+        Board memory board = _getBoard(boardId);
+        console.log(board.expiry);
+        console.log(board.id);
+        console.log(board.boardIv);
         require(_isValidExpiry(board.expiry), "invalid board");
         activeExpiry = board.expiry;
         currentBoardId = boardId;
@@ -104,7 +102,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
      */
     function returnFundsAndClearStrikes() external onlyVault {
         // exchange asset back to collateral asset and send it back to the vault
-        _returnFundsToVaut();
+        _returnFundsToVault();
 
         // keep internal storage data on old strikes and positions ids
         _clearAllActiveStrikes();
@@ -132,6 +130,8 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     {
         strategyDetail.size = size;
 
+        console.log(size);
+
         (
             positionId1,
             positionId2,
@@ -152,6 +152,15 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         )
     {
         (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
+        console.log(strike1.id);
+        console.log("strike 1 price");
+        console.log(strike1.strikePrice);
+        console.log("strike 1 board iv");
+        console.log(strike1.boardIv);
+        console.log("strike 2 price");
+        console.log(strike2.strikePrice);
+        console.log("strike 2 board iv");
+        console.log(strike2.boardIv);
 
         uint premiumReceived1;
         uint premiumReceived2;
@@ -166,15 +175,57 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         );
         premiumReceived = premiumReceived1 + premiumReceived2;
 
-        // uint additionalPremium;
-        // (, , additionalPremium, premiumExchangeValue) = _tradePremiums(
-        //     premiumReceived,
-        //     collateralToAdd1,
-        //     collateralToAdd2
-        // );
+        OptionPosition memory _position1 = _getPositions(
+            _toDynamic(positionId1)
+        )[0];
+
+        console.log("first position");
+        console.log(_position1.amount);
+
+        console.log("premium received for first");
+        console.log(premiumReceived1);
+
+        OptionPosition memory _position2 = _getPositions(
+            _toDynamic(positionId2)
+        )[0];
+
+        console.log("second position");
+        console.log(_position2.amount);
+
+        console.log("premium received for second");
+        console.log(premiumReceived2);
+
+        uint additionalPremium;
+        (, , additionalPremium, premiumExchangeValue) = _tradePremiums(
+            premiumReceived,
+            collateralToAdd1,
+            collateralToAdd2
+        );
+
+        console.log("option position id 1");
+        console.log(positionId1);
+        console.log("additional premium");
+        console.log(additionalPremium);
+        console.log("premium received");
+        console.log(premiumReceived);
+        console.log("premium exchange value");
+        console.log(premiumExchangeValue);
+        console.log("option position id 2");
+        console.log(positionId2);
+
+        OptionPosition memory position2 = _getPositions(
+            _toDynamic(positionId2)
+        )[0];
+
+        console.log("after premiums trade position");
+        console.log(position2.amount);
 
         collateralToAdd = collateralToAdd1 + collateralToAdd2; // + exchangeValue;
-        //premiumReceived += additionalPremium;
+        console.log("collateralToAdd");
+        console.log(collateralToAdd);
+        premiumReceived += additionalPremium;
+        console.log("premiumReceived");
+        console.log(premiumReceived);
     }
 
     function _tradeStrike(Strike memory strike)
@@ -184,12 +235,16 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             uint premiumReceived,
             uint collateralToAdd
         )
-    //uint setCollateralTo
     {
-        uint setCollateralTo;
-        (collateralToAdd, setCollateralTo) = getRequiredCollateral(strike);
+        (collateralToAdd, ) = getRequiredCollateral(strike);
+        console.log("before selling strike");
+        console.log(collateralToAdd);
 
-        (positionId, premiumReceived) = _sellStrike(strike, setCollateralTo);
+        (positionId, premiumReceived) = _sellStrike(strike, collateralToAdd);
+        console.log("position id");
+        console.log(positionId);
+        console.log("premium received");
+        console.log(premiumReceived);
     }
 
     /**
@@ -213,7 +268,11 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     {
         // exchange susd to seth
 
+        console.log("selling size");
+        console.log(size);
         exchangeValue = _exchangePremiums(size);
+        console.log("exchange value");
+        console.log(exchangeValue);
 
         uint sellAmount = exchangeValue / 2;
         (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
@@ -229,6 +288,11 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             sellAmount,
             collateralToAdd2
         );
+
+        console.log("premium position id 1");
+        console.log(positionId1);
+        console.log("premium position id 2");
+        console.log(positionId2);
         premiumReceived = premiumReceived1 + premiumReceived2;
     }
 
@@ -250,20 +314,6 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         uint sellAmount = strategyDetail.size;
         collateralToAdd = _getFullCollateral(strike.strikePrice, sellAmount);
         setCollateralTo = collateralToAdd;
-
-        // get existing position info if active
-        uint existingAmount = 0;
-        uint existingCollateral = 0;
-        if (_isActiveStrike(strike.id)) {
-            OptionPosition memory position = getPositions(
-                _toDynamic(strikeToPositionId[strike.id])
-            )[0];
-            existingCollateral = position.collateral;
-            existingAmount = position.amount;
-        }
-
-        setCollateralTo += existingCollateral;
-        console.log("setCollateralTo:", setCollateralTo / 10**18);
     }
 
     /**
@@ -277,17 +327,22 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         internal
         returns (uint, uint)
     {
+        console.log("trying to sell strike");
         // get minimum expected premium based on minIv
         uint minExpectedPremium = _getPremiumLimit(
             strike,
             strategyDetail.minVol,
             strategyDetail.size
         );
+        console.log("min expected premium");
+        console.log(minExpectedPremium);
         uint strikeId = strike.id;
         uint initIv = strike.boardIv.multiplyDecimal(strike.skew);
+        console.log("nit iv");
+        console.log(initIv);
 
         // perform trade
-        TradeResult memory result = openPosition(
+        TradeResult memory result = _openPosition(
             TradeInputParameters({
                 strikeId: strike.id,
                 positionId: strikeToPositionId[strike.id],
@@ -300,7 +355,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
                 rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
             })
         );
-        Strike memory finalStrike = getStrikes(_toDynamic(strikeId))[0];
+        Strike memory finalStrike = _getStrikes(_toDynamic(strikeId))[0];
         uint finalIv = finalStrike.boardIv.multiplyDecimal(finalStrike.skew);
         require(initIv - finalIv < ivLimit, "IV_LIMIT_HIT");
 
@@ -329,11 +384,13 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             strategyDetail.minVol,
             size
         );
+        console.log(strategyDetail.minVol);
         uint strikeId = strike.id;
+        console.log(strike.id);
         uint initIv = strike.boardIv.multiplyDecimal(strike.skew);
 
         // perform trade
-        TradeResult memory result = openPosition(
+        TradeResult memory result = _openPosition(
             TradeInputParameters({
                 strikeId: strike.id,
                 positionId: strikeToPositionId[strike.id],
@@ -346,7 +403,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
                 rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
             })
         );
-        Strike memory finalStrike = getStrikes(_toDynamic(strikeId))[0];
+        Strike memory finalStrike = _getStrikes(_toDynamic(strikeId))[0];
         uint finalIv = finalStrike.boardIv.multiplyDecimal(finalStrike.skew);
         require(initIv - finalIv < ivLimit, "IV_LIMIT_HIT");
 
@@ -355,10 +412,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         // update active strikes
         _addActiveStrike(strike.id, result.positionId);
 
-        // require(
-        //     result.totalCost >= minExpectedPremium,
-        //     "premium received is below min expected premium"
-        // );
+        require(
+            result.totalCost >= minExpectedPremium,
+            "premium received is below min expected premium"
+        );
 
         return (result.positionId, result.totalCost);
     }
@@ -376,8 +433,8 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         uint bigStrikeId = strikeIds[0];
 
         // init strikes
-        smallStrike = getStrikes(_toDynamic(smallStrikeId))[0];
-        bigStrike = getStrikes(_toDynamic(bigStrikeId))[0];
+        smallStrike = _getStrikes(_toDynamic(smallStrikeId))[0];
+        bigStrike = _getStrikes(_toDynamic(bigStrikeId))[0];
 
         (uint smallDeltaGap, ) = _getDeltaGap(smallStrike, true);
         (uint bigDeltaGap, ) = _getDeltaGap(bigStrike, false);
@@ -387,7 +444,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         for (uint i = 1; i < strikeIds.length - 1; i++) {
             // Get current Strike
             uint currentStrikeId = strikeIds[i];
-            Strike memory currentStrike = getStrikes(
+            Strike memory currentStrike = _getStrikes(
                 _toDynamic(currentStrikeId)
             )[0];
 
@@ -413,10 +470,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             smallDeltaGap <= strategyDetail.maxDeltaGap,
             "smallDeltaGap out of bound!"
         );
-        require(
-            bigDeltaGap <= strategyDetail.maxDeltaGap,
-            "smallDeltaGap out of bound!"
-        );
+        require(bigDeltaGap <= strategyDetail.maxDeltaGap, "smallDeltaGap out");
     }
 
     /////////////////////////////
@@ -452,9 +506,13 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             ? strategyDetail.maxtargetDelta
             : strategyDetail.mintargetDelta;
         uint[] memory strikeId = _toDynamic(strike.id);
-        callDelta = getDeltas(strikeId)[0];
+        callDelta = _getDeltas(strikeId)[0];
 
         int delta = _isCall() ? callDelta : callDelta - SignedDecimalMath.UNIT;
+        console.log("delta");
+        console.logInt(delta);
+        console.logInt(targetDelta);
+        console.log(strike.strikePrice);
         deltaGap = _abs(targetDelta - delta);
     }
 
@@ -472,7 +530,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     }
 
     function _exchangePremiums(uint size) internal returns (uint baseReceived) {
-        ExchangeRateParams memory exchangeParams = getExchangeParams();
+        ExchangeRateParams memory exchangeParams = _getExchangeParams();
         //uint quoteBal = quoteAsset.balanceOf(address(this));
         // exchange quote asset to base asset
         uint minQuoteExpected = size
@@ -480,6 +538,15 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
             .multiplyDecimal(
                 DecimalMath.UNIT - exchangeParams.baseQuoteFeeRate
             );
-        baseReceived = exchangeFromExactQuote(size, minQuoteExpected);
+        baseReceived = _exchangeFromExactQuote(size, minQuoteExpected);
+    }
+
+    // FIXME: To remove
+    function getPositions(uint[] memory positionIds)
+        public
+        view
+        returns (OptionPosition[] memory)
+    {
+        return _getPositions(positionIds);
     }
 }

@@ -27,7 +27,7 @@ const strategyDetail: HackMoneyStrategyDetailStruct = {
   maxTimeToExpiry: lyraConstants.WEEK_SEC * 2,
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
-  // maxDeltaGap: toBN("0.05"), // accept delta from 0.10~0.20 or 0.80~0.90
+  maxDeltaGap: toBN("0.05"), // accept delta from 0.10~0.20 or 0.80~0.90
   minVol: toBN("0.8"), // min vol to sell. (also used to calculate min premium for call selling vault)
   size: toBN("100"),
 };
@@ -169,8 +169,19 @@ describe("Hack Money Vault integration test", async () => {
 
     vaultBalance = await lyraVault.totalBalance();
     expect(vaultBalance).to.equal(ethers.utils.parseEther("11"));
-    await lyraVault.trade(ethers.utils.parseEther("5"), { gasLimit: 30000000 });
-    console.log("Traded");
+
+    let strategySethBalance;
+    strategySethBalance = await sETH.balanceOf(lyraStrategy.address);
+    console.log("strategySethBalance:", strategySethBalance.toString());
+
+    await lyraVault.trade(ethers.utils.parseEther("2"));
+    console.log("Traded1");
+    strategySethBalance = await sETH.balanceOf(lyraStrategy.address);
+    console.log("strategySethBalance:", strategySethBalance.toString());
+    await lyraVault.trade(ethers.utils.parseEther("1"));
+    console.log("Traded2");
+    strategySethBalance = await sETH.balanceOf(lyraStrategy.address);
+    console.log("strategySethBalance:", strategySethBalance.toString());
 
     // await expect(lyraVault.trade(ethers.utils.parseEther("5")))
     //   .to.emit(lyraVault, "Trade")

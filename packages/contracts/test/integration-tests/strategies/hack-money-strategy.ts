@@ -8,17 +8,18 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import {
-  HackMoneyStrategy,
+  HackMoneyStrategyTest,
   HackMoneyVault,
   MockERC20,
 } from "../../../typechain-types";
-import { HackMoneyStrategyDetailStruct } from "../../../typechain-types/HackMoneyStrategy";
+import { HackMoneyStrategyDetailStruct } from "../../../typechain-types/HackMoneyStrategyTest";
 
 const strategyDetail: HackMoneyStrategyDetailStruct = {
   minTimeToExpiry: lyraConstants.DAY_SEC,
   maxTimeToExpiry: lyraConstants.WEEK_SEC * 2,
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
+  maxDeltaGap: toBN("0.05"),
   minVol: toBN("0.1"), // min vol to sell. (also used to calculate min premium for call selling vault)
   size: toBN("100"),
 };
@@ -32,7 +33,7 @@ describe("Hack Money Strategy integration test", async () => {
   // let lyraGlobal: LyraGlobal;
   // let lyraETHMarkets: LyraMarket;
   let vault: HackMoneyVault;
-  let strategy: HackMoneyStrategy;
+  let strategy: HackMoneyStrategyTest;
 
   // roles
   let deployer: SignerWithAddress;
@@ -133,7 +134,7 @@ describe("Hack Money Strategy integration test", async () => {
 
   before("deploy strategy", async () => {
     strategy = (await (
-      await ethers.getContractFactory("HackMoneyStrategy", {
+      await ethers.getContractFactory("HackMoneyStrategyTest", {
         libraries: {
           BlackScholes: lyraTestSystem.blackScholes.address,
         },
@@ -144,7 +145,7 @@ describe("Hack Money Strategy integration test", async () => {
         vault.address,
         TestSystem.OptionType.SHORT_CALL_BASE,
         lyraTestSystem.GWAVOracle.address
-      )) as HackMoneyStrategy;
+      )) as HackMoneyStrategyTest;
   });
 
   before("initialize strategy and adaptor", async () => {
@@ -227,15 +228,6 @@ describe("Hack Money Strategy integration test", async () => {
     });
 
     it("should trade when called first time", async () => {
-      // const strikeObj1 = await strikeIdToDetail(lyraTestSystem.optionMarket, strikes[1]);
-      // const strikeObj2 = await strikeIdToDetail(lyraTestSystem.optionMarket, strikes[5]);
-      // const [collateralToAdd1] = await strategy.getRequiredCollateral(strikeObj1);
-      // const [collateralToAdd2] = await strategy.getRequiredCollateral(strikeObj2);
-      // const collateralToAdd = collateralToAdd1.add(collateralToAdd2);
-
-      // const { smallStrikePrice, bigStrikePrice } = await strategy.getStrikes();
-      // console.log(smallStrikePrice.toString(), bigStrikePrice.toString());
-
       const strategySETHBalanceBefore = await seth.balanceOf(strategy.address);
       console.log(
         "strategySETHBalanceBefore:",
@@ -285,12 +277,6 @@ describe("Hack Money Strategy integration test", async () => {
         ethers.utils.formatEther(strategySUSDBalanceAfter)
       );
 
-      // check state.lockAmount left is updated
-      //expect(vaultStateBefore.lockedAmountLeft.sub(vaultStateAfter.lockedAmountLeft).eq(collateralToAdd)).to.be.true;
-      // check that we receive sUSD
-      // expect(strategySUSDBalanceAfter.sub(strategySUSDBalanceBefore).gt(0)).to
-      //   .be.true;
-
       // active strike is updated
       const storedStrikeId1 = await strategy.activeStrikeIds(0);
       // expect(storedStrikeId1.eq(strikeObj1.id)).to.be.true;
@@ -306,21 +292,7 @@ describe("Hack Money Strategy integration test", async () => {
       const [position2] = await lyraTestSystem.optionToken.getOptionPositions([
         positionId2,
       ]);
-
-      //expect(strategySUSDBalanceAfter.sub(strategySUSDBalanceBefore).gt(0)).to.be.true;
-
-      // expect(position1.amount.sub(strategyDetail.size).gt(0)).to.be.true;
-      // expect(position2.amount.sub(strategyDetail.size).gt(0)).to.be.true;
-
-      //expect(position1.amount.eq(strategyDetail.size)).to.be.true;
-      //expect(position1.collateral.eq(collateralToAdd1)).to.be.true;
-      //expect(position2.amount.eq(strategyDetail.size)).to.be.true;
-      //expect(position2.collateral.eq(collateralToAdd2)).to.be.true;
     });
-
-    // it('should  revert when user try to make another trade during same period', async () => {
-    //   await expect(vault.connect(randomUser).trade(strategyDetail.size)).to.be.revertedWith('Wait for options to settle');
-    // });
 
     const additionalDepositAmount = toBN("25000");
     it("can add more deposit during the round", async () => {

@@ -20,9 +20,12 @@ import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath
 import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol";
 
 // StrategyBase to inherit
-import {HackMoneyStrategyBase} from "./HackMoneyStrategyBase.sol";
+import {HackMoneyStrategyBaseTest} from "./HackMoneyStrategyBaseTest.sol";
 
-contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
+contract HackMoneyStrategyTest is
+    HackMoneyStrategyBaseTest,
+    IHackMoneyStrategy
+{
     using DecimalMath for uint;
     using SignedDecimalMath for int;
 
@@ -53,7 +56,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         HackMoneyVault _vault,
         OptionType _optionType,
         GWAVOracle _gwavOracle
-    ) HackMoneyStrategyBase(_vault, _optionType, _gwavOracle) {}
+    ) HackMoneyStrategyBaseTest(_vault, _optionType, _gwavOracle) {}
 
     /**
      * @dev update the strategy detail for the new round.
@@ -404,8 +407,8 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
                 bigDeltaGap = currentBigDeltaGap;
             }
             console.log("Loop iteration: ", i);
-            console.log("smallDeltaGap:", smallDeltaGap / 10**15, " / 10 %");
-            console.log("bigDeltaGap:", bigDeltaGap / 10**15, " / 10 %");
+            console.log("smallDeltaGap:", smallDeltaGap / 10**15, "/ 10 %");
+            console.log("bigDeltaGap:", bigDeltaGap / 10**15, " / 10%");
         }
 
         // final checks

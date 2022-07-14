@@ -10,7 +10,7 @@ import {LyraAdapter} from "@lyrafinance/protocol/contracts/periphery/LyraAdapter
 // Libraries
 import {Vault} from "../libraries/Vault.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {LyraVault} from "../core/LyraVault.sol";
+import {HackMoneyVault} from "../core/HackMoneyVault.sol";
 import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol";
 import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol";
 
@@ -18,7 +18,7 @@ contract StrategyBase is LyraAdapter {
   using DecimalMath for uint;
   using SignedDecimalMath for int;
 
-  LyraVault public immutable vault;
+  HackMoneyVault public immutable vault;
   OptionType public immutable optionType;
 
   /// @dev asset used as collateral in AMM to sell. Should be the same as vault asset
@@ -38,7 +38,7 @@ contract StrategyBase is LyraAdapter {
     _;
   }
 
-  constructor(LyraVault _vault, OptionType _optionType) LyraAdapter() {
+  constructor(HackMoneyVault _vault, OptionType _optionType) LyraAdapter() {
     vault = _vault;
     optionType = _optionType;
   }

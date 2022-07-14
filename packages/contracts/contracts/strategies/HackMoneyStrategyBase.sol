@@ -15,12 +15,14 @@ import {HackMoneyVault} from "../core/HackMoneyVault.sol";
 import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol";
 import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol";
 
-contract HackMoneyStrategyBase is LyraAdapter {
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+contract HackMoneyStrategyBase is LyraAdapter, Initializable {
   using DecimalMath for uint;
   using SignedDecimalMath for int;
 
-  HackMoneyVault public immutable vault;
-  OptionType public immutable optionType;
+  HackMoneyVault public vault;
+  OptionType public optionType;
 
   /// @dev asset used as collateral in AMM to sell. Should be the same as vault asset
   IERC20 public collateralAsset;
@@ -40,6 +42,11 @@ contract HackMoneyStrategyBase is LyraAdapter {
   }
 
   constructor(HackMoneyVault _vault, OptionType _optionType) LyraAdapter() {
+    vault = _vault;
+    optionType = _optionType;
+  }
+
+  function initializeBase(HackMoneyVault _vault, OptionType _optionType) public onlyInitializing {
     vault = _vault;
     optionType = _optionType;
   }

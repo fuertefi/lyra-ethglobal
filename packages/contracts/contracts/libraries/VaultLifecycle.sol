@@ -2,12 +2,12 @@
 pragma solidity ^0.8.9;
 
 import {SafeMath} from "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import {Vault} from "./Vault.sol";
 import {ShareMath} from "./ShareMath.sol";
 
 import {IERC20Detailed} from "../interfaces/IERC20Detailed.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {SafeERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "hardhat/console.sol";
 
@@ -16,7 +16,7 @@ import "hardhat/console.sol";
  */
 library VaultLifecycle {
   using SafeMath for uint;
-  using SafeERC20 for IERC20;
+  using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /**
    * @notice Calculate the shares to mint, new price per share,
@@ -46,7 +46,7 @@ library VaultLifecycle {
       uint mintShares
     )
   {
-    uint currentBalance = IERC20(asset).balanceOf(address(this));
+    uint currentBalance = IERC20Upgradeable(asset).balanceOf(address(this));
 
     newPricePerShare = ShareMath.pricePerShare(currentShareSupply, currentBalance, pendingAmount, decimals);
 

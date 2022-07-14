@@ -316,6 +316,11 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         setCollateralTo = collateralToAdd;
     }
 
+  function initialize(HackMoneyVault _vault, OptionType _optionType) public initializer {
+      HackMoneyStrategyBase.initializeBase(_vault, _optionType);
+  }
+
+
     /**
      * @dev perform the trade
      * @param strike strike detail

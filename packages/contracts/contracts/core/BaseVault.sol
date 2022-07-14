@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import {SafeERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import {Vault} from "../libraries/Vault.sol";
 import {VaultLifecycle} from "../libraries/VaultLifecycle.sol";
 import {ShareMath} from "../libraries/ShareMath.sol";
 
-contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
-  using SafeERC20 for IERC20;
+contract BaseVault is Initializable, ReentrancyGuardUpgradeable, OwnableUpgradeable, ERC20Upgradeable  {
+  using SafeERC20Upgradeable for IERC20Upgradeable;
   using ShareMath for Vault.DepositReceipt;
 
   /************************************************
@@ -56,7 +56,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
    ***********************************************/
 
   // Round per year scaled up FEE_MULTIPLIER
-  uint private immutable roundPerYear;
+  uint private roundPerYear;
 
   /************************************************
    *  EVENTS
@@ -87,19 +87,22 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
   /**
    * @notice Initializes the contract with immutable variables
    */
-  constructor(
+  function initializeBaseVault(
     address _feeRecipient,
     uint _roundDuration,
     string memory _tokenName,
     string memory _tokenSymbol,
     Vault.VaultParams memory _vaultParams
-  ) ERC20(_tokenName, _tokenSymbol) {
+  ) public onlyInitializing {
+    __ReentrancyGuard_init();
+    __Ownable_init();
+    __ERC20_init(_tokenName, _tokenSymbol);
     feeRecipient = _feeRecipient;
     uint _roundPerYear = (uint(365 days) * Vault.FEE_MULTIPLIER) / _roundDuration;
     roundPerYear = _roundPerYear;
     vaultParams = _vaultParams;
 
-    uint assetBalance = IERC20(vaultParams.asset).balanceOf(address(this));
+    uint assetBalance = IERC20Upgradeable(vaultParams.asset).balanceOf(address(this));
     ShareMath.assertUint104(assetBalance);
     vaultState.lastLockedAmount = uint104(assetBalance);
     vaultState.round = 1;
@@ -171,7 +174,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     _depositFor(amount, msg.sender);
 
     // An approve() by the msg.sender is required beforehand
-    IERC20(vaultParams.asset).safeTransferFrom(msg.sender, address(this), amount);
+    IERC20Upgradeable(vaultParams.asset).safeTransferFrom(msg.sender, address(this), amount);
   }
 
   /**
@@ -187,7 +190,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
     _depositFor(amount, creditor);
 
     // An approve() by the msg.sender is required beforehand
-    IERC20(vaultParams.asset).safeTransferFrom(msg.sender, address(this), amount);
+    IERC20Upgradeable(vaultParams.asset).safeTransferFrom(msg.sender, address(this), amount);
   }
 
   /**
@@ -453,7 +456,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
    */
   function _transferAsset(address recipient, uint amount) internal {
     address asset = vaultParams.asset;
-    IERC20(asset).safeTransfer(recipient, amount);
+    IERC20Upgradeable(asset).safeTransfer(recipient, amount);
   }
 
   /************************************************
@@ -515,7 +518,7 @@ contract BaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
    * @return total balance of the vault, including the amounts locked in third party protocols
    */
   function totalBalance() public view returns (uint) {
-    return uint(vaultState.lockedAmount) + IERC20(vaultParams.asset).balanceOf(address(this));
+    return uint(vaultState.lockedAmount) + IERC20Upgradeable(vaultParams.asset).balanceOf(address(this));
   }
 
   /**

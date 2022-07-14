@@ -3,9 +3,7 @@ pragma solidity ^0.8.9;
 // Hardhat
 import "hardhat/console.sol";
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {Multicall} from "@openzeppelin/contracts/utils/Multicall.sol";
 
 import {BaseVault} from "./BaseVault.sol";
 import {Vault} from "../libraries/Vault.sol";
@@ -13,11 +11,11 @@ import {Vault} from "../libraries/Vault.sol";
 import {IHackMoneyStrategy} from "../interfaces/IHackMoneyStrategy.sol";
 
 /// @notice LyraVault help users run option-selling strategies on Lyra AMM.
-contract HackMoneyVault is Multicall, Ownable, BaseVault {
-  IERC20 public immutable premiumAsset;
-  IERC20 public immutable collateralAsset;
+contract HackMoneyVault is BaseVault {
+  IERC20 public premiumAsset;
+  IERC20 public collateralAsset;
 
-  uint public roundDelay = 6 hours;
+  uint public roundDelay;
 
   IHackMoneyStrategy public strategy;
   address public lyraRewardRecipient;
@@ -40,16 +38,18 @@ contract HackMoneyVault is Multicall, Ownable, BaseVault {
 
   event RoundClosed(uint16 roundId, uint104 lockAmount);
 
-  constructor(
+  function initialize(
     address _susd,
     address _feeRecipient,
     uint _roundDuration,
     string memory _tokenName,
     string memory _tokenSymbol,
     Vault.VaultParams memory _vaultParams
-  ) BaseVault(_feeRecipient, _roundDuration, _tokenName, _tokenSymbol, _vaultParams) {
+  ) public initializer {
+    BaseVault.initializeBaseVault(_feeRecipient, _roundDuration, _tokenName, _tokenSymbol, _vaultParams);
     premiumAsset = IERC20(_susd);
     collateralAsset = IERC20(_vaultParams.asset);
+    roundDelay = 6 hours;
   }
 
   /// @dev set strategy contract. This function can only be called by owner.

@@ -19,7 +19,7 @@ const strategyDetail: HackMoneyStrategyDetailStruct = {
   maxTimeToExpiry: lyraConstants.WEEK_SEC * 2,
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
-  maxDeltaGap: toBN("0.5"),
+  maxDeltaGap: toBN("0.05"),
   minVol: toBN("0.1"), // min vol to sell. (also used to calculate min premium for call selling vault)
   size: toBN("100"),
 };

@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: MIT
 // contract ProxySample {
 //     // ADD SAME IMPLEMENTATION LAYOUT
 //     // ADD IMPLEMENTATION SLOT

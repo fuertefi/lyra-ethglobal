@@ -36,7 +36,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     HackMoneyStrategyDetail public strategyDetail;
     uint256 public activeExpiry;
     uint256 public currentBoardId;
-    uint256 public ivLimit = 2 * 1e18;
+    uint256 public ivLimit;
     address public lyraRewardRecipient;
 
     //uint public optionSize;
@@ -48,6 +48,10 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     constructor(HackMoneyVault _vault, OptionType _optionType)
         HackMoneyStrategyBase(_vault, _optionType)
     {}
+
+    function initialize(HackMoneyVault _vault, OptionType _optionType) public initializer {
+        HackMoneyStrategyBase.initializeBase(_vault, _optionType);
+    }
 
     /**
      * @dev update the strategy detail for the new round.

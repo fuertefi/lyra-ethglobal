@@ -17,7 +17,12 @@ import {
   HackMoneyStrategyLibraryAddresses,
   HackMoneyStrategy__factory,
 } from "../../../typechain-types/factories/HackMoneyStrategy__factory";
-import { HackMoneyStrategyDetailStruct } from "../../../typechain-types/HackMoneyStrategy";
+import { StrategyUpgradeTest__factory } from "../../../typechain-types/factories/StrategyUpgradeTest__factory";
+import {
+  HackMoneyStrategy,
+  HackMoneyStrategyDetailStruct,
+} from "../../../typechain-types/HackMoneyStrategy";
+import { TransparentUpgradeableProxy } from "../../../typechain-types/TransparentUpgradeableProxy";
 import { targets as lyraGlobal } from "./lyra-mainnet.json";
 
 const lyraMarket = lyraGlobal.markets.sETH;
@@ -35,14 +40,22 @@ const strategyDetail: HackMoneyStrategyDetailStruct = {
 describe("Hack Money Vault integration test", async () => {
   let deployer: SignerWithAddress;
   let manager: SignerWithAddress;
-  // let randomUser: SignerWithAddress;
+  let lyraStrategy: HackMoneyStrategy;
+  let lyraVault: HackMoneyVault;
+  let proxy: TransparentUpgradeableProxy;
+  let randomUser: SignerWithAddress;
   // let randomUser2: SignerWithAddress;
+
+  const linkAddresses: HackMoneyStrategyLibraryAddresses = {
+    "@lyrafinance/protocol/contracts/libraries/BlackScholes.sol:BlackScholes":
+      "0x409f9A1Ee61E94B91b11e3696DF2108EFc7C3EF5",
+  };
 
   before("assign roles", async () => {
     const addresses = await ethers.getSigners();
     deployer = addresses[0];
     manager = addresses[1];
-    // randomUser = addresses[8];
+    randomUser = addresses[8];
     // randomUser2 = addresses[9];
   });
 
@@ -100,7 +113,7 @@ describe("Hack Money Vault integration test", async () => {
     const decimals = 18;
     const cap = ethers.utils.parseEther("100000"); // 100k USD as cap
     const LyraVault = await ethers.getContractFactory("HackMoneyVault");
-    const lyraVault = (await upgrades.deployProxy(LyraVault, [
+    lyraVault = (await upgrades.deployProxy(LyraVault, [
       sUSD.address,
       ZERO_ADDRESS,
       lyraConstants.DAY_SEC * 7,
@@ -113,10 +126,6 @@ describe("Hack Money Vault integration test", async () => {
       },
     ])) as HackMoneyVault;
 
-    const linkAddresses: HackMoneyStrategyLibraryAddresses = {
-      "@lyrafinance/protocol/contracts/libraries/BlackScholes.sol:BlackScholes":
-        "0x409f9A1Ee61E94B91b11e3696DF2108EFc7C3EF5",
-    };
     // const HackMoneyStrategy = await ethers.getContractFactory(
     // "HackMoneyStrategy",
     // {
@@ -148,12 +157,12 @@ describe("Hack Money Vault integration test", async () => {
     );
     // .encodeABI();
     // const initializeData = Buffer.from("");
-    const proxy = await Proxy.deploy(
+    proxy = await Proxy.deploy(
       lyraStrategyDep.address,
       manager.address,
       initializeData
     );
-    const lyraStrategy = LyraStrategyFactory.attach(proxy.address);
+    lyraStrategy = LyraStrategyFactory.attach(proxy.address);
 
     console.log("before fail");
 
@@ -219,5 +228,31 @@ describe("Hack Money Vault integration test", async () => {
 
     vaultBalance = await lyraVault.totalBalance();
     expect(vaultBalance).to.equal(ethers.utils.parseEther("21"));
+  });
+  it("successfully upgrades strategy", async () => {
+    const StrategyUpgradeFactory = new StrategyUpgradeTest__factory(
+      linkAddresses,
+      deployer
+    );
+    let strat = StrategyUpgradeFactory.attach(proxy.address);
+    // let strat = HackMoneyStrategy__factory.attach(proxy.address);
+    await expect(strat.test()).to.be.reverted;
+
+    const lyraStrategyDep = await StrategyUpgradeFactory.connect(
+      deployer
+    ).deploy(lyraVault.address, OptionType.SHORT_CALL_BASE);
+
+    const initializeData = lyraStrategyDep.interface.encodeFunctionData(
+      "initialize",
+      [lyraVault.address, OptionType.SHORT_CALL_BASE]
+    );
+
+    await expect(proxy.connect(randomUser).upgradeTo(lyraStrategyDep.address))
+      .to.be.reverted;
+    await proxy.connect(manager).upgradeTo(lyraStrategyDep.address);
+
+    strat = StrategyUpgradeFactory.attach(proxy.address);
+
+    expect(await strat.test()).to.equal(111111);
   });
 });

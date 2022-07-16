@@ -37,7 +37,7 @@ const strategyDetail: HackMoneyStrategyDetailStruct = {
   size: toBN("100"),
 };
 
-describe("Hack Money Vault integration test", async () => {
+xdescribe("Hack Money Vault integration test", async () => {
   let deployer: SignerWithAddress;
   let manager: SignerWithAddress;
   let lyraStrategy: HackMoneyStrategy;

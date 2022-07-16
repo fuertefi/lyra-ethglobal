@@ -30,8 +30,6 @@ describe("Hack Money Strategy integration test", async () => {
   let seth: MockERC20;
 
   let lyraTestSystem: TestSystemContractsType;
-  // let lyraGlobal: LyraGlobal;
-  // let lyraETHMarkets: LyraMarket;
   let vault: HackMoneyVault;
   let strategy: HackMoneyStrategy;
 
@@ -113,12 +111,14 @@ describe("Hack Money Strategy integration test", async () => {
   });
 
   before("deploy vault", async () => {
-    const LyraVault = await ethers.getContractFactory("HackMoneyVault");
+    const Vault = await ethers.getContractFactory("HackMoneyVault");
 
     const cap = ethers.utils.parseEther("5000000"); // 5m USD as cap
     const decimals = 18;
 
-    vault = (await upgrades.deployProxy(LyraVault.connect(manager), [
+    // using open zeppelin upgrades
+    // TODO: Manager should be admin, deployer should be interacting
+    vault = (await upgrades.deployProxy(Vault.connect(manager), [
       susd.address,
       manager.address, // feeRecipient,
       lyraConstants.DAY_SEC * 7,
@@ -131,6 +131,7 @@ describe("Hack Money Strategy integration test", async () => {
       },
     ])) as HackMoneyVault;
 
+    // TODO: Move owners, admins to test for successful deployment
     console.log("deployer");
     console.log(deployer.address);
     console.log("manager");
@@ -139,13 +140,11 @@ describe("Hack Money Strategy integration test", async () => {
     console.log(await vault.owner());
     console.log("vault address");
     console.log(vault.address);
-
-    // vault = (await LyraVault.connect(manager).deploy(
-    // )) as HackMoneyVault;
   });
 
   before("deploy strategy", async () => {
-    console.log("before deploying strategy");
+    // TODO: Verify same deployment for both tests
+    // TODO: Use upgradeability proxy
     strategy = (await (
       await ethers.getContractFactory("HackMoneyStrategy", {
         libraries: {
@@ -161,30 +160,21 @@ describe("Hack Money Strategy integration test", async () => {
   });
 
   before("initialize strategy and adaptor", async () => {
-    // todo: remove this once we put everything in constructor
-    console.log("failing here");
-    console.log(
-      lyraTestSystem.lyraRegistry.address,
-      lyraTestSystem.optionMarket.address,
-      lyraTestSystem.testCurve.address, // curve swap
-      lyraTestSystem.basicFeeCounter.address
-    );
     await strategy.connect(manager).initAdapter(
       lyraTestSystem.lyraRegistry.address,
       lyraTestSystem.optionMarket.address,
       lyraTestSystem.testCurve.address, // curve swap
       lyraTestSystem.basicFeeCounter.address
     );
+    // TODO: move iv limit to adapter init?
     await strategy.connect(manager).setIvLimit(ethers.utils.parseEther("2"));
-    console.log("failed");
   });
 
   before("link strategy to vault", async () => {
-    console.log("doing this");
     await vault.connect(manager).setStrategy(strategy.address);
   });
 
-  xdescribe("check strategy setup", async () => {
+  describe("check strategy setup", async () => {
     it("deploys with correct vault and optionType", async () => {
       expect(await strategy.optionType()).to.be.eq(
         TestSystem.OptionType.SHORT_CALL_BASE
@@ -192,6 +182,7 @@ describe("Hack Money Strategy integration test", async () => {
       expect(await strategy.gwavOracle()).to.be.eq(
         lyraTestSystem.GWAVOracle.address
       );
+      expect(await strategy.ivLimit()).to.be.eq(ethers.utils.parseEther("2"));
     });
   });
 
@@ -236,10 +227,25 @@ describe("Hack Money Strategy integration test", async () => {
       expect(state.totalPending.eq(toBN("100000"))).to.be.true;
     });
     it("manager can start round 1", async () => {
-      // TODO: add multicall here
-      // await vault.connect(manager).startNextRound(boardId, strategyDetail.size);
-      console.log("starting round");
+      const vaultBalancePreRound = await seth.balanceOf(vault.address);
+      const strategyBalancePreRound = await seth.balanceOf(strategy.address);
+      expect(strategyBalancePreRound).to.be.eq(0);
       await vault.connect(manager).startNextRound(boardId);
+      const vaultBalanceRoundStart = await seth.balanceOf(vault.address);
+      const strategyBalanceRoundStart = await seth.balanceOf(strategy.address);
+      expect(strategyBalanceRoundStart).to.be.eq(vaultBalancePreRound);
+
+      const vaultState = await vault.vaultState();
+      expect(vaultState.round).to.be.equal(2);
+      expect(vaultState.lockedAmount).to.be.equal(
+        ethers.utils.parseEther("100000")
+      );
+      expect(vaultState.lastLockedAmount).to.be.equal(0);
+      expect(vaultState.lockedAmountLeft).to.be.equal(
+        ethers.utils.parseEther("100000")
+      );
+      expect(vaultState.totalPending).to.be.equal(0);
+      expect(vaultState.roundInProgress).to.be.true;
     });
 
     it("should trade when called first time", async () => {
@@ -263,33 +269,41 @@ describe("Hack Money Strategy integration test", async () => {
         ethers.utils.formatEther(strategySUSDBalanceBefore)
       );
 
+      const vaultStateBefore = await vault.vaultState();
+
       const tradeTransaction = await vault
         .connect(randomUser)
         .trade(strategyDetail.size);
 
-      const tradeTransactionReceipt = await tradeTransaction.wait(1);
-      console.log(tradeTransactionReceipt.events?.length);
-      //console.log(tradeTransactionReceipt.events);
-      const tradeEventLength = tradeTransactionReceipt.events?.length
-        ? tradeTransactionReceipt.events?.length - 1
-        : 0;
-      //const tradeEventArgs = tradeTransactionReceipt.events?.at(110)?.args;
-      const tradeEventArgs =
-        tradeTransactionReceipt.events?.at(tradeEventLength)?.args;
-      console.log("getting premium");
-      const premium = ethers.utils.formatEther(tradeEventArgs?.premium);
-      console.log("getting capitalUsed");
-      const capitalUsed = ethers.utils.formatEther(tradeEventArgs?.capitalUsed);
-      const premiumExchangeValue = ethers.utils.formatEther(
-        tradeEventArgs?.premiumExchangeValue
-      );
-      console.log("PositionId_1: ", tradeEventArgs?.positionId_1.toString());
-      console.log("PositionId_2: ", tradeEventArgs?.positionId_2.toString());
-      console.log("premium: ", premium);
-      console.log("capitalUsed: ", capitalUsed);
-      console.log("premiumExchangeValue: ", premiumExchangeValue);
+      const vaultStateAfter = await vault.vaultState();
 
-      //const vaultStateBefore = await vault.vaultState();
+      const checkPremiumsReceived = (val: string) => {
+        console.log(`Premiums received ${val}`);
+        return BigNumber.from(val).gte("25075184391665341732348");
+      };
+
+      const checkCapitalUsed = (val: string) => {
+        return BigNumber.from(val).eq(
+          BigNumber.from(strategyDetail.size.toString()).mul(2)
+        );
+      };
+
+      const checkPremiumExchangeValue = (val: string) => {
+        console.log(`Premiums exchange: ${val}`);
+        return BigNumber.from(val).gte("13024350046259892330");
+      };
+
+      await expect(tradeTransaction)
+        .to.emit(vault, "Trade")
+        .withArgs(
+          randomUser.address,
+          1,
+          2,
+          checkPremiumsReceived,
+          checkCapitalUsed,
+          checkPremiumExchangeValue
+        );
+
       const strategySETHBalanceAfter = await seth.balanceOf(strategy.address);
       console.log(
         "strategySETHBalanceAfter:",
@@ -301,11 +315,24 @@ describe("Hack Money Strategy integration test", async () => {
         ethers.utils.formatEther(strategySUSDBalanceAfter)
       );
 
+      console.log(
+        "locked amount left before:",
+        ethers.utils.formatEther(vaultStateBefore.lockedAmountLeft)
+      );
+
+      console.log(
+        "locked amount left after:",
+        ethers.utils.formatEther(vaultStateAfter.lockedAmountLeft)
+      );
+
       // check state.lockAmount left is updated
-      //expect(vaultStateBefore.lockedAmountLeft.sub(vaultStateAfter.lockedAmountLeft).eq(collateralToAdd)).to.be.true;
+      expect(
+        vaultStateBefore.lockedAmountLeft.sub(vaultStateAfter.lockedAmountLeft)
+      ).to.equal(BigNumber.from(strategyDetail.size.toString()).mul(2));
       // check that we receive sUSD
-      // expect(strategySUSDBalanceAfter.sub(strategySUSDBalanceBefore).gt(0)).to
-      //   .be.true;
+      expect(strategySUSDBalanceAfter.sub(strategySUSDBalanceBefore)).to.be.gt(
+        0
+      );
 
       // active strike is updated
       // const storedStrikeId1 = await strategy.activeStrikeIds(0);

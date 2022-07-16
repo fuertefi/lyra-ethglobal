@@ -41,6 +41,7 @@ contract HackMoneyStrategyBase is LyraAdapter, Initializable {
     _;
   }
 
+  // TODO: Remove constructor at all?
   constructor(HackMoneyVault _vault, OptionType _optionType) LyraAdapter() {
     vault = _vault;
     optionType = _optionType;

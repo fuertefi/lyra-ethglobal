@@ -38,6 +38,7 @@ contract HackMoneyVault is BaseVault {
 
   event RoundClosed(uint16 roundId, uint104 lockAmount);
 
+  // TODO: Add docs
   function initialize(
     address _susd,
     address _feeRecipient,

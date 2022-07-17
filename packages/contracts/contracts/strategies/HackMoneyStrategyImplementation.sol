@@ -112,6 +112,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         _clearAllActiveStrikes();
     }
 
+    // TODO: Update docs
     /**
      * @notice sell a fix aomunt of options and collect premium
      * @dev the vault should pass in a strike id, and the strategy would verify if the strike is valid on-chain.
@@ -132,6 +133,8 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         )
     // uint exchangeValue
     {
+        // FIXME: Weird to save this to strategy detail as we'd do multiple trades and override. Add parameter to _tradeOptions method?
+        // Currently useless getRequiredCollateral being public due to this
         strategyDetail.size = size;
 
         console.log(size);
@@ -317,6 +320,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     {
         uint256 sellAmount = strategyDetail.size;
         collateralToAdd = _getFullCollateral(strike.strikePrice, sellAmount);
+        // FIXME: setCollateralTo is equal to collateral to add?
         setCollateralTo = collateralToAdd;
     }
 
@@ -425,7 +429,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
     }
 
     function _getTradeStrikes()
-        internal
+        public
         view
         returns (Strike memory smallStrike, Strike memory bigStrike)
     {
@@ -547,6 +551,7 @@ contract HackMoneyStrategy is HackMoneyStrategyBase, IHackMoneyStrategy {
         ExchangeRateParams memory exchangeParams = _getExchangeParams();
         //uint quoteBal = quoteAsset.balanceOf(address(this));
         // exchange quote asset to base asset
+        // TODO: Should we check baseQuoteFeeRate and revert?
         uint256 minQuoteExpected = size
             .divideDecimal(exchangeParams.spotPrice)
             .multiplyDecimal(

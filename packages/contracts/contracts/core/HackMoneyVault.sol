@@ -66,6 +66,8 @@ contract HackMoneyVault is BaseVault {
   }
 
   /// @dev anyone can trigger a trade
+  // TODO: Add docs
+  // Should we specify full size and divide it in halfs in the strategy?
   function trade(uint size) public {
     require(vaultState.roundInProgress, "round closed");
     // perform trades through strategy

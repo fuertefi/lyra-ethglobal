@@ -1,0 +1,448 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+    "txHash": "0x840f0b2e3b7ae3b1241507c17dfd130508f994771d1e63eb62d1627fa586dc61"
+  },
+  "proxies": [
+    {
+      "address": "0x948B3c65b89DF0B4894ABE91E6D02FE579834F8F",
+      "txHash": "0x404ccfca141511071ee9e278d13613bb6dcfa48f4a0b741538a0c32a8f83fb61",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "txHash": "0x5f97fb63b99fc04ac6d9572b0ddfae40eee41cdc29d8f7d2026d2cc7a6090783",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "c9b956f6d2a0a63be05ed7d810863e89ad6029d5bb11fcbd731c0efae7822be7": {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "txHash": "0xa690fbd9a1924f29f0ccfc9658e2333e74715fc54fd469b73c28588cadf48a93",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:74"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_balances",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "ERC20Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:37"
+          },
+          {
+            "label": "_allowances",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "contract": "ERC20Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:39"
+          },
+          {
+            "label": "_totalSupply",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_uint256",
+            "contract": "ERC20Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:41"
+          },
+          {
+            "label": "_name",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_string_storage",
+            "contract": "ERC20Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:43"
+          },
+          {
+            "label": "_symbol",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_string_storage",
+            "contract": "ERC20Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:44"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_array(t_uint256)45_storage",
+            "contract": "ERC20Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:394"
+          },
+          {
+            "label": "depositReceipts",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_mapping(t_address,t_struct(DepositReceipt)39406_storage)",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:24"
+          },
+          {
+            "label": "roundPricePerShare",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:29"
+          },
+          {
+            "label": "withdrawals",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_mapping(t_address,t_struct(Withdrawal)39411_storage)",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:32"
+          },
+          {
+            "label": "vaultParams",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_struct(VaultParams)39382_storage",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:35"
+          },
+          {
+            "label": "vaultState",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_struct(VaultState)39399_storage",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:38"
+          },
+          {
+            "label": "feeRecipient",
+            "offset": 0,
+            "slot": "211",
+            "type": "t_address",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:41"
+          },
+          {
+            "label": "performanceFee",
+            "offset": 0,
+            "slot": "212",
+            "type": "t_uint256",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:44"
+          },
+          {
+            "label": "managementFee",
+            "offset": 0,
+            "slot": "213",
+            "type": "t_uint256",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:47"
+          },
+          {
+            "label": "roundPerYear",
+            "offset": 0,
+            "slot": "214",
+            "type": "t_uint256",
+            "contract": "BaseVault",
+            "src": "contracts/core/BaseVault.sol:59"
+          },
+          {
+            "label": "premiumAsset",
+            "offset": 0,
+            "slot": "215",
+            "type": "t_contract(IERC20)35942",
+            "contract": "HackMoneyVault",
+            "src": "contracts/core/HackMoneyVault.sol:15"
+          },
+          {
+            "label": "collateralAsset",
+            "offset": 0,
+            "slot": "216",
+            "type": "t_contract(IERC20)35942",
+            "contract": "HackMoneyVault",
+            "src": "contracts/core/HackMoneyVault.sol:16"
+          },
+          {
+            "label": "roundDelay",
+            "offset": 0,
+            "slot": "217",
+            "type": "t_uint256",
+            "contract": "HackMoneyVault",
+            "src": "contracts/core/HackMoneyVault.sol:18"
+          },
+          {
+            "label": "strategy",
+            "offset": 0,
+            "slot": "218",
+            "type": "t_contract(IHackMoneyStrategy)39086",
+            "contract": "HackMoneyVault",
+            "src": "contracts/core/HackMoneyVault.sol:20"
+          },
+          {
+            "label": "lyraRewardRecipient",
+            "offset": 0,
+            "slot": "219",
+            "type": "t_address",
+            "contract": "HackMoneyVault",
+            "src": "contracts/core/HackMoneyVault.sol:21"
+          },
+          {
+            "label": "lastQueuedWithdrawAmount",
+            "offset": 0,
+            "slot": "220",
+            "type": "t_uint256",
+            "contract": "HackMoneyVault",
+            "src": "contracts/core/HackMoneyVault.sol:24"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)45_storage": {
+            "label": "uint256[45]",
+            "numberOfBytes": "1440"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)35942": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IHackMoneyStrategy)39086": {
+            "label": "contract IHackMoneyStrategy",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(DepositReceipt)39406_storage)": {
+            "label": "mapping(address => struct Vault.DepositReceipt)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(Withdrawal)39411_storage)": {
+            "label": "mapping(address => struct Vault.Withdrawal)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(DepositReceipt)39406_storage": {
+            "label": "struct Vault.DepositReceipt",
+            "members": [
+              {
+                "label": "round",
+                "type": "t_uint16",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint104",
+                "offset": 2,
+                "slot": "0"
+              },
+              {
+                "label": "unredeemedShares",
+                "type": "t_uint128",
+                "offset": 15,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(VaultParams)39382_storage": {
+            "label": "struct Vault.VaultParams",
+            "members": [
+              {
+                "label": "decimals",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "cap",
+                "type": "t_uint104",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "asset",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(VaultState)39399_storage": {
+            "label": "struct Vault.VaultState",
+            "members": [
+              {
+                "label": "round",
+                "type": "t_uint16",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "lockedAmount",
+                "type": "t_uint104",
+                "offset": 2,
+                "slot": "0"
+              },
+              {
+                "label": "lastLockedAmount",
+                "type": "t_uint104",
+                "offset": 15,
+                "slot": "0"
+              },
+              {
+                "label": "lockedAmountLeft",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "totalPending",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "queuedWithdrawShares",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "2"
+              },
+              {
+                "label": "nextRoundReadyTimestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "roundInProgress",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_struct(Withdrawal)39411_storage": {
+            "label": "struct Vault.Withdrawal",
+            "members": [
+              {
+                "label": "round",
+                "type": "t_uint16",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "shares",
+                "type": "t_uint128",
+                "offset": 2,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint104": {
+            "label": "uint104",
+            "numberOfBytes": "13"
+          },
+          "t_uint128": {
+            "label": "uint128",
+            "numberOfBytes": "16"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

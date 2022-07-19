@@ -7,7 +7,6 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 import {Vault} from "../libraries/Vault.sol";
 import {VaultLifecycle} from "../libraries/VaultLifecycle.sol";
@@ -15,7 +14,7 @@ import {ShareMath} from "../libraries/ShareMath.sol";
 
 import "hardhat/console.sol";
 
-contract CSBaseVault is ReentrancyGuard, Ownable, ERC20, Initializable {
+contract CSBaseVault is ReentrancyGuard, Ownable, ERC20 {
     using SafeERC20 for IERC20;
     using SafeMath for uint;
     using ShareMath for Vault.DepositReceipt;

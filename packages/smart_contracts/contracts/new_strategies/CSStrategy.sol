@@ -18,7 +18,7 @@ import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/Signe
 // StrategyBase to inherit
 import {CSStrategyBase} from "./CSStrategyBase.sol";
 
-contract CSStrategy is CSStrategyBase, ICSStrategy {
+contract CSStrategy is CSStrategyBase {
     using DecimalMath for uint256;
     using SignedDecimalMath for int256;
 
@@ -28,21 +28,7 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
     // ADMIN //
     ///////////
 
-    constructor(CSVault _vault, OptionType _optionType)
-        CSStrategyBase(_vault, _optionType)
-    {}
-
-    /**
-     * @dev update the strategy detail for the new round.
-     */
-    function setStrategyDetail(StrategyDetail memory _strategyDetail)
-        external
-        onlyOwner
-    {
-        (, , , , , , , bool roundInProgress) = vault.vaultState();
-        require(!roundInProgress, "cannot change strategy if round is active");
-        _strategyDetail = _strategyDetail;
-    }
+    constructor(CSVault _vault) CSStrategyBase(_vault) {}
 
     ///////////////////
     // VAULT ACTIONS //
@@ -54,7 +40,8 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
      * @dev the vault should pass in a strike id, and the strategy would verify if the strike is valid on-chain.
      * @return positionId1
      * @return positionId2
-     * @return premiumReceived
+     * @return premiumsReceived
+     * @return premiumsExchangeValue
      */
     function doTrade(uint256 tradeSize)
         external
@@ -63,30 +50,45 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
             uint256 positionId1,
             uint256 positionId2,
             uint256 premiumsReceived,
-            uint256 premiumExchangeValue
+            uint256 premiumsExchangeValue
         )
     {
-        // trade size
-        // FIXME: Weird to save this to strategy detail as we'd do multiple trades and override. Add parameter to _tradeOptions method?
-        // Currently useless getRequiredCollateral being public due to this
-        // LOT OF FALSE SHIT HERE EDIT
-        //strategyDetail.size = size;
+        // TODO: redefinie premiumsReceived, premiumExchangeValue etc
+        // We sell options we get premiums
+        // We sell premiums we get additional premium
+        // premiumsReceived doesnt reflect the stratrgy sUSD balance since we echange it
 
+        // EXCHANGE sUSD in strategy if bal>0
+        uint quoteBal = quoteAsset.balanceOf(address(this));
+        if (quoteBal > 0) _exchangeQuoteToBaseWithLimit(quoteBal);
+
+        // TRADE STRIKE
         (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
 
+        // PRINCIPAL TRADE PART
         (positionId1, positionId2, premiumsReceived) = _tradeStrikes(
             strike1,
             strike2,
             tradeSize
         );
 
-        uint256 additionalPremium;
-        (additionalPremium, premiumExchangeValue) = _tradePremiums(
-            premiumsReceived
-        );
+        // PREMIUMS TRADE PART
+        // TODO: Calling _exchangeQuoteToBaseWithLimit twice maybe we can just exchange our whole balance here and trade premiums
+        premiumsExchangeValue = _exchangeQuoteToBaseWithLimit(premiumsReceived);
 
-        //collateralToAdd = collateralToAdd1 + collateralToAdd2; // + exchangeValue;
-        premiumsReceived += additionalPremium;
+        if (premiumsExchangeValue > 0) {
+            uint256 premiumTradeSize = premiumsExchangeValue / 2;
+            uint256 additionalPremium;
+            (, , additionalPremium) = _tradeStrikes(
+                strike1,
+                strike2,
+                premiumTradeSize
+            );
+            premiumsReceived += additionalPremium;
+        }
+
+        lastTradeTimestamp[strike1.id] = block.timestamp;
+        lastTradeTimestamp[strike2.id] = block.timestamp;
     }
 
     function _tradeStrikes(
@@ -123,31 +125,6 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
             tradeSize,
             setCollateralTo
         );
-    }
-
-    /**
-     * @notice trade premiums received from a trade
-     * @return premiumReceived
-     */
-    function _tradePremiums(uint256 premiumsReceived)
-        internal
-        returns (uint256 premiumReceived, uint256 exchangeValue)
-    {
-        // exchange susd to seth
-
-        exchangeValue = _exchangeQuoteToBaseWithLimit(premiumsReceived);
-
-        if (exchangeValue > 0) {
-            uint256 premiumTradeSize = exchangeValue / 2;
-            (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
-
-            uint256 premiumReceived1;
-            premiumReceived1 = _sellPremiums(strike1, premiumTradeSize);
-            uint256 premiumReceived2;
-            premiumReceived2 = _sellPremiums(strike2, premiumTradeSize);
-
-            premiumReceived = premiumReceived1 + premiumReceived2;
-        }
     }
 
     /////////////////////////////
@@ -189,6 +166,7 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
         uint tradeSize,
         uint setCollateralTo
     ) internal returns (uint256, uint256) {
+        // TODO: fixi this part with min expected premium and strategy min vol
         // get minimum expected premium based on minIv
         // uint256 minExpectedPremium = _getPremiumLimit(
         //     strike,
@@ -216,7 +194,7 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
         uint256 finalIv = finalStrike.boardIv.multiplyDecimal(finalStrike.skew);
         require(initIv - finalIv < ivLimit, "IV_LIMIT_HIT");
 
-        lastTradeTimestamp[strike.id] = block.timestamp;
+        // lastTradeTimestamp[strike.id] = block.timestamp;
 
         // update active strikes
         _addActiveStrike(strike.id, result.positionId);
@@ -224,48 +202,29 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
         return (result.positionId, result.totalCost);
     }
 
+    /////////////////////////////
+    // Trade Parameter Helpers //
+    /////////////////////////////
+
     /**
-     * @dev perform the trade
-     * @param strike strike detail
-     * @return positionId
-     * @return premiumReceived
+     * @dev return delta gap
+     * @return deltaGap delta gap in abs value
      */
-    function _sellPremiums(Strike memory strike, uint256 premiumTradeSize)
-        internal
-        returns (uint256)
+    function _getDeltaGap(Strike memory strike, bool isSmallStrike)
+        public
+        view
+        returns (uint256 deltaGap, int256 callDelta)
     {
-        // get minimum expected premium based on minIv
-        // uint256 minExpectedPremium = _getPremiumLimit(
-        //     strike,
-        //     strategyDetail.minVol,
-        //     premiumTradeSize
-        // );
-        uint256 initIv = strike.boardIv.multiplyDecimal(strike.skew);
-        uint setCollateralTo = getRequiredCollateral(strike, premiumTradeSize);
-        // perform trade
-        TradeResult memory result = _openPosition(
-            TradeInputParameters({
-                strikeId: strike.id,
-                positionId: strikeToPositionId[strike.id],
-                iterations: 4,
-                optionType: optionType,
-                amount: premiumTradeSize,
-                setCollateralTo: setCollateralTo,
-                minTotalCost: 0,
-                maxTotalCost: type(uint256).max,
-                rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
-            })
-        );
-        Strike memory finalStrike = _getStrikes(_toDynamic(strike.id))[0];
-        uint256 finalIv = finalStrike.boardIv.multiplyDecimal(finalStrike.skew);
-        require(initIv - finalIv < ivLimit, "IV_LIMIT_HIT");
+        int256 targetDelta = isSmallStrike
+            ? strategyDetail.maxtargetDelta
+            : strategyDetail.mintargetDelta;
+        uint256[] memory strikeId = _toDynamic(strike.id);
+        callDelta = _getDeltas(strikeId)[0];
 
-        // require(
-        //     result.totalCost >= minExpectedPremium,
-        //     "premium received is below min expected premium"
-        // );
-
-        return result.totalCost;
+        int256 delta = _isCall()
+            ? callDelta
+            : callDelta - SignedDecimalMath.UNIT;
+        deltaGap = _abs(targetDelta - delta);
     }
 
     function _getTradeStrikes()
@@ -321,35 +280,6 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
         require(bigDeltaGap <= strategyDetail.maxDeltaGap, "smallDeltaGap out");
     }
 
-    /////////////////////////////
-    // Trade Parameter Helpers //
-    /////////////////////////////
-
-    /**
-     * @dev return delta gap
-     * @return deltaGap delta gap in abs value
-     */
-    function _getDeltaGap(Strike memory strike, bool isSmallStrike)
-        public
-        view
-        returns (uint256 deltaGap, int256 callDelta)
-    {
-        int256 targetDelta = isSmallStrike
-            ? strategyDetail.maxtargetDelta
-            : strategyDetail.mintargetDelta;
-        uint256[] memory strikeId = _toDynamic(strike.id);
-        callDelta = _getDeltas(strikeId)[0];
-
-        int256 delta = _isCall()
-            ? callDelta
-            : callDelta - SignedDecimalMath.UNIT;
-        deltaGap = _abs(targetDelta - delta);
-    }
-
-    /////////////////
-    // Validation ///
-    /////////////////
-
     function _exchangeQuoteToBaseWithLimit(uint256 quoteAmount)
         internal
         returns (uint256 baseReceived)
@@ -369,7 +299,12 @@ contract CSStrategy is CSStrategyBase, ICSStrategy {
                 minQuoteExpected
             );
         }
+        //TODO: Add event emission
     }
+
+    /////////////////
+    // Getters //////
+    /////////////////
 
     // FIXME: Remove
     function getPositions(uint256[] memory positionIds)

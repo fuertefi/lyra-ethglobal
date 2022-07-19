@@ -11,8 +11,7 @@ interface ICSStrategy {
         returns (
             uint positionId1,
             uint positionId2,
-            uint premium,
-            uint collateralAdded,
+            uint premiumsReceived,
             uint premiumExchangeValue
         );
 

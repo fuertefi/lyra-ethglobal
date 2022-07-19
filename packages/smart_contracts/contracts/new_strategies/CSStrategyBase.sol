@@ -30,16 +30,17 @@ contract CSStrategyBase is LyraAdapter {
         uint256 maxExchangeFeeRate; // 0.5%?
     }
 
+    OptionType constant optionType = OptionType.SHORT_CALL_QUOTE;
+    CSVault immutable vault;
     StrategyDetail public strategyDetail;
 
-    uint256 public ivLimit;
-    CSVault public vault;
-    OptionType public optionType;
     uint256 public currentBoardId;
     uint256 public activeExpiry;
+    uint256 public ivLimit;
     address public lyraRewardRecipient;
 
     /// @dev asset used as collateral in AMM to sell. Should be the same as vault asset
+    /// TODO: make it immutable
     IERC20 public collateralAsset;
 
     mapping(uint => uint) public lastTradeTimestamp;
@@ -57,18 +58,9 @@ contract CSStrategyBase is LyraAdapter {
     }
 
     // TODO: Remove constructor at all?
-    constructor(CSVault _vault, OptionType _optionType) LyraAdapter() {
+    constructor(CSVault _vault) LyraAdapter() {
         vault = _vault;
-        optionType = _optionType;
     }
-
-    // function initializeBase(CSVault _vault, OptionType _optionType)
-    //     public
-
-    // {
-    //     vault = _vault;
-    //     optionType = _optionType;
-    // }
 
     function initAdapter(
         address _lyraRegistry,
@@ -88,9 +80,9 @@ contract CSStrategyBase is LyraAdapter {
             : IERC20(address(quoteAsset));
     }
 
-    //////////////////////
-    // GENERAL PARAMS  //
-    //////////////////////
+    //////////////////////////
+    // GENERAL PARAMS SETTERS//
+    //////////////////////////
 
     /**
      * @dev update lyra reward recipient
@@ -121,12 +113,15 @@ contract CSStrategyBase is LyraAdapter {
     }
 
     /**
-     * @dev check if the expiry of the board is valid according to the strategy
+     * @dev update the strategy detail for the new round.
      */
-    function _isValidExpiry(uint256 expiry) public view returns (bool isValid) {
-        uint256 secondsToExpiry = _getSecondsToExpiry(expiry);
-        isValid = (secondsToExpiry >= strategyDetail.minTimeToExpiry &&
-            secondsToExpiry <= strategyDetail.maxTimeToExpiry);
+    function setStrategyDetail(StrategyDetail memory _strategyDetail)
+        external
+        onlyOwner
+    {
+        (, , , , , , , bool roundInProgress) = vault.vaultState();
+        require(!roundInProgress, "cannot change strategy if round is active");
+        strategyDetail = _strategyDetail;
     }
 
     //////////////////////
@@ -277,9 +272,18 @@ contract CSStrategyBase is LyraAdapter {
         isActive = strikeToPositionId[strikeId] != 0;
     }
 
-    //////////
-    // Misc //
-    //////////
+    //////////////
+    // Validation //
+    ///////////////
+
+    /**
+     * @dev check if the expiry of the board is valid according to the strategy
+     */
+    function _isValidExpiry(uint256 expiry) public view returns (bool isValid) {
+        uint256 secondsToExpiry = _getSecondsToExpiry(expiry);
+        isValid = (secondsToExpiry >= strategyDetail.minTimeToExpiry &&
+            secondsToExpiry <= strategyDetail.maxTimeToExpiry);
+    }
 
     function _isBaseCollat() internal view returns (bool isBase) {
         isBase = (optionType == OptionType.SHORT_CALL_BASE) ? true : false;

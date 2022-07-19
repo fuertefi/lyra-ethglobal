@@ -46,14 +46,15 @@ contract CSVault is CSBaseVault {
         string memory _tokenName,
         string memory _tokenSymbol,
         Vault.VaultParams memory _vaultParams
-    ) {
+    )
         CSBaseVault(
             _feeRecipient,
             _roundDuration,
             _tokenName,
             _tokenSymbol,
             _vaultParams
-        );
+        )
+    {
         premiumAsset = IERC20(_susd);
         collateralAsset = IERC20(_vaultParams.asset);
         roundDelay = 6 hours;

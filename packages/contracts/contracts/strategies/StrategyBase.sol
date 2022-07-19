@@ -10,18 +10,37 @@ import {LyraAdapter} from "@lyrafinance/protocol/contracts/periphery/LyraAdapter
 // Libraries
 import {Vault} from "../libraries/Vault.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {HackMoneyVault} from "../core/HackMoneyVault.sol";
+import {CSVault} from "../core/CSVault.sol";
 import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol";
 import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol";
 
-contract StrategyBase is LyraAdapter {
+contract CSStrategyBase is LyraAdapter {
   using DecimalMath for uint;
   using SignedDecimalMath for int;
 
-  HackMoneyVault public immutable vault;
-  OptionType public immutable optionType;
+  // example strategy detail
+  struct StrategyDetail {
+    uint minTimeToExpiry;
+    uint maxTimeToExpiry;
+    int mintargetDelta; // 15%
+    int maxtargetDelta; // 85%
+    uint maxDeltaGap; // 5%
+    uint minVol; // 80%
+    uint maxExchangeFeeRate; // 0.5%?
+  }
+
+  // TODO: Cannot be used this way for upgradeable contract
+  OptionType optionType;
+  CSVault immutable vault;
+  StrategyDetail public strategyDetail;
+
+  uint public currentBoardId;
+  uint public activeExpiry;
+  uint public ivLimit;
+  address public lyraRewardRecipient;
 
   /// @dev asset used as collateral in AMM to sell. Should be the same as vault asset
+  /// TODO: make it immutable
   IERC20 public collateralAsset;
 
   mapping(uint => uint) public lastTradeTimestamp;
@@ -38,9 +57,8 @@ contract StrategyBase is LyraAdapter {
     _;
   }
 
-  constructor(HackMoneyVault _vault, OptionType _optionType) LyraAdapter() {
+  constructor(CSVault _vault) LyraAdapter() {
     vault = _vault;
-    optionType = _optionType;
   }
 
   function initAdapter(
@@ -56,6 +74,60 @@ contract StrategyBase is LyraAdapter {
     baseAsset.approve(address(vault), type(uint).max);
     collateralAsset = _isBaseCollat() ? IERC20(address(baseAsset)) : IERC20(address(quoteAsset));
   }
+
+  //////////////////////////
+  // GENERAL PARAMS SETTERS//
+  //////////////////////////
+
+  /**
+   * @dev update lyra reward recipient
+   */
+  function setLyraRewardRecipient(address _lyraRewardRecipient) external onlyOwner {
+    lyraRewardRecipient = _lyraRewardRecipient;
+  }
+
+  /**
+   * @dev update the iv limit
+   */
+  function setIvLimit(uint _ivLimit) external onlyOwner {
+    ivLimit = _ivLimit;
+  }
+
+  /**
+   * @dev set the board id that will be traded for the next round
+   * @param boardId lyra board Id.
+   */
+  function setBoard(uint boardId) external onlyVault {
+    Board memory board = _getBoard(boardId);
+    require(_isValidExpiry(board.expiry), "invalid board");
+    activeExpiry = board.expiry;
+    currentBoardId = boardId;
+  }
+
+  /**
+   * @dev update the strategy detail for the new round.
+   */
+  function setStrategyDetail(StrategyDetail memory _strategyDetail) external onlyOwner {
+    (, , , , , , , bool roundInProgress) = vault.vaultState();
+    require(!roundInProgress, "cannot change strategy if round is active");
+    strategyDetail = _strategyDetail;
+  }
+
+  //////////////////////
+  // APPROVAL ACTIONS //
+  //////////////////////
+
+  function approveERC20(
+    address token,
+    address spender,
+    uint amount
+  ) external onlyOwner {
+    IERC20(token).approve(spender, amount);
+  }
+
+  // function approveSynthetixDelegate(address delegateApprovals, address exchanger) external onlyOwner {
+    // IDelegateApprovals(delegateApprovals).approveExchangeOnBehalf(exchanger);
+  // }
 
   ///////////////////
   // VAULT ACTIONS //
@@ -81,6 +153,17 @@ contract StrategyBase is LyraAdapter {
       // send quote balance directly
       require(quoteAsset.transfer(address(vault), quoteBal), "failed to return funds from strategy");
     }
+  }
+
+  /**
+   * @dev convert premium in quote asset into collateral asset and send it back to the vault.
+   */
+  function returnFundsAndClearStrikes() external onlyVault {
+    // exchange asset back to collateral asset and send it back to the vault
+    _returnFundsToVault();
+
+    // keep internal storage data on old strikes and positions ids
+    _clearAllActiveStrikes();
   }
 
   /////////////////////////////
@@ -151,9 +234,17 @@ contract StrategyBase is LyraAdapter {
     isActive = strikeToPositionId[strikeId] != 0;
   }
 
-  //////////
-  // Misc //
-  //////////
+  //////////////
+  // Validation //
+  ///////////////
+
+  /**
+   * @dev check if the expiry of the board is valid according to the strategy
+   */
+  function _isValidExpiry(uint expiry) public view returns (bool isValid) {
+    uint secondsToExpiry = _getSecondsToExpiry(expiry);
+    isValid = (secondsToExpiry >= strategyDetail.minTimeToExpiry && secondsToExpiry <= strategyDetail.maxTimeToExpiry);
+  }
 
   function _isBaseCollat() internal view returns (bool isBase) {
     isBase = (optionType == OptionType.SHORT_CALL_BASE) ? true : false;

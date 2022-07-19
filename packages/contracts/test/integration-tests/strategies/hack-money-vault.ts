@@ -1,7 +1,6 @@
 import { lyraConstants } from "@lyrafinance/protocol";
 import {
   MAX_UINT,
-  OptionType,
   toBN,
   ZERO_ADDRESS,
 } from "@lyrafinance/protocol/dist/scripts/util/web3utils";
@@ -12,41 +11,41 @@ import {
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers, network, upgrades } from "hardhat";
-import { HackMoneyVault } from "../../../typechain-types";
+import { CSVault } from "../../../typechain-types";
 import {
-  HackMoneyStrategyLibraryAddresses,
-  HackMoneyStrategy__factory,
-} from "../../../typechain-types/factories/HackMoneyStrategy__factory";
+  CSStrategy,
+  StrategyDetailStruct,
+} from "../../../typechain-types/CSStrategy";
+import {
+  CSStrategyLibraryAddresses,
+  CSStrategy__factory,
+} from "../../../typechain-types/factories/CSStrategy__factory";
 import { StrategyUpgradeTest__factory } from "../../../typechain-types/factories/StrategyUpgradeTest__factory";
-import {
-  HackMoneyStrategy,
-  HackMoneyStrategyDetailStruct,
-} from "../../../typechain-types/HackMoneyStrategy";
 import { TransparentUpgradeableProxy } from "../../../typechain-types/TransparentUpgradeableProxy";
 import { targets as lyraGlobal } from "./lyra-mainnet.json";
 
 const lyraMarket = lyraGlobal.markets.sETH;
 
-const strategyDetail: HackMoneyStrategyDetailStruct = {
+const strategyDetail: StrategyDetailStruct = {
   minTimeToExpiry: lyraConstants.DAY_SEC,
   maxTimeToExpiry: lyraConstants.WEEK_SEC * 2,
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
   maxDeltaGap: toBN("0.05"), // accept delta from 0.10~0.20 or 0.80~0.90
   minVol: toBN("0.8"), // min vol to sell. (also used to calculate min premium for call selling vault)
-  size: toBN("100"),
+  maxExchangeFeeRate: toBN("0.03"),
 };
 
 xdescribe("Hack Money Vault integration test", async () => {
   let deployer: SignerWithAddress;
   let manager: SignerWithAddress;
-  let lyraStrategy: HackMoneyStrategy;
-  let lyraVault: HackMoneyVault;
+  let lyraStrategy: CSStrategy;
+  let lyraVault: CSVault;
   let proxy: TransparentUpgradeableProxy;
   let randomUser: SignerWithAddress;
   // let randomUser2: SignerWithAddress;
 
-  const linkAddresses: HackMoneyStrategyLibraryAddresses = {
+  const linkAddresses: CSStrategyLibraryAddresses = {
     "@lyrafinance/protocol/contracts/libraries/BlackScholes.sol:BlackScholes":
       "0x409f9A1Ee61E94B91b11e3696DF2108EFc7C3EF5",
   };
@@ -111,7 +110,7 @@ xdescribe("Hack Money Vault integration test", async () => {
 
     const decimals = 18;
     const cap = ethers.utils.parseEther("100000"); // 100k USD as cap
-    const LyraVault = await ethers.getContractFactory("HackMoneyVault");
+    const LyraVault = await ethers.getContractFactory("CSVault");
     lyraVault = (await upgrades.deployProxy(LyraVault, [
       sUSD.address,
       ZERO_ADDRESS,
@@ -123,7 +122,7 @@ xdescribe("Hack Money Vault integration test", async () => {
         cap,
         asset: sETH.address, // collateral asset
       },
-    ])) as HackMoneyVault;
+    ])) as CSVault;
 
     // TODO: Remove
     // const HackMoneyStrategy = await ethers.getContractFactory(
@@ -141,19 +140,18 @@ xdescribe("Hack Money Vault integration test", async () => {
     const Proxy = await ethers.getContractFactory(
       "TransparentUpgradeableProxy",
     );
-    const LyraStrategyFactory = new HackMoneyStrategy__factory(
+    const LyraStrategyFactory = new CSStrategy__factory(
       linkAddresses,
       deployer,
     );
 
     const lyraStrategyDep = await LyraStrategyFactory.connect(deployer).deploy(
       lyraVault.address,
-      OptionType.SHORT_CALL_BASE,
     );
 
     const initializeData = lyraStrategyDep.interface.encodeFunctionData(
       "initialize",
-      [lyraVault.address, OptionType.SHORT_CALL_BASE],
+      [lyraVault.address],
     );
     // const initializeData = Buffer.from("");
     proxy = await Proxy.deploy(
@@ -263,7 +261,7 @@ xdescribe("Hack Money Vault integration test", async () => {
 
     const lyraStrategyDep = await StrategyUpgradeFactory.connect(
       deployer,
-    ).deploy(lyraVault.address, OptionType.SHORT_CALL_BASE);
+    ).deploy(lyraVault.address);
 
     // const initializeData = lyraStrategyDep.interface.encodeFunctionData(
     // "initialize",

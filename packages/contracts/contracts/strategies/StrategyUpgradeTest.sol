@@ -1,13 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "./HackMoneyStrategyImplementation.sol";
-import {HackMoneyVault} from "../core/HackMoneyVault.sol";
+import "./CSStrategy.sol";
+import {CSVault} from "../core/CSVault.sol";
 import {Vault} from "../libraries/Vault.sol";
 
-contract StrategyUpgradeTest is HackMoneyStrategy {
-    constructor(HackMoneyVault _vault, OptionType _optionType)
-        HackMoneyStrategy(_vault, _optionType)
+contract StrategyUpgradeTest is CSStrategy {
+    constructor(CSVault _vault)
+        CSStrategy(_vault)
     {}
 
     function test() public view returns (uint256) {

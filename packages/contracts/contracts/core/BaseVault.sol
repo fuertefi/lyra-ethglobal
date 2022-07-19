@@ -12,7 +12,7 @@ import {Vault} from "../libraries/Vault.sol";
 import {VaultLifecycle} from "../libraries/VaultLifecycle.sol";
 import {ShareMath} from "../libraries/ShareMath.sol";
 
-contract BaseVault is Initializable, ReentrancyGuardUpgradeable, OwnableUpgradeable, ERC20Upgradeable  {
+contract BaseVault is Initializable, ReentrancyGuardUpgradeable, OwnableUpgradeable, ERC20Upgradeable {
   using SafeERC20Upgradeable for IERC20Upgradeable;
   using ShareMath for Vault.DepositReceipt;
 

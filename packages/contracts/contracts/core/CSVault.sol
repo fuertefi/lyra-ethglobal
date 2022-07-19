@@ -8,16 +8,16 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {BaseVault} from "./BaseVault.sol";
 import {Vault} from "../libraries/Vault.sol";
 
-import {IHackMoneyStrategy} from "../interfaces/IHackMoneyStrategy.sol";
+import {ICSStrategy} from "../interfaces/ICSStrategy.sol";
 
 /// @notice LyraVault help users run option-selling strategies on Lyra AMM.
-contract HackMoneyVault is BaseVault {
+contract CSVault is BaseVault {
   IERC20 public premiumAsset;
   IERC20 public collateralAsset;
 
   uint public roundDelay;
 
-  IHackMoneyStrategy public strategy;
+  ICSStrategy public strategy;
   address public lyraRewardRecipient;
 
   // Amount locked for scheduled withdrawals last week;
@@ -60,7 +60,7 @@ contract HackMoneyVault is BaseVault {
       collateralAsset.approve(address(strategy), 0);
     }
 
-    strategy = IHackMoneyStrategy(_strategy);
+    strategy = ICSStrategy(_strategy);
     collateralAsset.approve(_strategy, type(uint).max);
     emit StrategyUpdated(_strategy);
   }
@@ -68,18 +68,20 @@ contract HackMoneyVault is BaseVault {
   /// @dev anyone can trigger a trade
   // TODO: Add docs
   // Should we specify full size and divide it in halfs in the strategy?
-  function trade(uint size) public {
+  function trade(uint totalTradesSize) public {
     require(vaultState.roundInProgress, "round closed");
     // perform trades through strategy
-    (uint positionId_1, uint positionId_2, uint premiumReceived, uint capitalUsed, uint premiumExchangeValue) = strategy
-      .doTrade(size);
-    // update the remaining locked amount
-    console.log("vaultState.lockedAmountLeft:", vaultState.lockedAmountLeft);
-    console.log("capitalUsed:", capitalUsed);
-    vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
+    // TODO: Do we want to calculate this inside the startegy?
+    uint tradeSize = totalTradesSize / 2;
+    (uint positionId_1, uint positionId_2, uint premiumReceived, uint premiumExchangeValue) = strategy.doTrade(
+      tradeSize
+    );
+
+    // TODO: why not using total trade size directly?
+    vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - 2 * tradeSize;
 
     // todo: udpate events
-    emit Trade(msg.sender, positionId_1, positionId_2, premiumReceived, capitalUsed, premiumExchangeValue);
+    emit Trade(msg.sender, positionId_1, positionId_2, premiumReceived, 2 * tradeSize, premiumExchangeValue);
   }
 
   /// @dev close the current round, enable user to deposit for the next round

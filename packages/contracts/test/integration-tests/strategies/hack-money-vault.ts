@@ -8,11 +8,9 @@ import {
 import {
   BasicFeeCounter__factory,
   ERC20__factory,
-  OptionToken__factory,
 } from "@lyrafinance/protocol/dist/typechain-types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import {Contract} from "ethers";
 import { ethers, network, upgrades } from "hardhat";
 import { HackMoneyVault } from "../../../typechain-types";
 import {
@@ -39,7 +37,7 @@ const strategyDetail: HackMoneyStrategyDetailStruct = {
   size: toBN("100"),
 };
 
-describe("Hack Money Vault integration test", async () => {
+xdescribe("Hack Money Vault integration test", async () => {
   let deployer: SignerWithAddress;
   let manager: SignerWithAddress;
   let lyraStrategy: HackMoneyStrategy;
@@ -90,7 +88,7 @@ describe("Hack Money Vault integration test", async () => {
     const whale = await ethers.getSigner(whaleAddress);
     const sETH = ERC20__factory.connect(
       "0xE405de8F52ba7559f9df3C368500B6E6ae6Cee49",
-      deployer
+      deployer,
     );
     // const sETH = new Contract(
     // lyraMarket.BaseAsset.address,
@@ -99,7 +97,7 @@ describe("Hack Money Vault integration test", async () => {
     // ) as ERC20;
     const sUSD = ERC20__factory.connect(
       "0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9",
-      deployer
+      deployer,
     );
     // const sUSD = new Contract(
     // lyraGlobal.QuoteAsset.address,
@@ -141,27 +139,27 @@ describe("Hack Money Vault integration test", async () => {
     // );
 
     const Proxy = await ethers.getContractFactory(
-      "TransparentUpgradeableProxy"
+      "TransparentUpgradeableProxy",
     );
     const LyraStrategyFactory = new HackMoneyStrategy__factory(
       linkAddresses,
-      deployer
+      deployer,
     );
 
     const lyraStrategyDep = await LyraStrategyFactory.connect(deployer).deploy(
       lyraVault.address,
-      OptionType.SHORT_CALL_BASE
+      OptionType.SHORT_CALL_BASE,
     );
 
     const initializeData = lyraStrategyDep.interface.encodeFunctionData(
       "initialize",
-      [lyraVault.address, OptionType.SHORT_CALL_BASE]
+      [lyraVault.address, OptionType.SHORT_CALL_BASE],
     );
     // const initializeData = Buffer.from("");
     proxy = await Proxy.deploy(
       lyraStrategyDep.address,
       manager.address,
-      initializeData
+      initializeData,
     );
     lyraStrategy = LyraStrategyFactory.attach(proxy.address);
 
@@ -172,8 +170,11 @@ describe("Hack Money Vault integration test", async () => {
     // FIXME: Move to unit test of proxy
     const owner = await lyraStrategy.owner();
     expect(owner).to.be.equal(deployer.address);
-    
-    const admin = await ethers.provider.getStorageAt(proxy.address, "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103")
+
+    const admin = await ethers.provider.getStorageAt(
+      proxy.address,
+      "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103",
+    );
     const abiCoder = new ethers.utils.AbiCoder();
     const [adminAddress] = abiCoder.decode(["address"], admin);
 
@@ -185,7 +186,7 @@ describe("Hack Money Vault integration test", async () => {
         lyraGlobal.LyraRegistry.address,
         lyraMarket.OptionMarket.address,
         "0x0100fBf414071977B19fC38e6fc7c32FE444F5C9",
-        feeCounter.address
+        feeCounter.address,
       );
 
     await lyraVault.connect(deployer).setStrategy(lyraStrategy.address);
@@ -201,8 +202,8 @@ describe("Hack Money Vault integration test", async () => {
     vaultBalance = await lyraVault.totalBalance();
     expect(vaultBalance).to.equal(ethers.utils.parseEther("20"));
 
-    const blockNumber = await ethers.provider.getBlockNumber();
-    const block = await ethers.provider.getBlock(blockNumber);
+    // const blockNumber = await ethers.provider.getBlockNumber();
+    // const block = await ethers.provider.getBlock(blockNumber);
     let vaultState = await lyraVault.vaultState();
     expect(vaultState.roundInProgress).to.be.equal(false);
     await lyraVault.startNextRound("3");
@@ -231,7 +232,10 @@ describe("Hack Money Vault integration test", async () => {
     // TODO: Check total pending added after round has started
     // TODO: Check position size
 
-    const optionToken = OptionToken__factory.connect(lyraMarket.OptionToken.address, deployer)
+    // const optionToken = OptionToken__factory.connect(
+    // lyraMarket.OptionToken.address,
+    // deployer,
+    // );
     // const [position1] = await optionToken.getOptionPositions([positionId2]);
 
     // TODO: Check strategyDetail size
@@ -251,20 +255,20 @@ describe("Hack Money Vault integration test", async () => {
   it("successfully upgrades strategy", async () => {
     const StrategyUpgradeFactory = new StrategyUpgradeTest__factory(
       linkAddresses,
-      deployer
+      deployer,
     );
     let strat = StrategyUpgradeFactory.attach(proxy.address);
     // let strat = HackMoneyStrategy__factory.attach(proxy.address);
     await expect(strat.test()).to.be.reverted;
 
     const lyraStrategyDep = await StrategyUpgradeFactory.connect(
-      deployer
+      deployer,
     ).deploy(lyraVault.address, OptionType.SHORT_CALL_BASE);
 
-    const initializeData = lyraStrategyDep.interface.encodeFunctionData(
-      "initialize",
-      [lyraVault.address, OptionType.SHORT_CALL_BASE]
-    );
+    // const initializeData = lyraStrategyDep.interface.encodeFunctionData(
+    // "initialize",
+    // [lyraVault.address, OptionType.SHORT_CALL_BASE],
+    // );
 
     await expect(proxy.connect(randomUser).upgradeTo(lyraStrategyDep.address))
       .to.be.reverted;

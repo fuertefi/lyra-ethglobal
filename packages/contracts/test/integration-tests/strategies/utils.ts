@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 
 export async function strikeIdToDetail(
   optionMarket: OptionMarket,
-  strikeId: BigNumber
+  strikeId: BigNumber,
 ) {
   const [strike, board] = await optionMarket.getStrikeAndBoard(strikeId);
   return {

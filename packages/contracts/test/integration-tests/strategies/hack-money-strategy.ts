@@ -131,14 +131,14 @@ describe("Hack Money Strategy integration test", async () => {
     ])) as CSVault;
 
     // TODO: Move owners, admins to test for successful deployment
-    console.log("deployer");
-    console.log(deployer.address);
-    console.log("manager");
-    console.log(manager.address);
-    console.log("owner");
-    console.log(await vault.owner());
-    console.log("vault address");
-    console.log(vault.address);
+    // console.log("deployer");
+    // console.log(deployer.address);
+    // console.log("manager");
+    // console.log(manager.address);
+    // console.log("owner");
+    // console.log(await vault.owner());
+    // console.log("vault address");
+    // console.log(vault.address);
   });
 
   before("deploy strategy", async () => {
@@ -148,10 +148,11 @@ describe("Hack Money Strategy integration test", async () => {
           BlackScholes: lyraTestSystem.blackScholes.address,
         },
       })
-    ).deploy(
+    )./*connect(manager)*/ deploy(
       vault.address,
       // TestSystem.OptionType.SHORT_CALL_BASE,
     )) as CSStrategy;
+    // TODO: delpoy directly from manager?
     await strategy.transferOwnership(manager.address);
   });
 
@@ -202,6 +203,10 @@ describe("Hack Money Strategy integration test", async () => {
       expect(newStrategy.maxtargetDelta).to.be.eq(
         strategyDetail.maxtargetDelta,
       );
+      expect(newStrategy.minVol).to.be.eq(strategyDetail.minVol);
+      expect(newStrategy.maxExchangeFeeRate).to.be.eq(
+        strategyDetail.maxExchangeFeeRate,
+      );
     });
   });
 
@@ -230,6 +235,8 @@ describe("Hack Money Strategy integration test", async () => {
 
       const state = await vault.vaultState();
       expect(state.totalPending.eq(toBN("100000"))).to.be.true;
+      // TODO: add checks on pending deposits for users?
+      // TODO: add checks on vault balance
     });
     it("manager can start round 1", async () => {
       const vaultBalancePreRound = await seth.balanceOf(vault.address);
@@ -250,7 +257,7 @@ describe("Hack Money Strategy integration test", async () => {
       expect(timestampsDiff / 7 / 24 / 60 / 60).to.be.closeTo(1, 0.01);
 
       const vaultState = await vault.vaultState();
-      expect(vaultState.round).to.be.equal(2);
+      expect(vaultState.round).to.be.equal(2); // QUESTION: why do we start round 1 and state is round = 2?
       expect(vaultState.lockedAmount).to.be.equal(
         ethers.utils.parseEther("100000"),
       );
@@ -289,12 +296,12 @@ describe("Hack Money Strategy integration test", async () => {
         false,
       );
 
-      console.log(ethers.utils.formatEther(deltaGapSmallStrike));
-      console.log(">>> DELTA GAP");
-      console.log(deltaGapSmallStrike);
-      console.log(await strategy._getDeltaGap(strikeObj1, true));
-      console.log(await strategy._getDeltaGap(strikeObj2, false));
-      console.log(await strategy._getDeltaGap(strikeObj2, true));
+      console.log(">>> DELTA GAPS");
+      console.log(
+        "SmallStrike Delta",
+        ethers.utils.formatEther(deltaGapSmallStrike),
+      );
+      console.log("Big Delta", ethers.utils.formatEther(deltaGapBigStrike));
       expect(
         parseFloat(ethers.utils.formatEther(deltaGapSmallStrike)),
       ).to.be.closeTo(0, 0.05);
@@ -302,10 +309,11 @@ describe("Hack Money Strategy integration test", async () => {
         parseFloat(ethers.utils.formatEther(deltaGapBigStrike)),
       ).to.be.closeTo(0, 0.05);
       // TODO: Test with wrong deltas
+      // ANSWER: Just try the different strikes in the array you can grab their respective deltas by call _getDeltaGap and expect trade to fail with reason delta gap...
 
-      const [smallStrikePrice, bigStrikePrice] =
-        await strategy._getTradeStrikes();
-      console.log(smallStrikePrice.toString(), bigStrikePrice.toString());
+      // const [smallStrikePrice, bigStrikePrice] =
+      //   await strategy._getTradeStrikes();
+      //console.log(smallStrikePrice.toString(), bigStrikePrice.toString());
 
       const strategySETHBalanceBefore = await seth.balanceOf(strategy.address);
       console.log(
@@ -327,6 +335,7 @@ describe("Hack Money Strategy integration test", async () => {
       const vaultStateAfter = await vault.vaultState();
 
       // TODO: Proper check for minimum premiums to receive
+      // ANSWER: Yes good idea should look in to that
       const checkPremiumsReceived = (val: string) => {
         console.log(`Premiums received ${val}`);
         return BigNumber.from(val).gte("25075174003286612347165");
@@ -493,3 +502,10 @@ describe("Hack Money Strategy integration test", async () => {
     });
   });
 });
+
+// TESTS TODO:  - Check trading a second time happens correctly.
+//              - Change spot price.
+//              - Trade again and check it picked right deltas, right strikes, updates positions correctly.
+//              - Sanity check, change spot price again and repeat.
+//              - Close round and do proper checks
+//

@@ -68,14 +68,9 @@ contract CSStrategy is CSStrategyBase {
 
     // TRADE STRIKE
     (Strike memory strike1, Strike memory strike2) = _getTradeStrikes();
-    // console.log(">>>> STRIKES");
-    // console.log(strike1.id);
-    // console.log(strike2.id);
 
     // PRINCIPAL TRADE PART
     (positionId1, positionId2, premiumsReceived) = _tradeStrikes(strike1, strike2, tradeSize);
-
-    console.log("principal trade ok");
 
     // PREMIUMS TRADE PART
     // TODO: Calling _exchangeQuoteToBaseWithLimit twice maybe we can just exchange our whole balance here and trade premiums
@@ -104,12 +99,12 @@ contract CSStrategy is CSStrategyBase {
       uint premiumsReceived
     )
   {
-    console.log("trying first strike");
+    //console.log("trying first strike");
     uint premiumReceived1;
     (positionId1, premiumReceived1) = _tradeStrike(strike1, tradeSize);
-    console.log("traded first");
+    //console.log("traded first");
 
-    console.log("trying second strike");
+    //console.log("trying second strike");
     uint premiumReceived2;
     (positionId2, premiumReceived2) = _tradeStrike(strike2, tradeSize);
 
@@ -119,10 +114,6 @@ contract CSStrategy is CSStrategyBase {
   function _tradeStrike(Strike memory strike, uint tradeSize) internal returns (uint positionId, uint premiumReceived) {
     uint setCollateralTo;
     setCollateralTo = getRequiredCollateral(strike, tradeSize);
-
-    console.log(">>> TRADE SIZE");
-    console.log(tradeSize);
-    console.log(setCollateralTo);
 
     (positionId, premiumReceived) = _sellStrike(strike, tradeSize, setCollateralTo);
   }
@@ -161,7 +152,7 @@ contract CSStrategy is CSStrategyBase {
     uint tradeSize,
     uint setCollateralTo
   ) internal returns (uint, uint) {
-    // TODO: fixi this part with min expected premium and strategy min vol
+    // TODO: fix this part with min expected premium and strategy min vol
     // get minimum expected premium based on minIv
     // uint256 minExpectedPremium = _getPremiumLimit(
     //     strike,
@@ -171,16 +162,16 @@ contract CSStrategy is CSStrategyBase {
 
     uint initIv = strike.boardIv.multiplyDecimal(strike.skew);
 
-    console.log(">>> SET COLLATERAL TO");
-    console.log(setCollateralTo);
-    console.log(tradeSize);
+    //console.log(">>> SET COLLATERAL TO");
+    //console.log(setCollateralTo);
+    //console.log(tradeSize);
 
     // perform trade
     TradeResult memory result = _openPosition(
       TradeInputParameters({
         strikeId: strike.id,
         positionId: strikeToPositionId[strike.id],
-        iterations: 4,
+        iterations: 4, // strategy.iterations
         optionType: optionType,
         amount: tradeSize,
         setCollateralTo: setCollateralTo,
@@ -192,8 +183,6 @@ contract CSStrategy is CSStrategyBase {
     Strike memory finalStrike = _getStrikes(_toDynamic(strike.id))[0];
     uint finalIv = finalStrike.boardIv.multiplyDecimal(finalStrike.skew);
     require(initIv - finalIv < ivLimit, "IV_LIMIT_HIT");
-
-    // lastTradeTimestamp[strike.id] = block.timestamp;
 
     // update active strikes
     _addActiveStrike(strike.id, result.positionId);

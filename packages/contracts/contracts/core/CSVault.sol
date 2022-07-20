@@ -78,6 +78,7 @@ contract CSVault is BaseVault {
     );
 
     // TODO: why not using total trade size directly?
+    // Answer: because of how solidity works: 7 / 2 = 3, Im avoiding accounting issues
     vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - 2 * tradeSize;
 
     // todo: udpate events

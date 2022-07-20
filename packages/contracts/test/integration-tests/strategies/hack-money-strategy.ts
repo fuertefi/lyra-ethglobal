@@ -21,7 +21,7 @@ const strategyDetail: StrategyDetailStruct = {
   maxExchangeFeeRate: toBN("3"),
 };
 
-describe("Hack Money Strategy integration test", async () => {
+describe("Strategy integration test", async () => {
   // mocked tokens
   let susd: MockERC20;
   let seth: MockERC20;
@@ -131,14 +131,10 @@ describe("Hack Money Strategy integration test", async () => {
     ])) as CSVault;
 
     // TODO: Move owners, admins to test for successful deployment
-    // console.log("deployer");
-    // console.log(deployer.address);
-    // console.log("manager");
-    // console.log(manager.address);
-    // console.log("owner");
-    // console.log(await vault.owner());
-    // console.log("vault address");
-    // console.log(vault.address);
+    console.log("deployer:", deployer.address);
+    console.log("manager:", manager.address);
+    console.log("owner:", await vault.owner());
+    console.log("vault address", vault.address);
   });
 
   before("deploy strategy", async () => {
@@ -210,7 +206,7 @@ describe("Hack Money Strategy integration test", async () => {
     });
   });
 
-  describe("start the first round", async () => {
+  describe("first round integration test", async () => {
     let strikes: BigNumber[] = [];
     before("create fake seth for users", async () => {
       await seth.mint(randomUser.address, toBN("100000"));
@@ -221,7 +217,7 @@ describe("Hack Money Strategy integration test", async () => {
       strikes = await lyraTestSystem.optionMarket.getBoardStrikes(boardId);
     });
 
-    it("user should be able to deposit through vault", async () => {
+    it("user should be able to deposit through vault and update state correctly", async () => {
       // user 1 deposits
       await seth
         .connect(randomUser)
@@ -233,10 +229,21 @@ describe("Hack Money Strategy integration test", async () => {
         .approve(vault.address, lyraConstants.MAX_UINT);
       await vault.connect(randomUser2).deposit(toBN("50000"));
 
+      // vault internal state checks
       const state = await vault.vaultState();
       expect(state.totalPending.eq(toBN("100000"))).to.be.true;
-      // TODO: add checks on pending deposits for users?
-      // TODO: add checks on vault balance
+      const randomUserDepositReceipt = await vault.depositReceipts(
+        randomUser.address,
+      );
+      expect(randomUserDepositReceipt.amount).to.be.eq(toBN("50000"));
+      const randomUser2DepositReceipt = await vault.depositReceipts(
+        randomUser2.address,
+      );
+      expect(randomUser2DepositReceipt.amount).to.be.eq(toBN("50000"));
+
+      // vault balance checks
+      const vaultBalance = await seth.balanceOf(vault.address);
+      expect(vaultBalance).to.be.eq(toBN("100000"));
     });
     it("manager can start round 1", async () => {
       const vaultBalancePreRound = await seth.balanceOf(vault.address);
@@ -267,9 +274,14 @@ describe("Hack Money Strategy integration test", async () => {
       );
       expect(vaultState.totalPending).to.be.equal(0);
       expect(vaultState.roundInProgress).to.be.true;
+      // expect(vaultState.nextRoundReadyTimestamp).to.be.equal(block.timestamp + );
+      //BUG: somethine wrong with nextRoundReadyTimestamp, we need a fix
+      const nextRoundReadyTimestamp = vaultState.nextRoundReadyTimestamp;
+      console.log("nextRoundReadyTimestamp:", nextRoundReadyTimestamp);
     });
 
-    it("should trade when called first time", async () => {
+    // test success
+    xit("should check deltas are within bound", async () => {
       const strikeObj1 = await strikeIdToDetail(
         lyraTestSystem.optionMarket,
         strikes[1],
@@ -278,15 +290,6 @@ describe("Hack Money Strategy integration test", async () => {
         lyraTestSystem.optionMarket,
         strikes[6],
       );
-      // const [collateralToAdd1] = await strategy.getRequiredCollateral(
-      // strikeObj1,
-      // );
-      // const [collateralToAdd2] = await strategy.getRequiredCollateral(
-      // strikeObj2,
-      // );
-      // const collateralToAdd = collateralToAdd1.add(collateralToAdd2);
-
-      // TODO: Move to separate test
       const { deltaGap: deltaGapSmallStrike } = await strategy._getDeltaGap(
         strikeObj1,
         true,
@@ -296,43 +299,129 @@ describe("Hack Money Strategy integration test", async () => {
         false,
       );
 
-      console.log(">>> DELTA GAPS");
-      console.log(
-        "SmallStrike Delta",
-        ethers.utils.formatEther(deltaGapSmallStrike),
-      );
-      console.log("Big Delta", ethers.utils.formatEther(deltaGapBigStrike));
       expect(
         parseFloat(ethers.utils.formatEther(deltaGapSmallStrike)),
       ).to.be.closeTo(0, 0.05);
       expect(
         parseFloat(ethers.utils.formatEther(deltaGapBigStrike)),
       ).to.be.closeTo(0, 0.05);
-      // TODO: Test with wrong deltas
-      // ANSWER: Just try the different strikes in the array you can grab their respective deltas by call _getDeltaGap and expect trade to fail with reason delta gap...
 
-      // const [smallStrikePrice, bigStrikePrice] =
-      //   await strategy._getTradeStrikes();
-      //console.log(smallStrikePrice.toString(), bigStrikePrice.toString());
+      const [SmallContractStrike, BigContractStrike] =
+        await strategy._getTradeStrikes();
 
+      const { deltaGap: deltaGapSmallContractStrikeContract } =
+        await strategy._getDeltaGap(SmallContractStrike, true);
+      const { deltaGap: deltaGapBigContractStrikeContract } =
+        await strategy._getDeltaGap(BigContractStrike, false);
+      expect(
+        parseFloat(
+          ethers.utils.formatEther(deltaGapSmallContractStrikeContract),
+        ),
+      ).to.be.closeTo(0, 0.05);
+      expect(
+        parseFloat(ethers.utils.formatEther(deltaGapBigContractStrikeContract)),
+      ).to.be.closeTo(0, 0.05);
+    });
+
+    it("should trade when called first time", async () => {
       const strategySETHBalanceBefore = await seth.balanceOf(strategy.address);
-      console.log(
-        "strategySETHBalanceBefore:",
-        ethers.utils.formatEther(strategySETHBalanceBefore),
-      );
       const strategySUSDBalanceBefore = await susd.balanceOf(strategy.address);
-      console.log(
-        "strategySUSDBalanceBefore:",
-        ethers.utils.formatEther(strategySUSDBalanceBefore),
-      );
-
       const vaultStateBefore = await vault.vaultState();
 
+      // TODO: only allowed should be able to call trade function
       const tradeTransaction = await vault
         .connect(randomUser)
         .trade(toBN("200"));
 
+      const strategySETHBalanceAfter = await seth.balanceOf(strategy.address);
+      const strategySUSDBalanceAfter = await susd.balanceOf(strategy.address);
       const vaultStateAfter = await vault.vaultState();
+
+      // Check Vault updates
+      expect(
+        vaultStateBefore.lockedAmountLeft.sub(vaultStateAfter.lockedAmountLeft),
+      ).to.equal(toBN("200"));
+
+      /* Check strategy updates: 1- Check that we receive sUSD
+       *                         2- Check that we sent correct sETH amount
+       *                         3- Check activeStrikes array update
+       *                         4- Update last trading timestamp
+       *                         5- Check Lyra positions
+       **/
+
+      // 1- Check that we receive sUSD
+      expect(strategySUSDBalanceAfter.sub(strategySUSDBalanceBefore)).to.be.gt(
+        0,
+      );
+      // 2- Check that we sent correct sETH amount
+      expect(
+        parseFloat(
+          ethers.utils.formatEther(
+            strategySETHBalanceBefore.sub(strategySETHBalanceAfter),
+          ),
+        ),
+      ).to.be.closeTo(
+        parseFloat(ethers.utils.formatEther(toBN("200"))),
+        0.0001,
+      );
+
+      // 3- Check active strikes array updates
+      const strikeObj1 = await strikeIdToDetail(
+        lyraTestSystem.optionMarket,
+        strikes[1],
+      );
+      const strikeObj2 = await strikeIdToDetail(
+        lyraTestSystem.optionMarket,
+        strikes[6],
+      );
+      const storedStrikeId1 = await strategy.activeStrikeIds(0);
+      const storedStrikeId2 = await strategy.activeStrikeIds(1);
+      expect(storedStrikeId1.eq(strikeObj1.id)).to.be.true;
+      expect(storedStrikeId2.eq(strikeObj2.id)).to.be.true;
+      await expect(strategy.activeStrikeIds(2)).to.be.reverted;
+
+      // 4- Update last trading timestamp
+
+      const tradeTimestamp = (
+        await ethers.provider.getBlock(tradeTransaction.blockNumber!)
+      ).timestamp; //tradeTransaction.timestamp;
+      const lastTradeTimestamp1 = await strategy.lastTradeTimestamp(
+        storedStrikeId1,
+      );
+      const lastTradeTimestamp2 = await strategy.lastTradeTimestamp(
+        storedStrikeId2,
+      );
+      expect(lastTradeTimestamp1).to.be.equal(tradeTimestamp);
+      expect(lastTradeTimestamp2).to.be.equal(tradeTimestamp);
+
+      // 5- Check Lyra positions
+      const positionId1 = await strategy.strikeToPositionId(storedStrikeId1);
+      const [position1] = await lyraTestSystem.optionToken.getOptionPositions([
+        positionId1,
+      ]);
+      const positionId2 = await strategy.strikeToPositionId(storedStrikeId2);
+      const [position2] = await lyraTestSystem.optionToken.getOptionPositions([
+        positionId2,
+      ]);
+
+      expect(position1.strikeId).to.be.equal(storedStrikeId1);
+      expect(position1.optionType).to.be.equal(
+        TestSystem.OptionType.SHORT_CALL_BASE,
+      );
+      //TODO: add checks with premiums received?
+      expect(position2.amount.sub(toBN("100"))).to.be.gt(0);
+      expect(position2.collateral.sub(toBN("100"))).to.be.gt(0);
+      expect(position2.state).to.be.equal(TestSystem.PositionState.ACTIVE);
+      expect(position2.strikeId).to.be.equal(storedStrikeId2);
+      expect(position2.optionType).to.be.equal(
+        TestSystem.OptionType.SHORT_CALL_BASE,
+      );
+      //TODO: add checks with premiums received?
+      expect(position2.amount.sub(toBN("100"))).to.be.gt(0);
+      expect(position2.collateral.sub(toBN("100"))).to.be.gt(0);
+      expect(position2.state).to.be.equal(TestSystem.PositionState.ACTIVE);
+
+      // Check Event emition
 
       // TODO: Proper check for minimum premiums to receive
       // ANSWER: Yes good idea should look in to that
@@ -372,48 +461,104 @@ describe("Hack Money Strategy integration test", async () => {
           checkCapitalUsed,
           checkPremiumExchangeValue,
         );
+    });
+
+    xit("should revert when called a second time because of high delta", async () => {
+      await expect(
+        vault.connect(randomUser).trade(toBN("200")),
+      ).to.be.revertedWithCustomError(
+        lyraTestSystem.optionMarketPricer,
+        "TradeDeltaOutOfRange",
+      );
+    });
+
+    it("should trade when called second time with smaller amount", async () => {
+      const strategySETHBalanceBefore = await seth.balanceOf(strategy.address);
+      const strategySUSDBalanceBefore = await susd.balanceOf(strategy.address);
+      const vaultStateBefore = await vault.vaultState();
+
+      console.log(
+        "strategySETHBalanceBefore:",
+        ethers.utils.formatEther(strategySETHBalanceBefore),
+      );
+      console.log(
+        "strategySUSDBalanceBefore:",
+        ethers.utils.formatEther(strategySUSDBalanceBefore),
+      );
+      // TODO: only allowed should be able to call trade function
+      const tradeTransaction = await vault
+        .connect(randomUser)
+        .trade(toBN("50"));
 
       const strategySETHBalanceAfter = await seth.balanceOf(strategy.address);
+      const strategySUSDBalanceAfter = await susd.balanceOf(strategy.address);
+      const vaultStateAfter = await vault.vaultState();
+
       console.log(
         "strategySETHBalanceAfter:",
         ethers.utils.formatEther(strategySETHBalanceAfter),
       );
-      const strategySUSDBalanceAfter = await susd.balanceOf(strategy.address);
       console.log(
         "strategySUSDBalanceAfter:",
         ethers.utils.formatEther(strategySUSDBalanceAfter),
       );
-
-      console.log(
-        "locked amount left before:",
-        ethers.utils.formatEther(vaultStateBefore.lockedAmountLeft),
-      );
-
-      console.log(
-        "locked amount left after:",
-        ethers.utils.formatEther(vaultStateAfter.lockedAmountLeft),
-      );
-
-      // check state.lockAmount left is updated
+      // Check Vault updates
       expect(
         vaultStateBefore.lockedAmountLeft.sub(vaultStateAfter.lockedAmountLeft),
-      ).to.equal(toBN("200"));
-      // check that we receive sUSD
-      expect(strategySUSDBalanceAfter.sub(strategySUSDBalanceBefore)).to.be.gt(
+      ).to.equal(toBN("50"));
+
+      /* Check strategy updates: 1- Check that we receive sUSD
+       *                         2- Check that we sent correct sETH amount
+       *                         3- Check activeStrikes array update
+       *                         4- Update last trading timestamp
+       *                         5- Check Lyra positions
+       **/
+
+      // 1- Check that we receive sUSD
+      // Inversing this time because we are exchanging sUSD at the beggingin
+      // TODO: Check strategy balance from the trade1 and trade2 and keep comparing
+      expect(strategySUSDBalanceBefore.sub(strategySUSDBalanceAfter)).to.be.gt(
         0,
       );
+      // 2- Check that we sent correct sETH amount
+      expect(
+        parseFloat(
+          ethers.utils.formatEther(
+            strategySETHBalanceBefore.sub(strategySETHBalanceAfter),
+          ),
+        ),
+      ).to.be.closeTo(parseFloat(ethers.utils.formatEther(toBN("50"))), 1);
 
-      // active strike is updated
+      // 3- Check active strikes array updates
+      const strikeObj1 = await strikeIdToDetail(
+        lyraTestSystem.optionMarket,
+        strikes[1],
+      );
+      const strikeObj2 = await strikeIdToDetail(
+        lyraTestSystem.optionMarket,
+        strikes[6],
+      );
       const storedStrikeId1 = await strategy.activeStrikeIds(0);
-      console.log(storedStrikeId1);
-      expect(storedStrikeId1.eq(strikeObj1.id)).to.be.true;
       const storedStrikeId2 = await strategy.activeStrikeIds(1);
-      console.log(storedStrikeId2);
+      expect(storedStrikeId1.eq(strikeObj1.id)).to.be.true;
       expect(storedStrikeId2.eq(strikeObj2.id)).to.be.true;
       await expect(strategy.activeStrikeIds(2)).to.be.reverted;
-      // expect(storedStrikeId2.eq(strikeObj2.id)).to.be.false;
 
-      // check that position size is correct
+      // 4- Update last trading timestamp
+
+      const tradeTimestamp = (
+        await ethers.provider.getBlock(tradeTransaction.blockNumber!)
+      ).timestamp; //tradeTransaction.timestamp;
+      const lastTradeTimestamp1 = await strategy.lastTradeTimestamp(
+        storedStrikeId1,
+      );
+      const lastTradeTimestamp2 = await strategy.lastTradeTimestamp(
+        storedStrikeId2,
+      );
+      expect(lastTradeTimestamp1).to.be.equal(tradeTimestamp);
+      expect(lastTradeTimestamp2).to.be.equal(tradeTimestamp);
+
+      // 5- Check Lyra positions
       const positionId1 = await strategy.strikeToPositionId(storedStrikeId1);
       const [position1] = await lyraTestSystem.optionToken.getOptionPositions([
         positionId1,
@@ -423,44 +568,36 @@ describe("Hack Money Strategy integration test", async () => {
         positionId2,
       ]);
 
-      console.log(">>> POSITIONS");
-      console.log(position1);
-      console.log(position2);
-
-      expect(strategySUSDBalanceAfter.sub(strategySUSDBalanceBefore).gt(0)).to
-        .be.true;
-
-      // TODO: Check against the trade for now
-      // expect(position1.amount.sub(strategyDetail.size).gt(0)).to.be.true;
-      // expect(position2.amount.sub(strategyDetail.size).gt(0)).to.be.true;
-
-      console.log(position1.amount);
-      console.log(position1.collateral);
-      console.log(position2.amount);
-      console.log(position2.collateral);
-      // expect(position1.amount.eq(strategyDetail.size)).to.be.true;
-      // expect(position1.collateral.eq(collateralToAdd1)).to.be.true;
-      // expect(position2.amount.eq(strategyDetail.size)).to.be.true;
-      // expect(position2.collateral.eq(collateralToAdd2)).to.be.true;
+      expect(position1.strikeId).to.be.equal(storedStrikeId1);
+      expect(position1.optionType).to.be.equal(
+        TestSystem.OptionType.SHORT_CALL_BASE,
+      );
+      //TODO: add checks with premiums received?
+      expect(position2.amount.sub(toBN("125"))).to.be.gt(0);
+      expect(position2.collateral.sub(toBN("125"))).to.be.gt(0);
+      expect(position2.state).to.be.equal(TestSystem.PositionState.ACTIVE);
+      expect(position2.strikeId).to.be.equal(storedStrikeId2);
+      expect(position2.optionType).to.be.equal(
+        TestSystem.OptionType.SHORT_CALL_BASE,
+      );
+      //TODO: add checks with premiums received?
+      expect(position2.amount.sub(toBN("125"))).to.be.gt(0);
+      expect(position2.collateral.sub(toBN("125"))).to.be.gt(0);
+      expect(position2.state).to.be.equal(TestSystem.PositionState.ACTIVE);
     });
 
-    // TODO: It should revert whether we try to trade more than we have as collateral
-    // it('should  revert when user try to make another trade during same period', async () => {
-    //   await expect(vault.connect(randomUser).trade(strategyDetail.size)).to.be.revertedWith('Wait for options to settle');
-    // });
-
-    const additionalDepositAmount = toBN("25000");
-    it("can add more deposit during the round", async () => {
+    xit("can add more deposit during the round", async () => {
+      const additionalDepositAmount = toBN("25000");
       await vault.connect(randomUser).deposit(additionalDepositAmount);
       const state = await vault.vaultState();
       expect(state.totalPending.eq(additionalDepositAmount)).to.be.true;
       const receipt = await vault.depositReceipts(randomUser.address);
       expect(receipt.amount.eq(additionalDepositAmount)).to.be.true;
     });
-    it("fastforward to the expiry", async () => {
+    xit("fastforward to the expiry", async () => {
       await lyraEvm.fastForward(boardParameter.expiresIn);
     });
-    it("should be able to close closeRound after settlement", async () => {
+    xit("should be able to close closeRound after settlement", async () => {
       await lyraTestSystem.optionMarket.settleExpiredBoard(boardId);
       const sethInStrategyBefore = await seth.balanceOf(strategy.address);
       const sethInVaultBefore = await seth.balanceOf(vault.address);
@@ -508,4 +645,3 @@ describe("Hack Money Strategy integration test", async () => {
 //              - Trade again and check it picked right deltas, right strikes, updates positions correctly.
 //              - Sanity check, change spot price again and repeat.
 //              - Close round and do proper checks
-//

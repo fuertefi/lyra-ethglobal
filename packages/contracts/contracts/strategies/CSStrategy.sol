@@ -77,9 +77,11 @@ contract CSStrategy is CSStrategyBase {
     premiumsExchangeValue = _exchangeQuoteToBaseWithLimit(premiumsReceived);
 
     if (premiumsExchangeValue > 0) {
+      (Strike memory newStrike1, Strike memory newStrike2) = _getTradeStrikes();
+
       uint premiumTradeSize = premiumsExchangeValue / 2;
       uint additionalPremium;
-      (, , additionalPremium) = _tradeStrikes(strike1, strike2, premiumTradeSize);
+      (, , additionalPremium) = _tradeStrikes(newStrike1, newStrike2, premiumTradeSize);
       premiumsReceived += additionalPremium;
     }
 
@@ -162,9 +164,7 @@ contract CSStrategy is CSStrategyBase {
 
     uint initIv = strike.boardIv.multiplyDecimal(strike.skew);
 
-    //console.log(">>> SET COLLATERAL TO");
-    //console.log(setCollateralTo);
-    //console.log(tradeSize);
+    console.log("Selling Strike:", strike.strikePrice);
 
     // perform trade
     TradeResult memory result = _openPosition(
@@ -222,6 +222,8 @@ contract CSStrategy is CSStrategyBase {
 
     (uint smallDeltaGap, ) = _getDeltaGap(smallStrike, true);
     (uint bigDeltaGap, ) = _getDeltaGap(bigStrike, false);
+    // console.log("smallDeltaGap:", (smallDeltaGap / 10**16));
+    // console.log("bigDeltaGap:", (bigDeltaGap / 10**16));
 
     for (uint i = 1; i < strikeIds.length - 1; i++) {
       // Get current Strike
@@ -235,16 +237,19 @@ contract CSStrategy is CSStrategyBase {
       if (currentSmallDeltaGap < smallDeltaGap) {
         smallStrike = currentStrike;
         smallDeltaGap = currentSmallDeltaGap;
+        //console.log("smallDeltaGap:", (smallDeltaGap / 10**16));
       }
       if (currentBigDeltaGap < bigDeltaGap) {
         bigStrike = currentStrike;
         bigDeltaGap = currentBigDeltaGap;
+        //console.log("bigDeltaGap:", (bigDeltaGap / 10**16));
       }
     }
-
+    console.log("smallStrike:", smallStrike.strikePrice / 10**16);
+    console.log("bigStrike:", bigStrike.strikePrice / 10**16);
     // final checks
     require(smallDeltaGap <= strategyDetail.maxDeltaGap, "smallDeltaGap out of bound!");
-    require(bigDeltaGap <= strategyDetail.maxDeltaGap, "smallDeltaGap out");
+    require(bigDeltaGap <= strategyDetail.maxDeltaGap, "bigDeltaGap out of bound!");
   }
 
   function _exchangeQuoteToBaseWithLimit(uint quoteAmount) internal returns (uint baseReceived) {

@@ -213,6 +213,7 @@ contract CSStrategyBase is LyraAdapter, Initializable {
     if (!_isActiveStrike(strikeId)) {
       strikeToPositionId[strikeId] = tradedPositionId;
       activeStrikeIds.push(strikeId);
+      console.log("Adding active strike with id:", strikeId);
     }
   }
 
@@ -235,7 +236,7 @@ contract CSStrategyBase is LyraAdapter, Initializable {
         // revert if position state is not settled
         require(position.state != PositionState.ACTIVE, "cannot clear active position");
         delete strikeToPositionId[strikeId];
-        delete lastTradeTimestamp[i]; //BUG: should be lastTradeTimestamp[strikeId]?? Test this
+        delete lastTradeTimestamp[strikeId];
       }
       delete activeStrikeIds;
     }

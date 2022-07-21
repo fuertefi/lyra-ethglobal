@@ -610,7 +610,7 @@ describe("Strategy integration test", async () => {
         "bigDeltaGap out of bound!",
       );
     });
-    it("should pick correct strikes when price changes", async () => {
+    xit("should pick correct strikes when price changes", async () => {
       // Change spot price to 1850
       await TestSystem.marketActions.mockPrice(
         lyraTestSystem,
@@ -681,8 +681,8 @@ describe("Strategy integration test", async () => {
       ).to.be.closeTo(0, 0.05);
     });
 
-    // success
-    it("should trade new strikes when spot changes", async () => {
+    //
+    xit("should trade new strikes when spot changes", async () => {
       console.log("NEW TRADE");
       const strategySETHBalanceBefore = await seth.balanceOf(strategy.address);
       const strategySUSDBalanceBefore = await susd.balanceOf(strategy.address);
@@ -804,13 +804,14 @@ describe("Strategy integration test", async () => {
       const receipt = await vault.depositReceipts(randomUser.address);
       expect(receipt.amount.eq(additionalDepositAmount)).to.be.true;
     });
-    xit("fastforward to the expiry", async () => {
+    it("fastforward to the expiry", async () => {
       await lyraEvm.fastForward(boardParameter.expiresIn);
     });
-    xit("should be able to close closeRound after settlement", async () => {
+    it("should be able to close closeRound after settlement", async () => {
       await lyraTestSystem.optionMarket.settleExpiredBoard(boardId);
       const sethInStrategyBefore = await seth.balanceOf(strategy.address);
       const sethInVaultBefore = await seth.balanceOf(vault.address);
+      const vaultStateBefore = await vault.vaultState();
 
       // settle all positions, from 1 to highest position
       const totalPositions = (await lyraTestSystem.optionToken.nextId())
@@ -830,12 +831,17 @@ describe("Strategy integration test", async () => {
       expect(sethInStrategyAfterSettlement.sub(sethInStrategyBefore).gt(0)).to
         .be.true;
 
+      // Strategy state before
+      const strikeId1 = await strategy.activeStrikeIds(0);
+      const strikeId2 = await strategy.activeStrikeIds(1);
+
       // TODO: Check how much was earned?
 
-      await vault.closeRound();
+      const closeRoundTx = await vault.closeRound();
 
       const sethInStrategyAfter = await seth.balanceOf(strategy.address);
       const sethInVaultAfter = await seth.balanceOf(vault.address);
+      const vaultStateAfter = await vault.vaultState();
 
       // strategy should be empty after close round
       expect(sethInStrategyAfter.isZero()).to.be.true;
@@ -846,6 +852,39 @@ describe("Strategy integration test", async () => {
           .sub(sethInVaultBefore)
           .eq(sethInStrategyAfterSettlement),
       );
+
+      // Vault state checks
+      const closeRoundBlock = closeRoundTx.blockNumber!;
+      const closeRoundTimestamp = (
+        await ethers.provider.getBlock(closeRoundBlock)
+      ).timestamp;
+
+      expect(
+        vaultStateAfter.lastLockedAmount.eq(vaultStateBefore.lockedAmount),
+      );
+      expect(vaultStateAfter.lockedAmountLeft.eq(0));
+      expect(vaultStateAfter.lockedAmount.eq(0));
+      expect(vaultStateAfter.roundInProgress).to.be.false;
+      expect(
+        vaultStateAfter.nextRoundReadyTimestamp.eq(
+          closeRoundTimestamp + 6 * 6 * 60,
+        ),
+      );
+
+      // Strategy update checks
+      const positionId1After = await strategy.strikeToPositionId(strikeId1);
+      const positionId2After = await strategy.strikeToPositionId(strikeId2);
+      const lastTradeTimestamp1After = await strategy.lastTradeTimestamp(
+        strikeId1,
+      );
+      const lastTradeTimestamp2After = await strategy.lastTradeTimestamp(
+        strikeId2,
+      );
+      expect(positionId1After.eq(0));
+      expect(positionId2After.eq(0));
+      expect(lastTradeTimestamp1After.eq(0));
+      expect(lastTradeTimestamp2After.eq(0));
+      await expect(strategy.activeStrikeIds(0)).to.be.reverted;
     });
   });
 });

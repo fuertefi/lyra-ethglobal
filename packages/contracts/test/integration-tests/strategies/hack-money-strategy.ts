@@ -7,9 +7,14 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
-import { CSStrategy, CSVault, MockERC20 } from "../../../typechain-types";
+import {
+  CSStrategy,
+  CSVault,
+  MockERC20,
+  Ownable__factory,
+} from "../../../typechain-types";
 import { StrategyDetailStruct } from "../../../typechain-types/CSStrategy";
-import { strikeIdToDetail } from "./utils";
+import { queryAdmin, strikeIdToDetail } from "./utils";
 
 const strategyDetail: StrategyDetailStruct = {
   minTimeToExpiry: lyraConstants.DAY_SEC,
@@ -130,12 +135,6 @@ describe("Strategy integration test", async () => {
         asset: seth.address, // collateral asset
       },
     ])) as CSVault;
-
-    // TODO: Move owners, admins to test for successful deployment
-    // console.log("deployer:", deployer.address);
-    // console.log("manager:", manager.address);
-    // console.log("owner:", await vault.owner());
-    // console.log("vault address", vault.address);
   });
 
   before("deploy strategy", async () => {
@@ -180,6 +179,18 @@ describe("Strategy integration test", async () => {
         lyraTestSystem.GWAVOracle.address,
       );
       expect(await strategy.ivLimit()).to.be.eq(ethers.utils.parseEther("2"));
+    });
+  });
+
+  describe("deployment", async () => {
+    it("sets admin and owner properly", async () => {
+      const adminAddress = await queryAdmin(vault.address);
+      const adminProxyOwner = await Ownable__factory.connect(
+        adminAddress,
+        deployer,
+      ).owner();
+      expect(adminProxyOwner).to.be.equal(manager.address);
+      expect(await vault.owner()).to.be.equal(manager.address);
     });
   });
 

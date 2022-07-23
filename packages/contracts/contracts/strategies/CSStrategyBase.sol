@@ -32,7 +32,7 @@ contract CSStrategyBase is LyraAdapter, Initializable {
     uint maxExchangeFeeRate; // 0.5%?
   }
 
-  OptionType optionType;
+  OptionType public optionType;
   CSVault vault;
   StrategyDetail public strategyDetail;
 

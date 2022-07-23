@@ -128,9 +128,8 @@ describe("Strategy integration test", async () => {
     const decimals = 18;
 
     // using open zeppelin upgrades
-    // TODO: Manager should be admin, deployer should be interacting
+    // TODO: Remove upgradeability
     // TODO: Use only in integrational test or create separate test for proxy
-    // TODO: Add proxy deployment script
     vault = (await upgrades.deployProxy(Vault.connect(manager), [
       susd.address,
       manager.address, // feeRecipient,
@@ -152,11 +151,11 @@ describe("Strategy integration test", async () => {
           BlackScholes: lyraTestSystem.blackScholes.address,
         },
       })
-    )./*connect(manager)*/ deploy(
+    ).deploy(
       vault.address,
       // TestSystem.OptionType.SHORT_CALL_BASE,
     )) as CSStrategy;
-    // +++ TODO: delpoy directly from manager?
+    // transfer ownership to managing account
     await strategy.transferOwnership(manager.address);
   });
 
@@ -170,26 +169,29 @@ describe("Strategy integration test", async () => {
   });
 
   before("set iv limit", async () => {
-    await strategy.connect(manager).setIvLimit(ethers.utils.parseEther("2"));
+    await strategy.connect(manager).setIvLimit(ethers.utils.parseEther("0.02"));
   });
 
   before("link strategy to vault", async () => {
     await vault.connect(manager).setStrategy(strategy.address);
   });
 
+  // TODO: Move to unit tests
   describe("check strategy setup", async () => {
     it("deploys with correct vault, optionType and iv limit", async () => {
-      // TODO: Fix me?
-      // expect(await strategy.optionType()).to.be.eq(
-      // TestSystem.OptionType.SHORT_CALL_BASE,
-      // );
+      expect(await strategy.optionType()).to.be.eq(
+        TestSystem.OptionType.SHORT_CALL_BASE,
+      );
       expect(await strategy.gwavOracle()).to.be.eq(
         lyraTestSystem.GWAVOracle.address,
       );
-      expect(await strategy.ivLimit()).to.be.eq(ethers.utils.parseEther("2"));
+      expect(await strategy.ivLimit()).to.be.eq(
+        ethers.utils.parseEther("0.02"),
+      );
     });
   });
 
+  // TODO: Remove with upgradeability
   describe("deployment", async () => {
     it("sets admin and owner properly", async () => {
       const adminAddress = await queryAdmin(vault.address);
@@ -202,6 +204,7 @@ describe("Strategy integration test", async () => {
     });
   });
 
+  // TODO: Move to unit tests and add init before call
   describe("setStrategy", async () => {
     it("cannot be called by any user", async () => {
       await expect(
@@ -269,6 +272,7 @@ describe("Strategy integration test", async () => {
       const vaultBalance = await seth.balanceOf(vault.address);
       expect(vaultBalance).to.be.eq(toBN("100000"));
     });
+    // TODO: Move to unit tests
     it("random user cannot start round 1", async () => {
       await expect(
         vault.connect(randomUser).startNextRound(boardId),
@@ -293,7 +297,7 @@ describe("Strategy integration test", async () => {
       expect(timestampsDiff / 7 / 24 / 60 / 60).to.be.closeTo(1, 0.01);
 
       const vaultState = await vault.vaultState();
-      expect(vaultState.round).to.be.equal(2); // QUESTION: why do we start round 1 and state is round = 2?
+      expect(vaultState.round).to.be.equal(2);
       expect(vaultState.lockedAmount).to.be.equal(
         ethers.utils.parseEther("100000"),
       );
@@ -305,8 +309,7 @@ describe("Strategy integration test", async () => {
       expect(vaultState.roundInProgress).to.be.true;
     });
 
-    // FIXME: test success
-    xit("should check deltas are within bound and pick correct strikes", async () => {
+    it("should check deltas are within bound and pick correct strikes", async () => {
       const strikeObj1 = await strikeIdToDetail(
         lyraTestSystem.optionMarket,
         strikes[1],
@@ -353,7 +356,7 @@ describe("Strategy integration test", async () => {
       const strategySUSDBalanceBefore = await susd.balanceOf(strategy.address);
       const vaultStateBefore = await vault.vaultState();
 
-      // +++ TODO: only allowed should be able to call trade function
+      // TODO: only allowed should be able to call trade function
       const tradeTransaction = await vault
         .connect(randomUser)
         .trade(toBN("10"));
@@ -400,10 +403,11 @@ describe("Strategy integration test", async () => {
       const storedStrikeId2 = await strategy.activeStrikeIds(1);
       expect(storedStrikeId1.eq(strikeObj1.id)).to.be.true;
       expect(storedStrikeId2.eq(strikeObj2.id)).to.be.true;
+
+      // check that premium trades were same strikes
       await expect(strategy.activeStrikeIds(2)).to.be.reverted;
 
       // 4- Update last trading timestamp
-
       const tradeTimestamp = (
         await ethers.provider.getBlock(tradeTransaction.blockNumber!)
       ).timestamp; //tradeTransaction.timestamp;
@@ -431,9 +435,10 @@ describe("Strategy integration test", async () => {
         TestSystem.OptionType.SHORT_CALL_BASE,
       );
       //TODO: add checks with premiums received?
-      expect(position2.amount.sub(toBN("5"))).to.be.gt(0);
-      expect(position2.collateral.sub(toBN("5"))).to.be.gt(0);
-      expect(position2.state).to.be.equal(TestSystem.PositionState.ACTIVE);
+      expect(position1.amount.sub(toBN("5"))).to.be.gt(0);
+      expect(position1.collateral.sub(toBN("5"))).to.be.gt(0);
+      expect(position1.state).to.be.equal(TestSystem.PositionState.ACTIVE);
+
       expect(position2.strikeId).to.be.equal(storedStrikeId2);
       expect(position2.optionType).to.be.equal(
         TestSystem.OptionType.SHORT_CALL_BASE,
@@ -444,7 +449,6 @@ describe("Strategy integration test", async () => {
       expect(position2.state).to.be.equal(TestSystem.PositionState.ACTIVE);
 
       // Check Event emition
-
       // TODO: Proper check for minimum premiums to receive
       // ANSWER: Yes good idea should look in to that
       const checkPremiumsReceived = (val: string) => {
@@ -461,10 +465,7 @@ describe("Strategy integration test", async () => {
         // );
       };
 
-      // TODO: Check strategy detail size is updated
-      // TODO: Check position size? and compare with trade on synthetix?
-
-      // TODO: Proper check for premium exchange value using premium limit
+      // TODO: Proper check for premium exchange value using premium limit (minVol)
       const checkPremiumExchangeValue = (val: string) => {
         console.log(`Premiums exchange: ${val}`);
         return true; //BigNumber.from(val).gte("13024350046259892330");
@@ -485,18 +486,7 @@ describe("Strategy integration test", async () => {
         );
     });
 
-    //TODO: this is just a lyra test system test and not ours, remove?
-    xit("should revert when called a second time because of high delta", async () => {
-      await expect(
-        vault.connect(randomUser).trade(toBN("10")),
-      ).to.be.revertedWithCustomError(
-        lyraTestSystem.optionMarketPricer,
-        "TradeDeltaOutOfRange",
-      );
-    });
-
-    // success
-    it("should trade when called second time with smaller amount", async () => {
+    it("should trade when called second time", async () => {
       const vaultStateBefore = await vault.vaultState();
 
       const tradeTransaction = await vault
@@ -568,22 +558,8 @@ describe("Strategy integration test", async () => {
       // expect(position2.state).to.be.equal(TestSystem.PositionState.ACTIVE);
     });
 
-    //TODO: Move to unit test
-    // SUCCESS
-    xit("should revert when not finding a matching delta gap", async () => {
-      // Change spot price to 2000
-      await TestSystem.marketActions.mockPrice(
-        lyraTestSystem,
-        toBN("2000"),
-        "sETH",
-      );
-
-      await expect(strategy._getTradeStrikes()).to.be.revertedWith(
-        "bigDeltaGap out of bound!",
-      );
-    });
     it("should pick correct strikes when price changes", async () => {
-      // Change spot price to 1850
+      // Change spot price to 1750
       await TestSystem.marketActions.mockPrice(
         lyraTestSystem,
         toBN("1750"),
@@ -620,8 +596,6 @@ describe("Strategy integration test", async () => {
         lyraTestSystem.optionMarket,
         strikes[6],
       );
-      console.log(strikeObj1);
-      console.log(strikeObj2);
       const { deltaGap: deltaGapSmallStrike } = await strategy._getDeltaGap(
         strikeObj1,
         true,

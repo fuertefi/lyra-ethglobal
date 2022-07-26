@@ -1,0 +1,120 @@
+{
+  "targets": {
+   "SynthetixAdapter": {
+    "contractName": "SynthetixAdapter",
+    "source": "SynthetixAdapter",
+    "address": "0xbfa31380ED380cEb325153eA08f296A45A489108",
+    "txn": "0x3bf8f66a05f53c40305e9def54b04f13992c2be054c84c6a0907093d586aa98f",
+    "blockNumber": 12800561
+  },
+  "OptionMarketViewer": {
+    "contractName": "OptionMarketViewer",
+    "source": "OptionMarketViewer",
+    "address": "0xEAf788AD8abd9C98bA05F6802a62B8DbC673D76B",
+    "txn": "0x10d267ea3fc510a9db47e847410bff41ef4fe2bf1eeb2320dc239636936ecdbb",
+    "blockNumber": 12800567
+  },
+  "OptionMarketWrapper": {
+    "contractName": "OptionMarketWrapper",
+    "source": "OptionMarketWrapper",
+    "address": "0xCCE7819d65f348c64B7Beb205BA367b3fE33763B",
+    "txn": "0xcc890710809b8287e16fcf08d9d273dff17f7c9cacc9e4280b047fce3e913b6f",
+    "blockNumber": 12800577
+  },
+  "LyraRegistry": {
+    "contractName": "LyraRegistry",
+    "source": "LyraRegistry",
+    "address": "0xF5A0442D4753cA1Ea36427ec071aa5E786dA5916",
+    "txn": "0x4ee838f8fd0bcbdc848923cbec2eedfaf7b2bf35990496e4226bbff0dc654bd9",
+    "blockNumber": 12800680
+  },
+  "GWAV": {
+    "contractName": "GWAV",
+    "source": "GWAV",
+    "address": "0xe0392ea1bABCf15d95819A5Bfc68aC191DF39C5B",
+    "txn": "0xcfa21b33b2fd421bb70a1193c5dacb51aea02477fdc6ed555a341fa7e4764ac8",
+    "blockNumber": 12800720
+  },
+  "BlackScholes": {
+    "contractName": "BlackScholes",
+    "source": "BlackScholes",
+    "address": "0xE97831964bF41C564EDF6629f818Ed36C85fD520",
+    "txn": "0x2507a119786d1629fa792927a54aaedabd9e0aa74a26ce7a95324386bcb857c0",
+    "blockNumber": 12800739
+  },
+  "markets": {
+    "sETH": {
+      "OptionMarket": {
+        "contractName": "OptionMarket",
+        "source": "OptionMarket",
+        "address": "0x1d42a98848e022908069c2c545aE44Cc78509Bc8",
+        "txn": "0x33e1f0acd79f21e894e28ed7106b28d98b6d4755f26bcd9757c8e8f96732521f",
+        "blockNumber": 12801071
+      },
+      "OptionMarketPricer": {
+        "contractName": "OptionMarketPricer",
+        "source": "OptionMarketPricer",
+        "address": "0x73b161f1bcF37048A5173619cda53aaa56A28Be0",
+        "txn": "0x574caff8dce286d0bcd06d3fa269b334eb2be27ac2a3de7e978c5ae777b9a62b",
+        "blockNumber": 12801079
+      },
+      "OptionGreekCache": {
+        "contractName": "OptionGreekCache",
+        "source": "OptionGreekCache",
+        "address": "0xbb3e8Eac35e649ed1071A9Ec42223d474e67b19A",
+        "txn": "0x2bda412287348d02c78f6e272e168e4bf13e65cf93015f89657a9c6b2a20f87a",
+        "blockNumber": 12801088
+      },
+      "OptionToken": {
+        "contractName": "OptionToken",
+        "source": "OptionToken",
+        "address": "0xCfDfF4E171133D55dE2e45c66a0E144a135D93f2",
+        "txn": "0xe0f147fc465b20f3bdce3e5518b4e53639b96d5d123ea2018c940a8153e010ae",
+        "blockNumber": 12801183
+      },
+      "LiquidityPool": {
+        "contractName": "LiquidityPool",
+        "source": "LiquidityPool",
+        "address": "0x5Db73886c4730dBF3C562ebf8044E19E8C93843e",
+        "txn": "0x6900e3ae214f72f860788d7b2249d32252287160ef0a77840988708e2ed4f446",
+        "blockNumber": 12801194
+      },
+      "LiquidityToken": {
+        "contractName": "LiquidityToken",
+        "source": "LiquidityToken",
+        "address": "0x0d1a91354A387a1e9E8FCD8f576670c4C3b723cA",
+        "txn": "0x291e8509f4d0bf7daf92bbbd924ebe70b598c579fee37ccf0a338aed2e06ce14",
+        "blockNumber": 12801215
+      },
+      "ShortCollateral": {
+        "contractName": "ShortCollateral",
+        "source": "ShortCollateral",
+        "address": "0x3E86B53e1D7DA7eDbA225c3A218d0b5a7544fDfD",
+        "txn": "0x1e06c7d5a380ed60d68571f4b98071073c30f7cd5e6da7967944614e32f033c9",
+        "blockNumber": 12801290
+      },
+      "ShortPoolHedger": {
+        "contractName": "ShortPoolHedger",
+        "source": "ShortPoolHedger",
+        "address": "0x60a5159bAfb2198b967021AC77E26C1417081477",
+        "txn": "0x017a02a1b54e07c0dd05bd7bcb58a788fd57f4a60095a8c0639715491e5b16f9",
+        "blockNumber": 12801313
+      },
+      "KeeperHelper": {
+        "contractName": "KeeperHelper",
+        "source": "KeeperHelper",
+        "address": "0xd02421294De2314F03441Ee3c27D2C034c9A0CF5",
+        "txn": "0x117730a19385f259073a2278389801e994f0c5576d2143812c17f6418b869678",
+        "blockNumber": 12801341
+      },
+      "GWAVOracle": {
+        "contractName": "GWAVOracle",
+        "source": "GWAVOracle",
+        "address": "0x9357EB9C4627F7cDdBdfF4f648Df5c2fB42cB69F",
+        "txn": "0xcfbf38dae61aaafa85ad8ec78a1c5c925a4eb1a3e6879d45b2b55af6608d18e3",
+        "blockNumber": 12801362
+      }
+    }
+  }  
+}
+}

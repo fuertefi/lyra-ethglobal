@@ -1,45 +1,56 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
+// Hardhat
+import "hardhat/console.sol";
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import {BaseVault} from "./BaseVault.sol";
 import {Vault} from "../libraries/Vault.sol";
 
-import {IStrategy} from "../interfaces/IStrategy.sol";
+import {ICSStrategy} from "../interfaces/ICSStrategy.sol";
 
 /// @notice LyraVault help users run option-selling strategies on Lyra AMM.
-contract LyraVault is Ownable, BaseVault {
-  IERC20 public immutable premiumAsset;
-  IERC20 public immutable collateralAsset;
+contract CSVault is BaseVault {
+  IERC20 public premiumAsset;
+  IERC20 public collateralAsset;
 
-  IStrategy public strategy;
+  uint public roundDelay;
+
+  ICSStrategy public strategy;
   address public lyraRewardRecipient;
 
   // Amount locked for scheduled withdrawals last week;
-  uint128 public lastQueuedWithdrawAmount;
-  // % of funds to be used for weekly option purchase
-  uint public optionAllocation;
+  uint public lastQueuedWithdrawAmount;
 
   event StrategyUpdated(address strategy);
 
-  event Trade(address user, uint positionId, uint premium, uint capitalUsed);
+  event Trade(
+    address user,
+    uint positionId_1,
+    uint positionId_2,
+    uint premium,
+    uint capitalUsed,
+    uint premiumExchangeValue
+  );
 
   event RoundStarted(uint16 roundId, uint104 lockAmount);
 
   event RoundClosed(uint16 roundId, uint104 lockAmount);
 
-  constructor(
+  // TODO: Add docs
+  function initialize(
     address _susd,
     address _feeRecipient,
     uint _roundDuration,
     string memory _tokenName,
     string memory _tokenSymbol,
     Vault.VaultParams memory _vaultParams
-  ) BaseVault(_feeRecipient, _roundDuration, _tokenName, _tokenSymbol, _vaultParams) {
+  ) public initializer {
+    BaseVault.initializeBaseVault(_feeRecipient, _roundDuration, _tokenName, _tokenSymbol, _vaultParams);
     premiumAsset = IERC20(_susd);
     collateralAsset = IERC20(_vaultParams.asset);
+    roundDelay = 6 hours;
   }
 
   /// @dev set strategy contract. This function can only be called by owner.
@@ -49,38 +60,41 @@ contract LyraVault is Ownable, BaseVault {
       collateralAsset.approve(address(strategy), 0);
     }
 
-    strategy = IStrategy(_strategy);
+    strategy = ICSStrategy(_strategy);
     collateralAsset.approve(_strategy, type(uint).max);
     emit StrategyUpdated(_strategy);
   }
 
   /// @dev anyone can trigger a trade
-  /// @param strikeId the strike id to sell
-  function trade(uint strikeId) external {
+  // TODO: Add docs
+  // Should we specify full size and divide it in halfs in the strategy?
+  function trade(uint totalTradesSize) public {
     require(vaultState.roundInProgress, "round closed");
-    // perform trade through strategy
-    (uint positionId, uint premiumReceived, uint capitalUsed) = strategy.doTrade(strikeId, lyraRewardRecipient);
+    // perform trades through strategy
+    // TODO: Do we want to calculate this inside the startegy?
+    uint tradeSize = totalTradesSize / 2;
+    (uint positionId_1, uint positionId_2, uint premiumReceived, uint premiumExchangeValue) = strategy.doTrade(
+      tradeSize
+    );
 
-    // update the remaining locked amount
-    vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - capitalUsed;
+    // TODO: why not using total trade size directly?
+    // Answer: because of how solidity works: 7 / 2 = 3, Im avoiding accounting issues
+    vaultState.lockedAmountLeft = vaultState.lockedAmountLeft - 2 * tradeSize;
 
     // todo: udpate events
-    emit Trade(msg.sender, positionId, premiumReceived, capitalUsed);
-  }
-
-  /// @dev anyone close part of the position with premium made by the strategy if a position is dangerous
-  /// @param positionId the positiion to close
-  function reducePosition(uint positionId, uint closeAmount) external {
-    strategy.reducePosition(positionId, closeAmount, lyraRewardRecipient);
+    emit Trade(msg.sender, positionId_1, positionId_2, premiumReceived, 2 * tradeSize, premiumExchangeValue);
   }
 
   /// @dev close the current round, enable user to deposit for the next round
   function closeRound() external {
+    require(strategy.activeExpiry() < block.timestamp, "cannot close round if board not expired");
+    require(vaultState.roundInProgress, "round closed");
+
     uint104 lockAmount = vaultState.lockedAmount;
     vaultState.lastLockedAmount = lockAmount;
     vaultState.lockedAmountLeft = 0;
     vaultState.lockedAmount = 0;
-    vaultState.nextRoundReadyTimestamp = block.timestamp + Vault.ROUND_DELAY;
+    vaultState.nextRoundReadyTimestamp = block.timestamp + roundDelay;
     vaultState.roundInProgress = false;
 
     // won't be able to close if positions are not settled
@@ -102,14 +116,25 @@ contract LyraVault is Ownable, BaseVault {
     vaultState.lockedAmount = uint104(lockedBalance);
     vaultState.lockedAmountLeft = lockedBalance;
     vaultState.roundInProgress = true;
-    lastQueuedWithdrawAmount = uint128(queuedWithdrawAmount);
-
+    lastQueuedWithdrawAmount = queuedWithdrawAmount;
     emit RoundStarted(vaultState.round, uint104(lockedBalance));
+
+    require(collateralAsset.transfer(address(strategy), lockedBalance), "collateralAsset transfer failed");
   }
 
   /// @notice set set new address to receive Lyra trading reward on behalf of the vault
   /// @param recipient recipient address
   function setLyraRewardRecipient(address recipient) external onlyOwner {
     lyraRewardRecipient = recipient;
+  }
+
+  // helper to set AmountLeft
+  function getLockedAmountLeft() public view returns (uint lockedAmountLeft) {
+    lockedAmountLeft = uint(vaultState.lockedAmountLeft);
+  }
+
+  // helper set round delay
+  function setRoundDelay(uint newRoundDelay) external onlyOwner {
+    roundDelay = newRoundDelay;
   }
 }

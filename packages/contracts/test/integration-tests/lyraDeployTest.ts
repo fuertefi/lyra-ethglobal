@@ -6,11 +6,9 @@ import {
   TestSystemContractsType,
 } from "@lyrafinance/protocol";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import chai, { expect } from "chai";
-import { solidity } from "ethereum-waffle";
+import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
-chai.use(solidity);
 
 xdescribe("Example script to setup lyra for local testnet", () => {
   let account: SignerWithAddress;

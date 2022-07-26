@@ -9,12 +9,15 @@ import {LyraAdapter} from "@lyrafinance/protocol/contracts/periphery/LyraAdapter
 
 // Libraries
 import {Vault} from "../libraries/Vault.sol";
+import {IDelegateApprovals} from "../interfaces/IDelegateApprovals.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {CSVault} from "../core/CSVault.sol";
 import {DecimalMath} from "@lyrafinance/protocol/contracts/synthetix/DecimalMath.sol";
 import {SignedDecimalMath} from "@lyrafinance/protocol/contracts/synthetix/SignedDecimalMath.sol";
 
-contract CSStrategyBase is LyraAdapter {
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+contract CSStrategyBase is LyraAdapter, Initializable {
   using DecimalMath for uint;
   using SignedDecimalMath for int;
 
@@ -29,9 +32,8 @@ contract CSStrategyBase is LyraAdapter {
     uint maxExchangeFeeRate; // 0.5%?
   }
 
-  // TODO: Cannot be used this way for upgradeable contract
-  OptionType optionType;
-  CSVault immutable vault;
+  OptionType public optionType;
+  CSVault vault;
   StrategyDetail public strategyDetail;
 
   uint public currentBoardId;
@@ -57,8 +59,15 @@ contract CSStrategyBase is LyraAdapter {
     _;
   }
 
+  // TODO: Remove constructor at all?
   constructor(CSVault _vault) LyraAdapter() {
     vault = _vault;
+    optionType = OptionType.SHORT_CALL_BASE;
+  }
+
+  function initializeBase(CSVault _vault) public onlyInitializing {
+    vault = _vault;
+    optionType = OptionType.SHORT_CALL_BASE;
   }
 
   function initAdapter(
@@ -72,6 +81,8 @@ contract CSStrategyBase is LyraAdapter {
 
     quoteAsset.approve(address(vault), type(uint).max);
     baseAsset.approve(address(vault), type(uint).max);
+    // IDelegateApprovals(0x2A23bc0EA97A89abD91214E8e4d20F02Fe14743f)
+    // .approveExchangeOnBehalf(0xbfa31380ED380cEb325153eA08f296A45A489108);
     collateralAsset = _isBaseCollat() ? IERC20(address(baseAsset)) : IERC20(address(quoteAsset));
   }
 
@@ -125,9 +136,9 @@ contract CSStrategyBase is LyraAdapter {
     IERC20(token).approve(spender, amount);
   }
 
-  // function approveSynthetixDelegate(address delegateApprovals, address exchanger) external onlyOwner {
-    // IDelegateApprovals(delegateApprovals).approveExchangeOnBehalf(exchanger);
-  // }
+  function approveSynthetixDelegate(address delegateApprovals, address exchanger) external onlyOwner {
+    IDelegateApprovals(delegateApprovals).approveExchangeOnBehalf(exchanger);
+  }
 
   ///////////////////
   // VAULT ACTIONS //
@@ -202,6 +213,7 @@ contract CSStrategyBase is LyraAdapter {
     if (!_isActiveStrike(strikeId)) {
       strikeToPositionId[strikeId] = tradedPositionId;
       activeStrikeIds.push(strikeId);
+      console.log("Adding active strike with id:", strikeId);
     }
   }
 
@@ -224,7 +236,7 @@ contract CSStrategyBase is LyraAdapter {
         // revert if position state is not settled
         require(position.state != PositionState.ACTIVE, "cannot clear active position");
         delete strikeToPositionId[strikeId];
-        delete lastTradeTimestamp[i];
+        delete lastTradeTimestamp[strikeId];
       }
       delete activeStrikeIds;
     }

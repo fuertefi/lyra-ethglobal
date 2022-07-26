@@ -1,7 +1,8 @@
 import "@eth-optimism/plugins/hardhat/compiler";
 import { lyraContractPaths } from "@lyrafinance/protocol/dist/test/utils/package/index-paths";
+import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
+import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
 import * as dotenv from "dotenv";
 import * as fs from "fs";

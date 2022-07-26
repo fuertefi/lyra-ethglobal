@@ -1,9 +1,0 @@
-# folders
-.yarn/
-build/
-dist/
-node_modules/
-contracts/mocks/*
-contracts/test-helpers/*
-contracts/synthetix/*
-contracts/openzeppelin-l2/*

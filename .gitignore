@@ -19,3 +19,4 @@ build
 generated
 
 .openzeppelin
+yarn-error.log

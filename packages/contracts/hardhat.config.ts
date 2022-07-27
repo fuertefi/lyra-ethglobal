@@ -52,6 +52,12 @@ export default {
       ovm: true,
       accounts: [process.env.PRIVATE_KEY],
     },
+    "mainnet-ovm": {
+      url: "https://mainnet.optimism.io",
+      chainId: 10,
+      // ovm: true,
+      accounts: [process.env.PRIVATE_KEY],
+    },
   },
   solidity: {
     version: "0.8.9",

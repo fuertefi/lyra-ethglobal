@@ -536,7 +536,7 @@ describe("Strategy integration test", async () => {
         positionId1,
       ]);
       const positionId2 = await strategy.strikeToPositionId(storedStrikeId2);
-      const [position2] = await lyraTestSystem.optionToken.getOptionPositions([
+      const [_position2] = await lyraTestSystem.optionToken.getOptionPositions([
         positionId2,
       ]);
 
@@ -650,7 +650,7 @@ describe("Strategy integration test", async () => {
         strikes[0],
       );
 
-      const { deltaGap: _deltaGapSmallStrike, callDelta } =
+      const { deltaGap: _deltaGapSmallStrike, callDelta: _callDelta } =
         await strategy._getDeltaGap(_strikeObj1, true);
       const tradeTransaction = await vault.connect(randomUser).trade(toBN("2"));
 

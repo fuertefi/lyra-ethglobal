@@ -32,8 +32,9 @@ const strategyDetail: StrategyDetailStruct = {
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
   maxDeltaGap: toBN("0.05"), // accept delta from 0.10~0.20 or 0.80~0.90
-  minVol: toBN("0.8"), // min vol to sell. (also used to calculate min premium for call selling vault)
+  minVol: toBN("0.6"), // min vol to sell. (also used to calculate min premium for call selling vault)
   maxExchangeFeeRate: toBN("0.03"),
+  iterations: 4,
 };
 
 xdescribe("Hack Money Vault integration test", async () => {

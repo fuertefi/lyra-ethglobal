@@ -154,13 +154,7 @@ contract CSStrategy is CSStrategyBase {
     uint tradeSize,
     uint setCollateralTo
   ) internal returns (uint, uint) {
-    // TODO: fix this part with min expected premium and strategy min vol
-    // get minimum expected premium based on minIv
-    // uint256 minExpectedPremium = _getPremiumLimit(
-    //     strike,
-    //     strategyDetail.minVol,
-    //     tradeSize
-    // );
+    uint minExpectedPremium = _getPremiumLimit(strike, strategyDetail.minVol, tradeSize);
 
     uint initIv = strike.boardIv.multiplyDecimal(strike.skew);
 
@@ -171,7 +165,7 @@ contract CSStrategy is CSStrategyBase {
       TradeInputParameters({
         strikeId: strike.id,
         positionId: strikeToPositionId[strike.id],
-        iterations: 4, // strategy.iterations
+        iterations: strategyDetail.iterations, // strategy.iterations
         optionType: optionType,
         amount: tradeSize,
         setCollateralTo: setCollateralTo,
@@ -180,6 +174,9 @@ contract CSStrategy is CSStrategyBase {
         rewardRecipient: lyraRewardRecipient // set to zero address if don't want to wait for whitelist
       })
     );
+
+    require(result.totalCost >= minExpectedPremium, "premium too low!");
+
     Strike memory finalStrike = _getStrikes(_toDynamic(strike.id))[0];
     uint finalIv = finalStrike.boardIv.multiplyDecimal(finalStrike.skew);
     require(initIv - finalIv < ivLimit, "IV_LIMIT_HIT");

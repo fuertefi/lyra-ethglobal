@@ -29,7 +29,8 @@ contract CSStrategyBase is LyraAdapter, Initializable {
     int maxtargetDelta; // 85%
     uint maxDeltaGap; // 5%
     uint minVol; // 80%
-    uint maxExchangeFeeRate; // 0.5%?
+    uint maxExchangeFeeRate;
+    uint iterations; // 0.5%?
   }
 
   OptionType public optionType;

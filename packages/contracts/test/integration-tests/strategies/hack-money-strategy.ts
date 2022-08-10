@@ -27,8 +27,9 @@ const strategyDetail: StrategyDetailStruct = {
   mintargetDelta: toBN("0.15"),
   maxtargetDelta: toBN("0.85"),
   maxDeltaGap: toBN("0.05"),
-  minVol: toBN("0.1"), // min vol to sell. (also used to calculate min premium for call selling vault)
+  minVol: toBN("0.65"), // min vol to sell. (also used to calculate min premium for call selling vault)
   maxExchangeFeeRate: toBN("3"),
+  iterations: 4,
 };
 
 describe("Strategy integration test", async () => {

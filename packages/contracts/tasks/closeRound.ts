@@ -2,7 +2,7 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-web3";
 import { task } from "hardhat/config";
 import { DEPLOYED_CONTRACTS } from "../constants";
-import { CSVault__factory } from "../typechain-types/factories/CSVault__factory";
+import { CSVault__factory } from "../typechain-types";
 
 task("closeRound", "Close round").setAction(async (_, hre) => {
   const chainId = hre.network.config.chainId;

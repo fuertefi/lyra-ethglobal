@@ -3,7 +3,7 @@ import "@nomiclabs/hardhat-web3";
 import { ethers } from "ethers";
 import { task } from "hardhat/config";
 import { DEPLOYED_CONTRACTS } from "../constants";
-import { CSVault__factory } from "../typechain-types/factories/CSVault__factory";
+import { CSVault__factory } from "../typechain-types";
 
 task("trade", "Trade in new round").setAction(async (_, hre) => {
   const chainId = hre.network.config.chainId;

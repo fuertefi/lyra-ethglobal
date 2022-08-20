@@ -85,8 +85,8 @@ contract CSStrategy is CSStrategyBase {
       premiumsReceived += additionalPremium;
     }
 
-    lastTradeTimestamp[strike1.id] = block.timestamp;
-    lastTradeTimestamp[strike2.id] = block.timestamp;
+    _setLastTradedAt(strike1.id, block.timestamp);
+    _setLastTradedAt(strike2.id, block.timestamp);
   }
 
   function _tradeStrikes(
